@@ -41,3 +41,14 @@ The heaving lifting is done in two routines:
 - inverse (implementing the inverse solution of geodesics on the ellipsoid)
 
 Full details are available at www.movable-type.co.uk/scripts/latlong-vincenty.html
+
+geo.js
+------
+
+Tools for manipulating geodetic latitude/longitude in degrees, minutes, seconds.
+
+The library includes the following functions:
+- parseDMS: parse string representing degrees/minutes/seconds into numeric degrees
+- toLat: convert decimal degrees to latitude
+- toLon: convert decimal degrees to longitude
+- toBrng: convert decimal degrees to bearing
