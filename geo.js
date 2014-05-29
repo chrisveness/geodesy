@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy representation conversion functions (c) Chris Veness 2002-2014                        */
+/*  Geodesy representation conversion functions                        (c) Chris Veness 2002-2014 */
 /*   - www.movable-type.co.uk/scripts/latlong.html                                                */
 /*                                                                                                */
 /*  Sample usage:                                                                                 */
@@ -11,7 +11,8 @@
 
 
 /**
- * @namespace Tools for manipulating geodetic latitude/longitude in degrees, minutes, seconds
+ * Tools for manipulating geodetic latitude/longitude in degrees, minutes, seconds
+ * @namespace
  */
 var Geo = {};
 
@@ -22,15 +23,11 @@ var Geo = {};
  * This is very flexible on formats, allowing signed decimal degrees, or deg-min-sec optionally
  * suffixed by compass direction (NSEW). A variety of separators are accepted (eg 3º 37' 09"W) 
  * or fixed-width format without separators (eg 0033709W). Seconds and minutes may be omitted. 
- * (Note minimal validation is done).
  *
- * @param   {String|Number} dmsStr - Degrees or deg/min/sec in variety of formats
- * @returns {Number} Degrees as decimal number
- * @throws  {TypeError} dmsStr is an object, perhaps DOM object without .value?
+ * @param   {string|number} dmsStr - Degrees or deg/min/sec in variety of formats.
+ * @returns {number} Degrees as decimal number.
  */
 Geo.parseDMS = function(dmsStr) {
-    if (typeof deg == 'object') throw new TypeError('Geo.parseDMS - dmsStr is [DOM?] object');
-
     // check for signed decimal degrees without NSEW, if so return it directly
     if (typeof dmsStr == 'number' && isFinite(dmsStr)) return Number(dmsStr);
 
@@ -63,19 +60,17 @@ Geo.parseDMS = function(dmsStr) {
 
 
 /**
- * Convert decimal degrees to deg/min/sec format
+ * Converts decimal degrees to deg/min/sec format
  *  - degree, prime, double-prime symbols are added, but sign is discarded, though no compass
  *    direction is added.
  *
  * @private
- * @param   {Number} deg - Degrees
- * @param   {String} [format=dms] - Return value as 'd', 'dm', 'dms'
- * @param   {Number} [dp=0|2|4] - No of decimal places to use - default 0 for dms, 2 for dm, 4 for d
- * @returns {String} deg formatted as deg/min/secs according to specified format
- * @throws  {TypeError} deg is an object, perhaps DOM object without .value?
+ * @param   {number} deg - Degrees to be formatted as specified.
+ * @param   {string} [format=dms] - Return value as 'd', 'dm', 'dms'.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @returns {string} Degrees formatted as deg/min/secs according to specified format.
  */
 Geo.toDMS = function(deg, format, dp) {
-    if (typeof deg == 'object') throw new TypeError('Geo.toDMS - deg is [DOM?] object');
     if (isNaN(deg)) return null;  // give up here if we can't make a number from deg
 
     // default values
@@ -125,12 +120,12 @@ Geo.toDMS = function(deg, format, dp) {
 
 
 /**
- * Convert numeric degrees to deg/min/sec latitude (suffixed with N/S).
+ * Converts numeric degrees to deg/min/sec latitude (2-digit degrees, suffixed with N/S).
  *
- * @param   {Number} deg - Degrees
- * @param   {String} [format=dms] - Return value as 'd', 'dm', 'dms'
- * @param   {Number} [dp=0|2|4] - No of decimal places to use - default 0 for dms, 2 for dm, 4 for d
- * @returns {String} Deg/min/seconds
+ * @param   {number} deg - Degrees to be formatted as specified.
+ * @param   {string} [format=dms] - Return value as 'd', 'dm', 'dms'.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @returns {string} Degrees formatted as deg/min/secs according to specified format.
  */
 Geo.toLat = function(deg, format, dp) {
     var lat = Geo.toDMS(deg, format, dp);
@@ -139,12 +134,12 @@ Geo.toLat = function(deg, format, dp) {
 
 
 /**
- * Convert numeric degrees to deg/min/sec longitude (suffixed with E/W)
+ * Convert numeric degrees to deg/min/sec longitude (3-digit degrees, suffixed with E/W)
  *
- * @param   {Number} deg - Degrees
- * @param   {String} [format=dms] - Return value as 'd', 'dm', 'dms'
- * @param   {Number} [dp=0|2|4] - No of decimal places to use - default 0 for dms, 2 for dm, 4 for d
- * @returns {String} Deg/min/seconds
+ * @param   {number} deg - Degrees to be formatted as specified.
+ * @param   {string} [format=dms] - Return value as 'd', 'dm', 'dms'.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @returns {string} Degrees formatted as deg/min/secs according to specified format.
  */
 Geo.toLon = function(deg, format, dp) {
     var lon = Geo.toDMS(deg, format, dp);
@@ -153,12 +148,12 @@ Geo.toLon = function(deg, format, dp) {
 
 
 /**
- * Convert numeric degrees to deg/min/sec as a bearing (0º..360º)
+ * Converts numeric degrees to deg/min/sec as a bearing (0º..360º)
  *
- * @param   {Number} deg - Degrees
- * @param   {String} [format=dms] - Return value as 'd', 'dm', 'dms'
- * @param   {Number} [dp=0|2|4] - No of decimal places to use - default 0 for dms, 2 for dm, 4 for d
- * @returns {String} Deg/min/seconds
+ * @param   {number} deg - Degrees to be formatted as specified.
+ * @param   {string} [format=dms] - Return value as 'd', 'dm', 'dms'.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @returns {string} Degrees formatted as deg/min/secs according to specified format.
  */
 Geo.toBrng = function(deg, format, dp) {
     deg = (Number(deg)+360) % 360;  // normalise -ve values to 180º..360º
