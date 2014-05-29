@@ -219,20 +219,14 @@ LatLon.prototype.toString = function(format, dp) {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-// ---- extend Number object with methods for converting degrees/radians
-
-/** Converts numeric degrees to radians */
+/** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
-    Number.prototype.toRadians = function() {
-        return this * Math.PI / 180;
-    }
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
 }
 
-/** Converts radians to numeric (signed) degrees */
+/** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
-    Number.prototype.toDegrees = function() {
-        return this * 180 / Math.PI;
-    }
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
