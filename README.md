@@ -49,7 +49,7 @@ Geodesy tools for an ellipsoidal earth model.
 This includes the LatLonE object which incorporates not just the latitude & longitude coordinates, 
 but also the datum the latitude/longitude point is defined in, 
 along with functions for translating between different datums. 
-It also includes the GeoParams object whith ellipsoid parameters and datum transform parameters.
+It also includes the GeoParams object with ellipsoid parameters and datum transform parameters.
 
 The library includes:
 - ellipsoid parameters
@@ -57,6 +57,8 @@ The library includes:
 - convertDatum
 - toCartesian (ECEF 3-d vector)
 - toLatLon (from ECEF 3-d vector)
+
+More information at www.movable-type.co.uk/scripts/latlong-convert-coords.html
 
 geo.js
 ------
