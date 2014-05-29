@@ -42,6 +42,22 @@ The heaving lifting is done in two routines:
 
 Full details are available at www.movable-type.co.uk/scripts/latlong-vincenty.html
 
+latlon-ellipsoid.js
+-------------------
+
+Geodesy tools for an ellipsoidal earth model. 
+This includes the LatLonE object which incorporates not just the latitude & longitude coordinates, 
+but also the datum the latitude/longitude point is defined in, 
+along with functions for translating between different datums. 
+It also includes the GeoParams object whith ellipsoid parameters and datum transform parameters.
+
+The library includes:
+- ellipsoid parameters
+- datum ellipsoid & Helmert transform parameters
+- convertDatum
+- toCartesian (ECEF 3-d vector)
+- toLatLon (from ECEF 3-d vector)
+
 geo.js
 ------
 
