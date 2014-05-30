@@ -222,6 +222,19 @@ Vector3d.prototype.applyTransform = function(t)   {
 }
 
 
+/**
+ * Returns a string representation of ‘this’ point, formatted as degrees, degrees+minutes, or
+ * degrees+minutes+seconds.
+ *
+ * @param   {string} [format=dms] - Format point as 'd', 'dm', 'dms'.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @returns {string} Comma-separated latitude/longitude.
+ */
+LatLonE.prototype.toString = function(format, dp) {
+    return Geo.toLat(this.lat, format, dp) + ', ' + Geo.toLon(this.lon, format, dp);
+}
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /** Extend Number object with method to convert numeric degrees to radians */
