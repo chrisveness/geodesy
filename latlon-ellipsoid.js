@@ -177,14 +177,13 @@ Vector3d.prototype.toLatLon = function(datum) {
 
     var eSq = (a*a - b*b) / (a*a);
     var p = Math.sqrt(x*x + y*y);
-    var φ = Math.atan2(z, p*(1-eSq)), φʹ;
+    var φ = Math.atan2(z, p*(1-eSq)), φʹ; // initial value of φ
 
     var precision = 1 / a;  // 1m: Helmert transform cannot generally do better than a few metres
     do {
         var sinφ = Math.sin(φ);
         var ν = a / Math.sqrt(1 - eSq*sinφ*sinφ);
         φʹ = φ;
-        sinφ = Math.sin(φ);
         φ = Math.atan2(z + eSq*ν*sinφ, p);
     } while (Math.abs(φ-φʹ) > precision);
 
