@@ -1,8 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2014  */
 /*                                                                                                */
-/* from: Vincenty inverse formula - T Vincenty, "Direct and Inverse Solutions of Geodesics on the */
-/*       Ellipsoid with application of nested equations", Survey Review, vol XXII no 176, 1975    */
+/* from: T Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with application */
+/*       of nested equations", Survey Review, vol XXIII no 176, 1975                              */
 /*       http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
@@ -15,8 +15,8 @@
  * @requires Geo
  *
  * @constructor
- * @param {Number} lat - latitude in degrees
- * @param {Number} lon - longitude in degrees
+ * @param {number} lat - Latitude in degrees.
+ * @param {number} lon - Longitude in degrees.
  */
 function LatLon(lat, lon) {
     this.lat = Number(lat);
@@ -25,11 +25,11 @@ function LatLon(lat, lon) {
 
 
 /**
- * Calculates geodetic distance between 'this' point and destination point specified by
- * latitude/longitude using Vincenty inverse formula for ellipsoids.
+ * Returns the distance between ‘this’ point and destination point along a geodesic, using Vincenty
+ * inverse solution.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns (Number} distance in metres between points or NaN if failed to converge
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns (Number} Distance in metres between points or NaN if failed to converge.
  */
 LatLon.prototype.distanceTo = function(point) {
     try {
@@ -41,11 +41,11 @@ LatLon.prototype.distanceTo = function(point) {
 
 
 /**
- * Returns the initial bearing (forward azimuth) from 'this' point to the specified point,
- * in compass degrees.
+ * Returns the initial bearing (forward azimuth) to travel along a geodesic from ‘this’ point to the
+ * specified point, using Vincenty inverse solution.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {Number} initial bearing in degrees from North (0°..360°) or NaN if failed to converge
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {number} initial Bearing in degrees from North (0°..360°) or NaN if failed to converge.
  */
 LatLon.prototype.initialBearingTo = function(point) {
     try {
@@ -57,11 +57,11 @@ LatLon.prototype.initialBearingTo = function(point) {
 
 
 /**
- * Returns the final bearing (reverse azimuth) from 'this' point to the specified point,
- * in compass degrees.
+ * Returns the final bearing (reverse azimuth) having travelled along a geodesic from ‘this’ point
+ * to the specified point, using Vincenty inverse solution.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {Number} initial bearing in degrees from North (0°..360°) or NaN if failed to converge
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {number} Initial bearing in degrees from North (0°..360°) or NaN if failed to converge.
  */
 LatLon.prototype.finalBearingTo = function(point) {
     try {
@@ -73,12 +73,12 @@ LatLon.prototype.finalBearingTo = function(point) {
 
 
 /**
- * Returns the destination point having travelled the given distance along the
- * given initial bearing from 'this' point.
+ * Returns the destination point having travelled the given distance along a geodesic given by
+ * initial bearing from ‘this’ point, using Vincenty direct solution.
  *
- * @param   {Number} initialBearing - initial bearing in degrees
- * @param   {Number} distance - distance travelled along the geodesic in metres
- * @returns {LatLon} destination point
+ * @param   {number} initialBearing - Initial bearing in degrees.
+ * @param   {number} distance - Distance travelled along the geodesic in metres.
+ * @returns {LatLon} Destination point.
  */
 LatLon.prototype.destinationPoint = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).point;
@@ -86,12 +86,12 @@ LatLon.prototype.destinationPoint = function(initialBearing, distance) {
 
 
 /**
- * Returns the final bearing (reverse azimuth) having travelled given distance on given bearing
- * from 'this' point, in compass degrees.
+ * Returns the final bearing (reverse azimuth) having travelled given distance along a geodesic
+ * given by initial bearing from ‘this’ point, using Vincenty direct solution.
  *
- * @param   {LatLon} initialBearing - initial bearing in degrees
- * @param   {Number} distance - distance travelled along the geodesic in metres
- * @returns {Number} final bearing in degrees from North (0°..360°)
+ * @param   {LatLon} initialBearing - Initial bearing in compass degrees.
+ * @param   {number} distance - Distance travelled along the geodesic in metres.
+ * @returns {number} Final bearing in degrees from north (0°..360°).
  */
 LatLon.prototype.finalBearingOn = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).finalBearing;
@@ -101,10 +101,10 @@ LatLon.prototype.finalBearingOn = function(initialBearing, distance) {
 /**
  * Vincenty direct calculation.
  *
- * @param   {Number} initialBearing - initial bearing in decimal degrees
- * @param   {Number} distance - distance along bearing in metres
- * @returns (Object} point (destination point), finalBearing
  * @private
+ * @param   {number} initialBearing - Initial bearing in decimal degrees.
+ * @param   {number} distance - Distance along bearing in metres.
+ * @returns (Object} Object including point (destination point), finalBearing.
  */
 LatLon.prototype.direct = function(initialBearing, distance) {
     var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
@@ -134,7 +134,6 @@ LatLon.prototype.direct = function(initialBearing, distance) {
         σʹ = σ;
         σ = s / (b*A) + Δσ;
     } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations);
-    console.log('direct', this.toString(), initialBearing, distance, iterations);
 
     var x = sinU1*sinσ - cosU1*cosσ*cosα1;
     var φ2 = Math.atan2(sinU1*cosσ + cosU1*sinσ*cosα1, (1-f)*Math.sqrt(sinα*sinα + x*x));
@@ -153,10 +152,10 @@ LatLon.prototype.direct = function(initialBearing, distance) {
 /**
  * Vincenty inverse calculation.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {Object} distance, initialBearing, finalBearing
- * @throws  {Error}  on formula failed to converge
  * @private
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {Object} Object including istance, initialBearing, finalBearing.
+ * @throws  {Error}  Formula failed to converge.
  */
 LatLon.prototype.inverse = function(point) {
     var p1 = this, p2 = point;
@@ -186,7 +185,6 @@ LatLon.prototype.inverse = function(point) {
         λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
     } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<100);
     if (iterations>=100) throw new Error('Formula failed to converge');
-    console.log('inverse', p1.toString(), p2.toString(), iterations);
 
     var uSq = cosSqα * (a*a - b*b) / (b*b);
     var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
@@ -205,12 +203,12 @@ LatLon.prototype.inverse = function(point) {
 
 
 /**
- * Returns a string representation of 'this' point, formatted as degrees, degrees+minutes, or
+ * Returns a string representation of ‘this’ point, formatted as degrees, degrees+minutes, or
  * degrees+minutes+seconds.
  *
- * @param   {String} [format=dms] - format point as 'd', 'dm', 'dms'
- * @param   {Number} [dp=0|2|4] - number of decimal places to use - default 0 for dms, 2 for dm, 4 for d
- * @returns {String} comma-separated latitude/longitude
+ * @param   {string} [format=dms] - Format point as 'd', 'dm', 'dms'.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @returns {string} Comma-separated latitude/longitude.
  */
 LatLon.prototype.toString = function(format, dp) {
     return Geo.toLat(this.lat, format, dp) + ', ' + Geo.toLon(this.lon, format, dp);
