@@ -2,8 +2,8 @@
 /*  Vector-based geodetic (latitude/longitude) functions              (c) Chris Veness 2011-2014  */
 /*                                                                                                */
 /*  These functions work with                                                                     */
-/*   a) geodesic (polar) latitude/longitude points on the Earth's surface (in degrees)            */
-/*   b) 3D vectors used as n-vectors representing points on the surface of the Earth's surface,   */
+/*   a) geodesic (polar) latitude/longitude points on the earth's surface (in degrees)            */
+/*   b) 3D vectors used as n-vectors representing points on the surface of the earth's surface,   */
 /*      or vectors normal to the plane of a great circle                                          */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
@@ -13,7 +13,10 @@
  * Creates a LatLonV point on spherical model earth.
  *
  * @constructor
- * @classdesc Tools for geodetic calculations using ‘n-vectors’ (in place of spherical trigonometry)
+ * @classdesc Tools for working with points and paths on (a spherical model of) the earth’s surface
+ *     using a vector-based approach using ‘n-vectors’ (rather than the more common spherical
+ *     trigonometry; a vector-based approach makes most calculations much simpler, and easier to
+ *     follow, compared with trigonometric equivalents).
  * @requires Vector3d
  * @requires Geo
  *
@@ -33,6 +36,7 @@ function LatLonV(lat, lon, radius) {
 /**
  * Converts ‘this’ lat/lon point to Vector3d n-vector (normal to earth's surface).
  *
+ * @private
  * @returns {Vector3d} Normalised n-vector representing lat/lon point.
  */
 LatLonV.prototype.toVector = function() {
@@ -51,6 +55,7 @@ LatLonV.prototype.toVector = function() {
 /**
  * Converts ‘this’ n-vector to latitude/longitude point.
  *
+ * @private
  * @augments Vector3d
  * @returns {LatLonV} Latitude/longitude point vector points to.
  */
@@ -65,6 +70,7 @@ Vector3d.prototype.toLatLon = function() {
 /**
  * Great circle obtained by heading on given bearing from ‘this’ point.
  *
+ * @private
  * @param   {number} bearing - Compass bearing in degrees.
  * @returns {Vector3d} Vector representing great circle.
  */
@@ -269,6 +275,7 @@ LatLonV.meanOf = function(points) {
 /**
  * Checks if another point is equal to ‘this’ point.
  *
+ * @private
  * @param   {LatLonV} point - Point to be compared against this point.
  * @returns {bool} True if points are identical.
  */
@@ -282,7 +289,7 @@ LatLonV.prototype.equals = function(point) {
  * Returns a string representation of ‘this’ point.
  *
  * @param   {string} [format=dms] - Format point as 'd', 'dm', 'dms'.
- * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use: default 0 for dms, 2 for dm, 4 for d.
  * @returns {string} Comma-separated formatted latitude/longitude.
  */
 LatLonV.prototype.toString = function(format, dp) {
