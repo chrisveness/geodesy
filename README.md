@@ -87,6 +87,8 @@ The library includes:
 - `enclosedBy` polygon
 - `meanOf` set of points
 
+More information at www.movable-type.co.uk/scripts/latlong-vectors.html
+
 geo.js
 ------
 
