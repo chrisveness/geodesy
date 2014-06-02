@@ -68,6 +68,25 @@ The library includes:
 
 More information at www.movable-type.co.uk/scripts/latlong-convert-coords.html
 
+latlon-vectors.js
+-----------------
+
+This is a library of functions for working with points and paths on (a spherical model of) the
+earth’s surface using a vector-based approach using ‘n-vectors’ (rather than the more common
+spherical trigonometry; a vector-based approach makes most calculations much simpler, and easier to
+follow, compared with trigonometric equivalents).
+
+The library includes:
+
+- `distanceTo` destination point
+- `bearingTo` destination point
+- `midpointTo` destination point
+- `destinationPoint` following initial bearing for given distance
+- `intersection` of two paths
+- `crossTrackDistanceTo` great circle path
+- `enclosedBy` polygon
+- `meanOf` set of points
+
 geo.js
 ------
 
