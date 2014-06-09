@@ -167,4 +167,16 @@ Geo.toBrng = function(deg, format, dp) {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+
+/** Extend Number object with method to  trim whitespace from string
+ *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
+if (typeof String.prototype.trim == 'undefined') {
+    String.prototype.trim = function() {
+        return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    }
+}
+
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (!window.console) window.console = { log: function() {} };
