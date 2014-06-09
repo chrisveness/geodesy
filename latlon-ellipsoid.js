@@ -5,8 +5,9 @@
 /*   - www.movable-type.co.uk/scripts/latlong-convert-coords.html                                 */
 /*                                                                                                */
 /*  Usage: to eg convert WGS84 coordinate to OSGB coordinate:                                     */
-/*   - var wgs84 = new LatLonE(lat, lon, GeoParams.datum.WGS84);                                  */
+/*   - var wgs84 = new LatLonE(latWGS84, lonWGS84, GeoParams.datum.WGS84);                        */
 /*   - var osgb = wgs84.convertDatum(GeoParams.datum.OSGB36);                                     */
+/*   - var latOSGB = osgb.lat, lonOSGB = osgb.lon;                                                */
 /*                                                                                                */
 /*  q.v. Ordnance Survey 'A guide to coordinate systems in Great Britain' Section 6               */
 /*   - www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf           */
