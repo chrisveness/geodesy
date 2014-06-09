@@ -34,50 +34,24 @@ function Vector3d(x, y, z) {
 
 
 /**
- * Returns the sum of ‘this’ vector and supplied vector.
+ * Adds supplied vector to ‘this’ vector.
  *
  * @param   {Vector3d} v - Vector to be added to this vector.
  * @returns {Vector3d} Vector representing sum of this and v.
  */
 Vector3d.prototype.plus = function(v) {
-    return new Vector3d(this.x+v.x, this.y+v.y, this.z+v.z);
+    return new Vector3d(this.x + v.x, this.y + v.y, this.z + v.z);
 }
 
 
 /**
- * Returns the difference between ‘this’ vector and supplied vector.
+ * Subtracts supplied vector from ‘this’ vector.
  *
  * @param   {Vector3d} v - Vector to be subtracted from this vector.
- * @returns {Vector3d} This minus v.
+ * @returns {Vector3d} Vector representing difference between this and v.
  */
 Vector3d.prototype.minus = function(v) {
-    return new Vector3d(this.x-v.x, this.y-v.y, this.z-v.z);
-}
-
-
-/**
- * Returns the dot (scalar) product of ‘this’ vector and supplied vector.
- *
- * @param   {Vector3d} v - Vector to be dotted with this vector.
- * @returns {number} Dot product between ‘this’ and v.
- */
-Vector3d.prototype.dot = function(v) {
-    return this.x*v.x + this.y*v.y + this.z*v.z;
-}
-
-
-/**
- * Returns the cross (vector) product of ‘this’ vector and supplied vector.
- *
- * @param   {Vector3d} v - Vector to be crossed with this vector.
- * @returns {Vector3d} Cross product of ‘this’ and v.
- */
-Vector3d.prototype.cross = function(v) {
-    var x = this.y*v.z - this.z*v.y;
-    var y = this.z*v.x - this.x*v.z;
-    var z = this.x*v.y - this.y*v.x;
-
-    return new Vector3d(x, y, z);
+    return new Vector3d(this.x - v.x, this.y - v.y, this.z - v.z);
 }
 
 
@@ -88,7 +62,47 @@ Vector3d.prototype.cross = function(v) {
  * @returns {Vector3d} Vector scaled by x.
  */
 Vector3d.prototype.times = function(x) {
+    x = Number(x);
+    //console.log(this.toString(), x, (new Vector3d(this.x * x, this.y * x, this.z * x)).toString());
     return new Vector3d(this.x * x, this.y * x, this.z * x);
+}
+
+
+/**
+ * Divides ‘this’ vector by a scalar value.
+ *
+ * @param   {number}   x - Factor to divide this vector by.
+ * @returns {Vector3d} Vector divided by x.
+ */
+Vector3d.prototype.dividedBy = function(x) {
+    x = Number(x);
+    return new Vector3d(this.x / x, this.y / x, this.z / x);
+}
+
+
+/**
+ * Multiplies ‘this’ vector by the supplied vector using dot (scalar) product.
+ *
+ * @param   {Vector3d} v - Vector to be dotted with this vector.
+ * @returns {number} Dot product of ‘this’ and v.
+ */
+Vector3d.prototype.dot = function(v) {
+    return this.x*v.x + this.y*v.y + this.z*v.z;
+}
+
+
+/**
+ * Multiplies ‘this’ vector by the supplied vector using cross (vector) product.
+ *
+ * @param   {Vector3d} v - Vector to be crossed with this vector.
+ * @returns {Vector3d} Cross product of ‘this’ and v.
+ */
+Vector3d.prototype.cross = function(v) {
+    var x = this.y*v.z - this.z*v.y;
+    var y = this.z*v.x - this.x*v.z;
+    var z = this.x*v.y - this.y*v.x;
+
+    return new Vector3d(x, y, z);
 }
 
 
