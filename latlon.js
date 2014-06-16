@@ -1,12 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Latitude/longitude spherical geodesy formulae & scripts (c) Chris Veness 2002-2014            */
+/*  Latitude/longitude spherical geodesy formulae & scripts           (c) Chris Veness 2002-2014  */
 /*   - www.movable-type.co.uk/scripts/latlong.html                                                */
 /*                                                                                                */
 /*  Sample usage:                                                                                 */
 /*    var p1 = new LatLon(51.5136, -0.0983);                                                      */
 /*    var p2 = new LatLon(51.4778, -0.0015);                                                      */
-/*    var dist = p1.distanceTo(p2);          // in km                                             */
-/*    var brng = p1.bearingTo(p2);           // in degrees clockwise from north                   */
+/*    var dist = p1.distanceTo(p2);                                                               */
+/*    var brng = p1.bearingTo(p2);                                                                */
 /*    ... etc                                                                                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
@@ -19,12 +19,12 @@
  * @requires Geo
  *
  * @constructor
- * @param {Number} lat - latitude in degrees
- * @param {Number} lon - longitude in degrees
- * @param {Number} [radius=6371] - radius of earth if different value is required from standard 6,371km
+ * @param {number} lat - Latitude in degrees.
+ * @param {number} lon - Longitude in degrees.
+ * @param {number} [radius=6371] - (Mean) radius of earth in kilometres.
  */
 function LatLon(lat, lon, radius) {
-    if (typeof radius == 'undefined') radius = 6371;  // earth's mean radius in km
+    if (typeof radius == 'undefined') radius = 6371;
 
     this.lat    = Number(lat);
     this.lon    = Number(lon);
@@ -35,9 +35,9 @@ function LatLon(lat, lon, radius) {
 /**
  * Returns the distance from 'this' point to destination point (using haversine formula).
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @param   {Number} [precision=4] - number of significant digits to use for returned value
- * @returns {Number} distance between this point and destination point, in km
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @param   {number} [precision=4] - Number of significant digits to use for returned value.
+ * @returns {number} Distance between this point and destination point, in km.
  */
 LatLon.prototype.distanceTo = function(point, precision) {
     // default 4 significant figures reflects typical 0.3% accuracy of spherical model
@@ -60,10 +60,10 @@ LatLon.prototype.distanceTo = function(point, precision) {
 
 
 /**
- * Returns the (initial) bearing from 'this' point to destination point, in degrees.
+ * Returns the (initial) bearing from 'this' point to destination point.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {Number} initial bearing in degrees from North
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {number} Initial bearing in degrees from north.
  */
 LatLon.prototype.bearingTo = function(point) {
     // see http://williams.best.vwh.net/avform.htm#Crs
@@ -84,8 +84,8 @@ LatLon.prototype.bearingTo = function(point) {
  * Returns final bearing arriving at destination destination point from 'this' point; the final bearing
  * will differ from the initial bearing by varying degrees according to distance and latitude.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {Number} final bearing in degrees from North
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {number} Final bearing in degrees from north.
  */
 LatLon.prototype.finalBearingTo = function(point) {
     // get initial bearing from destination point to this point & reverse it by adding 180°
@@ -96,8 +96,8 @@ LatLon.prototype.finalBearingTo = function(point) {
 /**
  * Returns the midpoint between 'this' point and the supplied point.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {LatLon} midpoint between this point and the supplied point
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {LatLon} Midpoint between this point and the supplied point.
  */
 LatLon.prototype.midpointTo = function(point) {
     // see http://mathforum.org/library/drmath/view/51822.html for derivation
@@ -120,11 +120,11 @@ LatLon.prototype.midpointTo = function(point) {
 
 /**
  * Returns the destination point from 'this' point having travelled the given distance on the
- * given initial bearing (bearing may vary before destination is reached).
+ * given initial bearing (bearing normally varies around path followed).
  *
- * @param   {Number} brng - initial bearing in degrees
- * @param   {Number} dist - distance in km
- * @returns {LatLon} destination point
+ * @param   {number} brng - Initial bearing in degrees.
+ * @param   {number} dist - Distance in km.
+ * @returns {LatLon} Destination point.
  */
 LatLon.prototype.destinationPoint = function(brng, dist) {
     // see http://williams.best.vwh.net/avform.htm#LL
@@ -148,11 +148,11 @@ LatLon.prototype.destinationPoint = function(brng, dist) {
 /**
  * Returns the point of intersection of two paths defined by point and bearing.
  *
- * @param   {LatLon} p1 - first point
- * @param   {Number} brng1 - initial bearing from first point
- * @param   {LatLon} p2 - second point
- * @param   {Number} brng2 - initial bearing from second point
- * @returns {LatLon} destination point (null if no unique intersection defined)
+ * @param   {LatLon} p1 - First point.
+ * @param   {number} brng1 - Initial bearing from first point.
+ * @param   {LatLon} p2 - Second point.
+ * @param   {number} brng2 - Initial bearing from second point.
+ * @returns {LatLon} Destination point (null if no unique intersection defined).
  */
 LatLon.intersection = function(p1, brng1, p2, brng2) {
     // see http://williams.best.vwh.net/avform.htm#Intersection
@@ -211,8 +211,8 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
 /**
  * Returns the distance travelling from 'this' point to destination point along a rhumb line.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {Number} distance in km between this point and destination point
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {number} Distance in km between this point and destination point.
  */
 LatLon.prototype.rhumbDistanceTo = function(point) {
     // see http://williams.best.vwh.net/avform.htm#Rhumb
@@ -242,8 +242,8 @@ LatLon.prototype.rhumbDistanceTo = function(point) {
 /**
  * Returns the bearing from 'this' point to destination point along a rhumb line.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {Number} bearing in degrees from North
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @returns {number} Bearing in degrees from north.
  */
 LatLon.prototype.rhumbBearingTo = function(point) {
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
@@ -263,9 +263,9 @@ LatLon.prototype.rhumbBearingTo = function(point) {
  * Returns the destination point having travelled along a rhumb line from 'this' point the given
  * distance on the  given bearing.
  *
- * @param   {Number} brng - bearing in degrees from North
- * @param   {Number} dist - distance in km
- * @returns {LatLon} destination point
+ * @param   {number} brng - Bearing in degrees from north.
+ * @param   {number} dist - Distance in km.
+ * @returns {LatLon} Destination point.
  */
 LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
     var δ = Number(dist) / this.radius; // angular distance in radians
@@ -292,10 +292,10 @@ LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
 
 
 /**
- * Returns the loxodromic midpoint (along a rhumb line) between 'this' point and the supplied point.
+ * Returns the loxodromic midpoint (along a rhumb line) between 'this' point and second point.
  *
- * @param   {LatLon} point - latitude/longitude of destination point
- * @returns {LatLon} midpoint between this point and the supplied point
+ * @param   {LatLon} point - Latitude/longitude of second point.
+ * @returns {LatLon} Midpoint between this point and second point.
  */
 LatLon.prototype.rhumbMidpointTo = function(point) {
     // http://mathforum.org/kb/message.jspa?messageID=148837
@@ -326,9 +326,9 @@ LatLon.prototype.rhumbMidpointTo = function(point) {
  * Returns a string representation of 'this' point, formatted as degrees, degrees+minutes, or
  * degrees+minutes+seconds.
  *
- * @param   {String} [format=dms] - format point as 'd', 'dm', 'dms'
- * @param   {Number} [dp=0|2|4] - number of decimal places to use - default 0 for dms, 2 for dm, 4 for d
- * @returns {String} comma-separated latitude/longitude
+ * @param   {string} [format=dms] - Format point as 'd', 'dm', 'dms'.
+ * @param   {number} [dp=0|2|4] - Number of decimal places to use - default 0 for dms, 2 for dm, 4 for d.
+ * @returns {string} Comma-separated latitude/longitude.
  */
 LatLon.prototype.toString = function(format, dp) {
     if (typeof format == 'undefined') format = 'dms';
@@ -340,31 +340,20 @@ LatLon.prototype.toString = function(format, dp) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
-// ---- extend Number object with methods for converting degrees/radians
-
-
-/** Converts numeric degrees to radians */
+/** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
-    Number.prototype.toRadians = function() {
-        return this * Math.PI / 180;
-    }
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
 }
 
 
-/** Converts radians to numeric (signed) degrees */
+/** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
-    Number.prototype.toDegrees = function() {
-        return this * 180 / Math.PI;
-    }
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
 }
 
 
-/** 
- * Formats the significant digits of a number, using only fixed-point notation (no exponential)
- * 
- * @param   {Number} precision - Number of significant digits to appear in the returned string
- * @returns {String} A string representation of number which contains precision significant digits
- */
+/** Extend Number object with method to format significant digits of a number,
+ * using only fixed-point notation (without exponential) */
 if (typeof Number.prototype.toPrecisionFixed == 'undefined') {
     Number.prototype.toPrecisionFixed = function(precision) {
 
@@ -387,23 +376,6 @@ if (typeof Number.prototype.toPrecisionFixed == 'undefined') {
         });
 
         return n;
-    }
-}
-
-
-/** Trims whitespace from string (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-if (typeof String.prototype.trim == 'undefined') {
-    String.prototype.trim = function() {
-        return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    }
-}
-
-
-/** Returns the sign of a number, indicating whether the number is positive, negative or zero */
-if (typeof Math.sign == 'undefined') {
-    // stackoverflow.com/questions/7624920/number-sign-in-javascript
-    Math.sign = function(x) {
-        return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
     }
 }
 
