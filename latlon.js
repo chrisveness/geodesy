@@ -21,13 +21,17 @@
  * @constructor
  * @param {number} lat - Latitude in degrees.
  * @param {number} lon - Longitude in degrees.
+ * @param {number} [height=0] - Height above mean-sea-level in kilometres.
  * @param {number} [radius=6371] - (Mean) radius of earth in kilometres.
  */
-function LatLon(lat, lon, radius) {
+function LatLon(lat, lon, height, radius) {
+    if (typeof height == 'undefined') height = 0;
     if (typeof radius == 'undefined') radius = 6371;
+    radius = Math.min(Math.max(radius, 6353), 6384);
 
     this.lat    = Number(lat);
     this.lon    = Number(lon);
+    this.height = Number(height);
     this.radius = Number(radius);
 }
 
