@@ -52,11 +52,10 @@ Full details are available at www.movable-type.co.uk/scripts/latlong-vincenty.ht
 latlon-ellipsoid.js
 -------------------
 
-Geodesy tools for an ellipsoidal earth model. 
-The `LatLonE` object incorporates not just latitude & longitude coordinates,
-but also the datum the lat/lon point is defined on,
-along with functions for translating between different datums. 
-Also included is the `GeoParams` object with ellipsoid parameters and datum transform parameters.
+Geodesy tools for an ellipsoidal earth model. The `LatLonE` object incorporates not just latitude &
+longitude coordinates, but also the datum the lat/lon point is defined on, along with functions for
+translating between different datums (e.g. between OSGB36 & WGS-84). Also included is the
+`GeoParams` object with ellipsoid parameters and datum transform parameters.
 
 The library includes:
 
