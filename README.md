@@ -89,6 +89,19 @@ The library includes:
 
 More information at www.movable-type.co.uk/scripts/latlong-vectors.html
 
+osgridref.js
+------------
+
+Routines for converting between Ordnance Survey grid references and (OSGB-36) latitude/longitude
+coordinates, based on Ordnance Survey formulae.
+
+The library includes:
+
+- `latLonToOsGrid`: convert (OSGB) latitude/longitude to (numeric) OS grid reference
+- `osGridToLatLon`: convert (numeric) OS grid reference to (OSGB) latitude/longitude
+- `parse` standard format grid reference to numeric grid reference
+- `toString`: convert numeric grid reference to standard format
+
 geo.js
 ------
 
