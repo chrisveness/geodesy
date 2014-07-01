@@ -101,6 +101,8 @@ The library includes:
 - `parse` standard format grid reference to numeric grid reference
 - `toString`: convert numeric grid reference to standard format
 
+More information at www.movable-type.co.uk/scripts/latlong-gridref.html.
+
 geo.js
 ------
 
