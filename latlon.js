@@ -41,7 +41,7 @@ function LatLon(lat, lon, height, radius) {
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @param   {number} [precision=4] - Number of significant digits to use for returned value.
- * @returns {number} Distance between this point and destination point, in km.
+ * @returns {number} Distance between this point and destination point, in km (on sphere of 'this' radius).
  */
 LatLon.prototype.distanceTo = function(point, precision) {
     // default 4 significant figures reflects typical 0.3% accuracy of spherical model
@@ -127,7 +127,7 @@ LatLon.prototype.midpointTo = function(point) {
  * given initial bearing (bearing normally varies around path followed).
  *
  * @param   {number} brng - Initial bearing in degrees.
- * @param   {number} dist - Distance in km.
+ * @param   {number} dist - Distance in km (on sphere of 'this' radius).
  * @returns {LatLon} Destination point.
  */
 LatLon.prototype.destinationPoint = function(brng, dist) {
@@ -216,7 +216,7 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
  * Returns the distance travelling from 'this' point to destination point along a rhumb line.
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
- * @returns {number} Distance in km between this point and destination point.
+ * @returns {number} Distance in km between this point and destination point (on sphere of 'this' radius).
  */
 LatLon.prototype.rhumbDistanceTo = function(point) {
     // see http://williams.best.vwh.net/avform.htm#Rhumb
@@ -268,7 +268,7 @@ LatLon.prototype.rhumbBearingTo = function(point) {
  * distance on the  given bearing.
  *
  * @param   {number} brng - Bearing in degrees from north.
- * @param   {number} dist - Distance in km.
+ * @param   {number} dist - Distance in km (on sphere of 'this' radius).
  * @returns {LatLon} Destination point.
  */
 LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
