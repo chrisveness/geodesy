@@ -90,6 +90,9 @@ GeoParams.datum = {
  * @param {number}          [height=0] - Height above ellipsoid, in metres.
  */
 function LatLonE(lat, lon, datum, height) {
+    // allow instantiation without 'new'
+    if (!(this instanceof LatLonE)) return new LatLonE(lat, lon, datum, height);
+
     if (typeof datum == 'undefined') datum = GeoParams.datum.WGS84;
     if (typeof height == 'undefined') height = 0;
 

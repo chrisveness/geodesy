@@ -26,6 +26,9 @@
  * @param {number} [radius=6371] - Earth's mean radius in kilometres.
  */
 function LatLonV(lat, lon, height, radius) {
+    // allow instantiation without 'new'
+    if (!(this instanceof LatLonV)) return new LatLonV(lat, lon, height, radius);
+
     if (typeof height == 'undefined') height = 0;
     if (typeof radius == 'undefined') radius = 6371;
     radius = Math.min(Math.max(radius, 6353), 6384);

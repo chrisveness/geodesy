@@ -18,6 +18,9 @@
  * @param {Number} northing - Northing in metres from OS false origin.
  */
 function OsGridRef(easting, northing) {
+    // allow instantiation without 'new'
+    if (!(this instanceof OsGridRef)) return new OsGridRef(easting, northing);
+
     this.easting = Math.floor(Number(easting));
     this.northing = Math.floor(Number(northing));
 }
