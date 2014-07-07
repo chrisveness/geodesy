@@ -40,13 +40,9 @@ function LatLon(lat, lon, height, radius) {
  * Returns the distance from 'this' point to destination point (using haversine formula).
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
- * @param   {number} [precision=4] - Number of significant digits to use for returned value.
  * @returns {number} Distance between this point and destination point, in km (on sphere of 'this' radius).
  */
-LatLon.prototype.distanceTo = function(point, precision) {
-    // default 4 significant figures reflects typical 0.3% accuracy of spherical model
-    if (typeof precision == 'undefined') precision = 4;
-  
+LatLon.prototype.distanceTo = function(point) {
     var R = this.radius;
     var φ1 = this.lat.toRadians(),  λ1 = this.lon.toRadians();
     var φ2 = point.lat.toRadians(), λ2 = point.lon.toRadians();
@@ -59,7 +55,7 @@ LatLon.prototype.distanceTo = function(point, precision) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     var d = R * c;
 
-    return d.toPrecisionFixed(Number(precision));
+    return d;
 }
 
 
@@ -239,7 +235,7 @@ LatLon.prototype.rhumbDistanceTo = function(point) {
     var δ = Math.sqrt(Δφ*Δφ + q*q*Δλ*Δλ); // angular distance in radians
     var dist = δ * R;
 
-    return dist.toPrecisionFixed(4); // 4 sig figs reflects typical 0.3% accuracy of spherical model
+    return dist;
 }
 
 
@@ -353,34 +349,6 @@ if (typeof Number.prototype.toRadians == 'undefined') {
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
     Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
-}
-
-
-/** Extend Number object with method to format significant digits of a number,
- * using only fixed-point notation (without exponential) */
-if (typeof Number.prototype.toPrecisionFixed == 'undefined') {
-    Number.prototype.toPrecisionFixed = function(precision) {
-
-        // use standard toPrecision method
-        var n = this.toPrecision(precision);
-
-        // ... but replace +ve exponential format with trailing zeros
-        n = n.replace(/(.+)e\+(.+)/, function(n, sig, exp) {
-            sig = sig.replace(/\./, '');       // remove decimal from significand
-            var l = sig.length - 1;
-            while (exp-- > l) sig = sig + '0'; // append zeros from exponent
-            return sig;
-        });
-
-        // ... and replace -ve exponential format with leading zeros
-        n = n.replace(/(.+)e-(.+)/, function(n, sig, exp) {
-            sig = sig.replace(/\./, '');       // remove decimal from significand
-            while (exp-- > 1) sig = '0' + sig; // prepend zeros from exponent
-            return '0.' + sig;
-        });
-
-        return n;
-    }
 }
 
 
