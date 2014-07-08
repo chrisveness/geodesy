@@ -152,11 +152,18 @@ Vector3d.prototype.unit = function() {
  * Calculates the angle between ‘this’ vector and supplied vector.
  *
  * @param   {Vector3d} v
- * @returns {number} Angle (in signed radians) between this vector and supplied vector.
+ * @param   {Vector3d} [vSign] - If supplied, angle is signed +ve if clockwise looking along vSign,
+ *     -ve in opposite direction (otherwise unsigned angle).
+ * @returns {number} Angle (in radians) between this vector and supplied vector.
  */
-Vector3d.prototype.angleTo = function(v) {
+Vector3d.prototype.angleTo = function(v, vSign) {
     var sinθ = this.cross(v).length();
     var cosθ = this.dot(v);
+
+    if (typeof vSign != 'undefined') {
+        // use vSign as reference to get sign of sinθ
+        sinθ = this.cross(v).dot(vSign)<0 ? -sinθ : sinθ;
+    }
 
     return Math.atan2(sinθ, cosθ);
 }
