@@ -184,12 +184,12 @@ LatLonV.prototype.destinationPoint = function(bearing, distance) {
  * @returns {LatLonV} Destination point (null if no unique intersection defined)
  */
 LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
-    if (typeof path1brngEnd == 'LatLonV') {       // path 1 defined by endpoint
+    if (path1brngEnd instanceof LatLonV) {       // path 1 defined by endpoint
         var c1 = path1start.cross(path1brngEnd);
     } else {                                     // path 1 defined by initial bearing
         var c1 = path1start.greatCircle(path1brngEnd);
     }
-    if (typeof path2brngEnd == 'LatLonV') {       // path 2 defined by endpoint
+    if (path2brngEnd instanceof LatLonV) {       // path 2 defined by endpoint
         var c2 = path2start.cross(path2brngEnd);
     } else {                                     // path 2 defined by initial bearing
         var c2 = path2start.greatCircle(path2brngEnd);
@@ -211,15 +211,17 @@ LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngE
 LatLonV.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd) {
     var p = this.toVector();
 
-    if (typeof pathbrngEnd == 'LatLonV') {
-        var pathEnd = pathbrngEnd;
-        var gc = pathStart.cross(pathEnd);
+    if (pathBrngEnd instanceof LatLonV) {
+        // great circle defined by two points
+        var pathEnd = pathBrngEnd;
+        var gc = pathStart.toVector().cross(pathEnd.toVector());
     } else {
+        // great circle defined by point + bearing
         var pathBrng = Number(pathBrngEnd);
         var gc = pathStart.greatCircle(pathBrng);
     }
 
-    var α = Math.PI/2 - p.angleTo(gc);
+    var α = Math.PI/2 - p.angleTo(gc, p);
     var d = α * this.radius;
 
     return d;
@@ -274,12 +276,14 @@ LatLonV.prototype.enclosedBy = function(points) {
  * @todo Not yet tested.
  */
 LatLonV.meanOf = function(points) {
-    var m = new LatLonV(0, 0, 0);
+    var m = new Vector3d(0, 0, 0);
 
+    // add all vectors
     for (var p=0; p<points.length; p++) {
-        m = m.plus(points[p]);
+        m = m.plus(points[p].toVector());
     }
 
+    // m is now geographic mean
     return m.unit();
 }
 
@@ -292,8 +296,12 @@ LatLonV.meanOf = function(points) {
  * @returns {bool} True if points are identical.
  */
 LatLonV.prototype.equals = function(point) {
-    if (this.lat==points.lat && this.lon==point.lon && this.radius==point.radius) return true;
-    return false;
+    if (this.lat != point.lat) return false;
+    if (this.lon != point.lon) return false;
+    if (this.height != point.height) return false;
+    if (this.radius != point.radius) return false;
+
+    return true;
 }
 
 
@@ -327,7 +335,7 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 if (typeof Math.sign == 'undefined') {
     // stackoverflow.com/questions/7624920/number-sign-in-javascript
     Math.sign = function(x) {
-        return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
+        return typeof x == 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
     }
 }
 
