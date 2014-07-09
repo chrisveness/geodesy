@@ -9,13 +9,16 @@
 /**
  * Creates an OsGridRef object.
  *
- * @constructor
  * @classdesc Convert OS grid references to/from OSGB latitude/longitude points.
  * @requires  LatLonE (from latlon-ellipsoid.js).
  * @requires  GeoParams (from latlon-ellipsoid.js).
  *
- * @param {Number} easting - Easting in metres from OS false origin.
- * @param {Number} northing - Northing in metres from OS false origin.
+ * @constructor
+ * @param {number} easting - Easting in metres from OS false origin.
+ * @param {number} northing - Northing in metres from OS false origin.
+ *
+ * @example
+ *   var grid = new OsGridRef(651409, 313177);
  */
 function OsGridRef(easting, northing) {
     // allow instantiation without 'new'
@@ -29,9 +32,13 @@ function OsGridRef(easting, northing) {
 /**
  * Converts (OSGB36) latitude/longitude to Ordnance Survey grid reference easting/northing coordinate.
  *
- * @param   {LatLonE} point - OSGB36 latitude/longitude.
- * @returns {OsGridRef} - OS Grid Reference easting/northing.
- * @throws  Error if datum of point is not OSGB36.
+ * @param   {LatLonE}   point - OSGB36 latitude/longitude.
+ * @returns {OsGridRef} OS Grid Reference easting/northing.
+ * @throws  {Error}     If datum of point is not OSGB36.
+ *
+ * @example
+ *   var p = new LatLonE(52.65757, 1.71791, GeoParams.datum.OSGB36);
+ *   var grid = OsGridRef.latLonToOsGrid(p); // grid.toString(): TG 51409 13177
  */
 OsGridRef.latLonToOsGrid = function(point) {
     if (point.datum != GeoParams.datum.OSGB36) throw new Error('Can only convert OSGB36 point to OsGrid');
@@ -83,7 +90,11 @@ OsGridRef.latLonToOsGrid = function(point) {
  * Converts Ordnance Survey grid reference easting/northing coordinate to (OSGB36) latitude/longitude
  *
  * @param   {OsGridRef} gridref - Easting/northing to be converted to latitude/longitude.
- * @returns {LatLonE} - Latitude/longitude (in OSGB36) of supplied grid reference.
+ * @returns {LatLonE}   Latitude/longitude (in OSGB36) of supplied grid reference.
+ *
+ * @example
+ *   var grid = new OsGridRef(651409, 313177);
+ *   var p = OsGridRef.osGridToLatLon(grid); // p.toString(): 52°39′27″N, 001°43′04″E
  */
 OsGridRef.osGridToLatLon = function(gridref) {
     var E = gridref.easting;
@@ -136,9 +147,12 @@ OsGridRef.osGridToLatLon = function(gridref) {
 /**
  * Converts standard grid reference (eg 'SU387148') to fully numeric ref (eg [438700,114800]).
  *
- * @param   {String} gridref - Standard format OS grid reference.
- * @returns {OsGridRef} - Numeric version of grid reference in metres from false origin, centred on
- *          supplied grid square.
+ * @param   {string}    gridref - Standard format OS grid reference.
+ * @returns {OsGridRef} Numeric version of grid reference in metres from false origin, centred on
+ *   supplied grid square.
+ *
+ * @example
+ *   var grid = OsGridRef.parse('TG 51409 13177'); // grid: { easting: 651409, northing: 313177 }
  */
 OsGridRef.parse = function(gridref) {
     gridref = String(gridref).trim();
@@ -179,8 +193,8 @@ OsGridRef.parse = function(gridref) {
 /**
  * Converts ‘this’ numeric grid reference to standard OS grid reference.
  *
- * @param   {Number} [digits=6] - Precision of returned grid reference (6 digits = metres).
- * @returns {String} - This grid reference in standard format.
+ * @param   {number} [digits=6] - Precision of returned grid reference (6 digits = metres).
+ * @returns {string} This grid reference in standard format.
  */
 OsGridRef.prototype.toString = function(digits) {
     digits = (typeof digits == 'undefined') ? 10 : digits;

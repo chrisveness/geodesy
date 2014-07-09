@@ -20,7 +20,11 @@
  * inverse solution.
  *
  * @param   {LatLonE} point - Latitude/longitude of destination point.
- * @returns (Number} Distance in metres between points or NaN if failed to converge.
+ * @returns (Number}  Distance in metres between points or NaN if failed to converge.
+ *
+ * @example
+ *   var p1 = new LatLongE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
+ *   var d = p1.distanceTo(p2); // d.toFixed(3): 969954.114
  */
 LatLonE.prototype.distanceTo = function(point) {
     try {
@@ -36,7 +40,11 @@ LatLonE.prototype.distanceTo = function(point) {
  * specified point, using Vincenty inverse solution.
  *
  * @param   {LatLonE} point - Latitude/longitude of destination point.
- * @returns {number} initial Bearing in degrees from North (0°..360°) or NaN if failed to converge.
+ * @returns {number}  initial Bearing in degrees from north (0°..360°) or NaN if failed to converge.
+ *
+ * @example
+ *   var p1 = new LatLongE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
+ *   var b1 = p1.initialBearingTo(p2); // b1.toFixed(4): 9.1419
  */
 LatLonE.prototype.initialBearingTo = function(point) {
     try {
@@ -52,7 +60,11 @@ LatLonE.prototype.initialBearingTo = function(point) {
  * to the specified point, using Vincenty inverse solution.
  *
  * @param   {LatLonE} point - Latitude/longitude of destination point.
- * @returns {number} Initial bearing in degrees from North (0°..360°) or NaN if failed to converge.
+ * @returns {number}  Initial bearing in degrees from north (0°..360°) or NaN if failed to converge.
+ *
+ * @example
+ *   var p1 = new LatLongE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
+ *   var b2 = p1.initialBearingTo(p2); // b2.toFixed(4): 11.2972
  */
 LatLonE.prototype.finalBearingTo = function(point) {
     try {
@@ -67,9 +79,13 @@ LatLonE.prototype.finalBearingTo = function(point) {
  * Returns the destination point having travelled the given distance along a geodesic given by
  * initial bearing from ‘this’ point, using Vincenty direct solution.
  *
- * @param   {number} initialBearing - Initial bearing in degrees.
- * @param   {number} distance - Distance travelled along the geodesic in metres.
+ * @param   {number}  initialBearing - Initial bearing in degrees from north.
+ * @param   {number}  distance - Distance travelled along the geodesic in metres.
  * @returns {LatLonE} Destination point.
+ *
+ * @example
+ *   var p1 = new LatLongE(-37.95103, 144.42487);
+ *   var p2 = p1.destinationPoint(306.86816, 54972.271); // p2.toString(): 37.6528°S, 143.9265°E
  */
 LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).point;
@@ -80,9 +96,13 @@ LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
  * Returns the final bearing (reverse azimuth) having travelled given distance along a geodesic
  * given by initial bearing from ‘this’ point, using Vincenty direct solution.
  *
- * @param   {LatLonE} initialBearing - Initial bearing in compass degrees.
- * @param   {number} distance - Distance travelled along the geodesic in metres.
- * @returns {number} Final bearing in degrees from north (0°..360°).
+ * @param   {LatLonE} initialBearing - Initial bearing in degrees from north.
+ * @param   {number}  distance - Distance travelled along the geodesic in metres.
+ * @returns {number}  Final bearing in degrees from north (0°..360°).
+ *
+ * @example
+ *   var p1 = new LatLongE-37.95103, 144.42487);
+ *   var b2 = p1.destinationPoint(306.86816, 54972.271); // b2.toFixed(4): 307.1736
  */
 LatLonE.prototype.finalBearingOn = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).finalBearing;
@@ -93,7 +113,7 @@ LatLonE.prototype.finalBearingOn = function(initialBearing, distance) {
  * Vincenty direct calculation.
  *
  * @private
- * @param   {number} initialBearing - Initial bearing in decimal degrees.
+ * @param   {number} initialBearing - Initial bearing in degrees from north.
  * @param   {number} distance - Distance along bearing in metres.
  * @returns (Object} Object including point (destination point), finalBearing.
  */
@@ -146,8 +166,8 @@ LatLonE.prototype.direct = function(initialBearing, distance) {
  *
  * @private
  * @param   {LatLonE} point - Latitude/longitude of destination point.
- * @returns {Object} Object including istance, initialBearing, finalBearing.
- * @throws  {Error}  Formula failed to converge.
+ * @returns {Object}  Object including istance, initialBearing, finalBearing.
+ * @throws  {Error}   If formula failed to converge.
  */
 LatLonE.prototype.inverse = function(point) {
     var p1 = this, p2 = point;

@@ -1,13 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Latitude/longitude spherical geodesy formulae & scripts           (c) Chris Veness 2002-2014  */
 /*   - www.movable-type.co.uk/scripts/latlong.html                                                */
-/*                                                                                                */
-/*  Sample usage:                                                                                 */
-/*    var p1 = new LatLon(51.5136, -0.0983);                                                      */
-/*    var p2 = new LatLon(51.4778, -0.0015);                                                      */
-/*    var dist = p1.distanceTo(p2);                                                               */
-/*    var brng = p1.bearingTo(p2);                                                                */
-/*    ... etc                                                                                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
 
@@ -23,6 +16,9 @@
  * @param {number} lon - Longitude in degrees.
  * @param {number} [height=0] - Height above mean-sea-level in kilometres.
  * @param {number} [radius=6371] - (Mean) radius of earth in kilometres.
+ *
+ * @example
+ *     var p1 = new LatLon(52.205, 0.119);
  */
 function LatLon(lat, lon, height, radius) {
     // allow instantiation without 'new'
@@ -44,6 +40,10 @@ function LatLon(lat, lon, height, radius) {
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {number} Distance between this point and destination point, in km (on sphere of 'this' radius).
+ *
+ * @example
+ *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
+ *     var d = p1.distanceTo(p2); // d.toPrecision(4): 404.3
  */
 LatLon.prototype.distanceTo = function(point) {
     var R = this.radius;
@@ -67,18 +67,21 @@ LatLon.prototype.distanceTo = function(point) {
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {number} Initial bearing in degrees from north.
+ *
+ * @example
+ *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
+ *     var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
  */
 LatLon.prototype.bearingTo = function(point) {
-    // see http://williams.best.vwh.net/avform.htm#Crs
-
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
     var Δλ = (point.lon-this.lon).toRadians();
 
+    // see http://mathforum.org/library/drmath/view/55417.html
     var y = Math.sin(Δλ) * Math.cos(φ2);
     var x = Math.cos(φ1)*Math.sin(φ2) -
             Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
     var θ = Math.atan2(y, x);
-  
+
     return (θ.toDegrees()+360) % 360;
 }
 
@@ -89,6 +92,10 @@ LatLon.prototype.bearingTo = function(point) {
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {number} Final bearing in degrees from north.
+ *
+ * @example
+ *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
+ *     var b2 = p1.finalBearingTo(p2); // p2.toFixed(1): 157.9
  */
 LatLon.prototype.finalBearingTo = function(point) {
     // get initial bearing from destination point to this point & reverse it by adding 180°
@@ -101,6 +108,10 @@ LatLon.prototype.finalBearingTo = function(point) {
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {LatLon} Midpoint between this point and the supplied point.
+ *
+ * @example
+ *     var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
+ *     var pMid = p1.midpointTo(p2); // pMid.toString(): 0.5363°N, 001.2746°E
  */
 LatLon.prototype.midpointTo = function(point) {
     // see http://mathforum.org/library/drmath/view/51822.html for derivation
@@ -128,6 +139,10 @@ LatLon.prototype.midpointTo = function(point) {
  * @param   {number} brng - Initial bearing in degrees.
  * @param   {number} dist - Distance in km (on sphere of 'this' radius).
  * @returns {LatLon} Destination point.
+ *
+ * @example
+ *     var p1 = new LatLon(51.4778, -0.0015);
+ *     var p2 = p1.rhumbDestinationPoint(300.7, 7.794); // p2.toString(): 51.5136°N, 000.0983°W
  */
 LatLon.prototype.destinationPoint = function(brng, dist) {
     // see http://williams.best.vwh.net/avform.htm#LL
@@ -156,6 +171,11 @@ LatLon.prototype.destinationPoint = function(brng, dist) {
  * @param   {LatLon} p2 - Second point.
  * @param   {number} brng2 - Initial bearing from second point.
  * @returns {LatLon} Destination point (null if no unique intersection defined).
+ *
+ * @example
+ *     var p1 = LatLon(51.8853, 0.2545), brng1 = 108.55;
+ *     var p2 = LatLon(49.0034, 2.5735), brng2 =  32.44;
+ *     var pInt = LatLon.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9078°N, 4.5084°E
  */
 LatLon.intersection = function(p1, brng1, p2, brng2) {
     // see http://williams.best.vwh.net/avform.htm#Intersection
@@ -171,10 +191,10 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
 
     // initial/final bearings between points
     var θ1 = Math.acos( ( Math.sin(φ2) - Math.sin(φ1)*Math.cos(δ12) ) /
-           ( Math.sin(δ12)*Math.cos(φ1) ) );
+                        ( Math.sin(δ12)*Math.cos(φ1) ) );
     if (isNaN(θ1)) θ1 = 0; // protect against rounding
     var θ2 = Math.acos( ( Math.sin(φ1) - Math.sin(φ2)*Math.cos(δ12) ) /
-           ( Math.sin(δ12)*Math.cos(φ2) ) );
+                        ( Math.sin(δ12)*Math.cos(φ2) ) );
 
     if (Math.sin(λ2-λ1) > 0) {
         var θ12 = θ1;
@@ -216,6 +236,10 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {number} Distance in km between this point and destination point (on sphere of 'this' radius).
+ *
+ * @example
+ *     var p1 = new LatLon(51.127, 1.338), p2 = new LatLon(50.964, 1.853);
+ *     var d = p1.distanceTo(p2); // d.toPrecision(4): 40.31
  */
 LatLon.prototype.rhumbDistanceTo = function(point) {
     // see http://williams.best.vwh.net/avform.htm#Rhumb
@@ -227,11 +251,9 @@ LatLon.prototype.rhumbDistanceTo = function(point) {
     // if dLon over 180° take shorter rhumb line across the anti-meridian:
     if (Math.abs(Δλ) > Math.PI) Δλ = Δλ>0 ? -(2*Math.PI-Δλ) : (2*Math.PI+Δλ);
 
-    // on Mercator projection, longitude gets increasing stretched by latitude; q is the 'stretch factor'
-
+    // on Mercator projection, longitude distances shrink by latitude; q is the 'stretch factor'
+    // q becomes ill-conditioned along E-W line (0/0); use empirical tolerance to avoid it
     var Δψ = Math.log(Math.tan(φ2/2+Math.PI/4)/Math.tan(φ1/2+Math.PI/4));
-
-    // the stretch factor becomes ill-conditioned along E-W line (0/0); use empirical tolerance to avoid it
     var q = Math.abs(Δψ) > 10e-12 ? Δφ/Δψ : Math.cos(φ1);
 
     // distance is pythagoras on 'stretched' Mercator projection
@@ -247,6 +269,10 @@ LatLon.prototype.rhumbDistanceTo = function(point) {
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {number} Bearing in degrees from north.
+ *
+ * @example
+ *     var p1 = new LatLon(51.127, 1.338), p2 = new LatLon(50.964, 1.853);
+ *     var d = p1.rhumbBearingTo(p2); // d.toFixed(1): 116.7
  */
 LatLon.prototype.rhumbBearingTo = function(point) {
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
@@ -269,6 +295,10 @@ LatLon.prototype.rhumbBearingTo = function(point) {
  * @param   {number} brng - Bearing in degrees from north.
  * @param   {number} dist - Distance in km (on sphere of 'this' radius).
  * @returns {LatLon} Destination point.
+ *
+ * @example
+ *     var p1 = new LatLon(51.127, 1.338);
+ *     var p2 = p1.rhumbDestinationPoint(116.7, 40.31); // p2.toString(): 50.9641°N, 001.8531°E
  */
 LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
     var δ = Number(dist) / this.radius; // angular distance in radians
@@ -299,6 +329,10 @@ LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
  *
  * @param   {LatLon} point - Latitude/longitude of second point.
  * @returns {LatLon} Midpoint between this point and second point.
+ *
+ * @example
+ *     var p1 = new LatLon(51.127, 1.338), p2 = new LatLon(50.964, 1.853);
+ *     var p2 = p1.rhumbMidpointTo(p2); // p2.toString(): 51.0455°N, 001.5957°E
  */
 LatLon.prototype.rhumbMidpointTo = function(point) {
     // http://mathforum.org/kb/message.jspa?messageID=148837

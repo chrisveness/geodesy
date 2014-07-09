@@ -88,6 +88,9 @@ GeoParams.datum = {
  * @param {number}          lon - Longitude in degrees.
  * @param {GeoParams.datum} [datum=WGS84] - Datum this point is defined within.
  * @param {number}          [height=0] - Height above ellipsoid, in metres.
+ *
+ * @example
+ *     var p1 = new LatLonE(51.4778, -0.0016, GeoParams.datum.WGS84);
  */
 function LatLonE(lat, lon, datum, height) {
     // allow instantiation without 'new'
@@ -108,6 +111,10 @@ function LatLonE(lat, lon, datum, height) {
  *
  * @param   {GeoParams.datum} toDatum - Datum this coordinate is to be converted to.
  * @returns {LatLonE} This point converted to new datum.
+ *
+ * @example
+ *     var pWGS84 = new LatLonE(51.4778, -0.0016, GeoParams.datum.WGS84);
+ *     var pOSGB = pWGS84.convertDatum(GeoParams.datum.OSGB36); // pOSGB.toString(): 51.4773°N, 000.0000°W
  */
 LatLonE.prototype.convertDatum = function(toDatum) {
     var oldLatLon = this;

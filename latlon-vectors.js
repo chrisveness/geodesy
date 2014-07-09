@@ -12,7 +12,6 @@
 /**
  * Creates a LatLonV point on spherical model earth.
  *
- * @constructor
  * @classdesc Tools for working with points and paths on (a spherical model of) the earth’s surface
  *     using a vector-based approach using ‘n-vectors’ (rather than the more common spherical
  *     trigonometry; a vector-based approach makes most calculations much simpler, and easier to
@@ -20,10 +19,14 @@
  * @requires Vector3d
  * @requires Geo
  *
+ * @constructor
  * @param {number} lat - Latitude in degrees.
  * @param {number} lon - Longitude in degrees.
  * @param {number} [height=0] - Height above mean-sea-level in kilometres.
  * @param {number} [radius=6371] - Earth's mean radius in kilometres.
+ *
+ * @example
+ *   var p1 = new LatLonV(52.205, 0.119);
  */
 function LatLonV(lat, lon, height, radius) {
     // allow instantiation without 'new'
@@ -45,6 +48,10 @@ function LatLonV(lat, lon, height, radius) {
  *
  * @private
  * @returns {Vector3d} Normalised n-vector representing lat/lon point.
+ *
+ * @example
+ *   var p = new LatLonV(45, 45);
+ *   var v = p.toVector(); // v.toString(): [0.500,0.500,0.707]
  */
 LatLonV.prototype.toVector = function() {
     var φ = this.lat.toRadians();
@@ -64,7 +71,11 @@ LatLonV.prototype.toVector = function() {
  *
  * @private
  * @augments Vector3d
- * @returns {LatLonV} Latitude/longitude point vector points to.
+ * @returns  {LatLonV} Latitude/longitude point vector points to.
+ *
+ * @example
+ *   var v = new Vector3d(0.500, 0.500, 0.707);
+ *   var p = v.toLatLon(); // p.toString(): 45.0°N, 45.0°E
  */
 Vector3d.prototype.toLatLon = function() {
     var φ = Math.atan2(this.z, Math.sqrt(this.x*this.x + this.y*this.y));
@@ -78,8 +89,12 @@ Vector3d.prototype.toLatLon = function() {
  * Great circle obtained by heading on given bearing from ‘this’ point.
  *
  * @private
- * @param   {number} bearing - Compass bearing in degrees.
+ * @param   {number}   bearing - Compass bearing in degrees.
  * @returns {Vector3d} Vector representing great circle.
+ *
+ * @example
+ *   var p1 = new LatLonV(53.3206, -1.7297);
+ *   var gc = p1.greatCircle(96.0); // gc.toString(): [-0.794,0.129,0.594]
  */
 LatLonV.prototype.greatCircle = function(bearing) {
     var φ = this.lat.toRadians();
@@ -98,7 +113,11 @@ LatLonV.prototype.greatCircle = function(bearing) {
  * Returns the distance from ‘this’ point to the specified point.
  *
  * @param   {LatLonV} point - Latitude/longitude of destination point.
- * @returns {number} Distance between this point and destination point in km.
+ * @returns {number}  Distance between this point and destination point in km.
+ *
+ * @example
+ *   var p1 = new LatLonV(52.205, 0.119), p2 = new LatLonV(48.857, 2.351);
+ *   var d = p1.distanceTo(p2); // d.toPrecision(4): 404.3
  */
 LatLonV.prototype.distanceTo = function(point) {
     var p1 = this.toVector();
@@ -115,7 +134,11 @@ LatLonV.prototype.distanceTo = function(point) {
  * Returns the (initial) bearing from ‘this’ point to the specified point, in compass degrees.
  *
  * @param   {LatLonV} point - Latitude/longitude of destination point.
- * @returns {number} Initial bearing in degrees from North (0°..360°).
+ * @returns {number}  Initial bearing in degrees from North (0°..360°).
+ *
+ * @example
+ *   var p1 = new LatLonV(52.205, 0.119), p2 = new LatLonV(48.857, 2.351);
+ *   var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
  */
 LatLonV.prototype.bearingTo = function(point) {
     var p1 = this.toVector();
@@ -138,6 +161,10 @@ LatLonV.prototype.bearingTo = function(point) {
  *
  * @param   {LatLonV} point - Latitude/longitude of destination point.
  * @returns {LatLonV} Midpoint between this point and destination point.
+ *
+ * @example
+ *   var p1 = new LatLonV(52.205, 0.119), p2 = new LatLonV(48.857, 2.351);
+ *   var pMid = p1.midpointTo(p2); // pMid.toString(): 0.5363°N, 001.2746°E
  */
 LatLonV.prototype.midpointTo = function(point) {
     var p1 = this.toVector();
@@ -156,6 +183,10 @@ LatLonV.prototype.midpointTo = function(point) {
  * @param   {number}  bearing - Initial bearing in degrees.
  * @param   {number}  distance - Distance in km.
  * @returns {LatLonV} Destination point.
+ *
+ * @example
+ *   var p1 = new LatLonV(51.4778, -0.0015);
+ *   var p2 = p1.rhumbDestinationPoint(300.7, 7.794); // p2.toString(): 51.5136°N, 000.0983°W
  */
 LatLonV.prototype.destinationPoint = function(bearing, distance) {
     var δ = Number(distance) / this.radius; // angular distance in radians
@@ -181,7 +212,12 @@ LatLonV.prototype.destinationPoint = function(bearing, distance) {
  * @param   {LatLonV|number} path1brngEnd - End point of first path or initial bearing from first start point.
  * @param   {LatLonV}        path2start - Start point of second path.
  * @param   {LatLonV|number} path2brngEnd - End point of second path or initial bearing from second start point.
- * @returns {LatLonV} Destination point (null if no unique intersection defined)
+ * @returns {LatLonV}        Destination point (null if no unique intersection defined)
+ *
+ * @example
+ *   var p1 = LatLonV(51.8853, 0.2545), brng1 = 108.55;
+ *   var p2 = LatLonV(49.0034, 2.5735), brng2 =  32.44;
+ *   var pInt = LatLonV.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9078°N, 4.5084°E
  */
 LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
     if (path1brngEnd instanceof LatLonV) {       // path 1 defined by endpoint
@@ -206,7 +242,16 @@ LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngE
  *
  * @param   {LatLonV}        pathstart - Start point of great circle path.
  * @param   {LatLonV|number} pathbrngEnd - End point of great circle path or initial bearing from great circle start point.
- * @returns {number} Distance to great circle.
+ * @returns {number}         Distance to great circle (+ve if to left, -ve if to right).
+ *
+ * @example
+ *   var pCurrent = new LatLonV(53.2611, -0.7972);
+ *
+ *   var p1 = new LatLonV(53.3206, -1.7297), brng = 96.0;
+ *   var d = pCurrent.crossTrackDistanceTo(p1, brng);// d.toPrecision(4): 0.3354
+ *
+ *   var p1 = new LatLonV(53.3206, -1.7297), p2 = new LatLonV(53.1883, 0.1333);
+ *   var d = pCurrent.crossTrackDistanceTo(p1, p2);  // d.toPrecision(4): 0.3354
  */
 LatLonV.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd) {
     var p = this.toVector();
@@ -232,8 +277,13 @@ LatLonV.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd) {
  * Tests whether ‘this’ point is enclosed by the (convex) polygon defined by a set of points.
  *
  * @param   {LatLonV[]} points - Ordered array of points defining vertices of polygon.
- * @returns {bool} Whether this point is enclosed by region.
- * @throws  {Error} If polygon is not convex.
+ * @returns {bool}      Whether this point is enclosed by region.
+ * @throws  {Error}     If polygon is not convex.
+ *
+ * @example
+ *   var bounds = [ new LatLonV(45,1), new LatLonV(45,2), new LatLonV(46,2), new LatLonV(46,1) ];
+ *   var p = new LatLonV(45,1, 1.1);
+ *   var inside = p.enclosedBy(bounds); // inside: true;
  */
 LatLonV.prototype.enclosedBy = function(points) {
     var v = this.toVector(); // vector to 'this' point
@@ -272,7 +322,7 @@ LatLonV.prototype.enclosedBy = function(points) {
  * Returns point representing geographic mean of supplied points.
  *
  * @param   {LatLonV[]} points - Array of points to be averaged.
- * @returns {LatLonV} Point at the geographic mean of the supplied points.
+ * @returns {LatLonV}   Point at the geographic mean of the supplied points.
  * @todo Not yet tested.
  */
 LatLonV.meanOf = function(points) {
@@ -293,7 +343,11 @@ LatLonV.meanOf = function(points) {
  *
  * @private
  * @param   {LatLonV} point - Point to be compared against this point.
- * @returns {bool} True if points are identical.
+ * @returns {bool}    True if points are identical.
+ *
+ * @example
+ *   var p1 = new LatLonV(52.205, 0.119), p2 = new LatLonV(52.205, 0.119);
+ *   var equal = p1,equals(p2); // equals: true
  */
 LatLonV.prototype.equals = function(point) {
     if (this.lat != point.lat) return false;
