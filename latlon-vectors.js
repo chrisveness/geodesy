@@ -231,25 +231,35 @@ LatLonV.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd) {
  *
  * @param   {LatLonV[]} points - Ordered array of points defining vertices of polygon.
  * @returns {bool} Whether this point is enclosed by region.
- * @todo Not yet tested.
+ * @throws  {Error} If polygon is not convex.
  */
 LatLonV.prototype.enclosedBy = function(points) {
+    var v = this.toVector(); // vector to 'this' point
+
     // if fully closed polygon, pop last point off array
     if (points[0].equals(points[points.length-1])) points.pop();
 
-    // get sign of cross-track distance for ultimate segment
-    var p1 = points[points.length-1];
-    var p2 = points[0];
-    var side = Math.sign(this.crossTrackDistanceTo(p2, p2));
+    // get great-circle vector for each segment
+    var c = [];
+    for (var n=0; n<points.length; n++) {
+        var p1 = points[n].toVector();
+        var p2 = points[n+1==points.length ? 0 : n+1].toVector();
+        c[n] = p1.cross(p2); // great circle for segment n
+    }
 
-    var turn = Math.sign(p1.cross.p2); // to check polygon is convex
+    // is 'this' point on same side of each segment? (left/right depending on (anti-)clockwise)
+    var toLeft0 = c[0].angleTo(v) <= Math.PI/2; // 'this' point to left of first segment?
+    for (var n=1; n<points.length; n++) {
+        var toLeftN = c[n].angleTo(v) <= Math.PI/2; // 'this' point to left of segment n?
+        if (toLeft0 != toLeftN) return false;
+    }
 
-    // for 'this' to be enclosed, sign of all cross-track distances must be the same
-    for (var p=1; p<points.length; p++) {
-        p1 = p - 1;
-        p2 = p;
-        if (Math.sign(this.crossTrackDistanceTo(p2, p2)) != side) return false;
-        if (Math.sign(p1.cross.p2) != turn) throw new Error('Polygon must be convex');
+    // is polygon convex? (otherwise above test is not reliable)
+    for (var n=0; n<points.length; n++) {
+        var c1 = c[n];
+        var c2 = c[n+1==points.length ? 0 : n+1];
+        var α = c1.angleTo(c2, v); // angle between great-circle vectors, signed by direction of v
+        if (α < 0) throw new Error('Polygon is not convex');
     }
 
     return true;
