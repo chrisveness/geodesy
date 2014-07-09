@@ -127,12 +127,7 @@ LatLonV.prototype.bearingTo = function(point) {
     var c2 = p1.cross(northPole); // great circle through p1 & north pole
 
     // bearing is (signed) angle between c1 & c2
-    var sinθ = c1.cross(c2).length();
-    var cosθ = c1.dot(c2);
-    // use p1 as reference to get sign of sinθ
-    sinθ = c1.cross(c2).dot(p1)<0 ? -sinθ : sinθ;
-
-    var bearing = Math.atan2(sinθ, cosθ).toDegrees();
+    var bearing = c1.angleTo(c1, p1).toDegrees();
 
     return (bearing+360) % 360; // normalise to 0..360
 }
@@ -310,12 +305,12 @@ LatLonV.prototype.toString = function(format, dp) {
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
-  Number.prototype.toRadians = function() { return this * Math.PI / 180; }
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
 }
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
-  Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
 }
 
 /** Extend Math object to test the sign of a number, indicating whether it's positive, negative or zero */
