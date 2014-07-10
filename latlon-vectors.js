@@ -150,7 +150,7 @@ LatLonV.prototype.bearingTo = function(point) {
     var c2 = p1.cross(northPole); // great circle through p1 & north pole
 
     // bearing is (signed) angle between c1 & c2
-    var bearing = c1.angleTo(c1, p1).toDegrees();
+    var bearing = c1.angleTo(c2, p1).toDegrees();
 
     return (bearing+360) % 360; // normalise to 0..360
 }
