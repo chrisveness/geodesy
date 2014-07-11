@@ -334,7 +334,7 @@ LatLonV.meanOf = function(points) {
     }
 
     // m is now geographic mean
-    return m.unit();
+    return m.unit().toLatLon();
 }
 
 
