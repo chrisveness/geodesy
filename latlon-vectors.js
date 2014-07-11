@@ -221,12 +221,12 @@ LatLonV.prototype.destinationPoint = function(bearing, distance) {
  */
 LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
     if (path1brngEnd instanceof LatLonV) {       // path 1 defined by endpoint
-        var c1 = path1start.cross(path1brngEnd);
+        var c1 = path1start.toVector().cross(path1brngEnd.toVector());
     } else {                                     // path 1 defined by initial bearing
         var c1 = path1start.greatCircle(path1brngEnd);
     }
     if (path2brngEnd instanceof LatLonV) {       // path 2 defined by endpoint
-        var c2 = path2start.cross(path2brngEnd);
+        var c2 = path2start.toVector().cross(path2brngEnd.toVector());
     } else {                                     // path 2 defined by initial bearing
         var c2 = path2start.greatCircle(path2brngEnd);
     }
