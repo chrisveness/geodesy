@@ -9,7 +9,7 @@
 
 
 /**
- * Direct and indirect solutions of geodesics on the ellipsoid using Vincenty formulae
+ * Direct and inverse solutions of geodesics on the ellipsoid using Vincenty formulae
  *
  * @augments LatLonE
  */
@@ -23,7 +23,7 @@
  * @returns (Number}  Distance in metres between points or NaN if failed to converge.
  *
  * @example
- *   var p1 = new LatLongE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
+ *   var p1 = new LatLonE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
  *   var d = p1.distanceTo(p2); // d.toFixed(3): 969954.114
  */
 LatLonE.prototype.distanceTo = function(point) {
@@ -43,7 +43,7 @@ LatLonE.prototype.distanceTo = function(point) {
  * @returns {number}  initial Bearing in degrees from north (0°..360°) or NaN if failed to converge.
  *
  * @example
- *   var p1 = new LatLongE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
+ *   var p1 = new LatLonE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
  *   var b1 = p1.initialBearingTo(p2); // b1.toFixed(4): 9.1419
  */
 LatLonE.prototype.initialBearingTo = function(point) {
@@ -63,8 +63,8 @@ LatLonE.prototype.initialBearingTo = function(point) {
  * @returns {number}  Initial bearing in degrees from north (0°..360°) or NaN if failed to converge.
  *
  * @example
- *   var p1 = new LatLongE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
- *   var b2 = p1.initialBearingTo(p2); // b2.toFixed(4): 11.2972
+ *   var p1 = new LatLonE(50.06632, -5.71475), p2 = new LatLongE(58.64402, -3.07009);
+ *   var b2 = p1.finalBearingTo(p2); // b2.toFixed(4): 11.2972
  */
 LatLonE.prototype.finalBearingTo = function(point) {
     try {
@@ -84,7 +84,7 @@ LatLonE.prototype.finalBearingTo = function(point) {
  * @returns {LatLonE} Destination point.
  *
  * @example
- *   var p1 = new LatLongE(-37.95103, 144.42487);
+ *   var p1 = new LatLonE(-37.95103, 144.42487);
  *   var p2 = p1.destinationPoint(306.86816, 54972.271); // p2.toString(): 37.6528°S, 143.9265°E
  */
 LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
@@ -101,8 +101,8 @@ LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
  * @returns {number}  Final bearing in degrees from north (0°..360°).
  *
  * @example
- *   var p1 = new LatLongE-37.95103, 144.42487);
- *   var b2 = p1.destinationPoint(306.86816, 54972.271); // b2.toFixed(4): 307.1736
+ *   var p1 = new LatLongE(-37.95103, 144.42487);
+ *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // b2.toFixed(4): 307.1736
  */
 LatLonE.prototype.finalBearingOn = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).finalBearing;
@@ -154,10 +154,11 @@ LatLonE.prototype.direct = function(initialBearing, distance) {
         (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
     var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI;  // normalise to -180...+180
 
-    var revAz = Math.atan2(sinα, -x);
+    var α2 = Math.atan2(sinα, -x);
+    α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0...360
 
     return { point: new LatLonE(φ2.toDegrees(), λ2.toDegrees(), this.datum),
-        finalBearing: revAz.toDegrees() };
+        finalBearing: α2.toDegrees() };
 }
 
 
@@ -206,11 +207,11 @@ LatLonE.prototype.inverse = function(point) {
 
     var s = b*A*(σ-Δσ);
 
-    var fwdAz = Math.atan2(cosU2*sinλ,  cosU1*sinU2-sinU1*cosU2*cosλ);
-    var revAz = Math.atan2(cosU1*sinλ, -sinU1*cosU2+cosU1*sinU2*cosλ);
+    var α1 = Math.atan2(cosU2*sinλ,  cosU1*sinU2-sinU1*cosU2*cosλ);
+    var α2 = Math.atan2(cosU1*sinλ, -sinU1*cosU2+cosU1*sinU2*cosλ);
 
     s = Number(s.toFixed(3)); // round to 1mm precision
-    return { distance: s, initialBearing: fwdAz.toDegrees(), finalBearing: revAz.toDegrees() };
+    return { distance: s, initialBearing: α1.toDegrees(), finalBearing: α2.toDegrees() };
 }
 
 
@@ -227,4 +228,4 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (!window.console) window.console = { log: function() {} };
+if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub

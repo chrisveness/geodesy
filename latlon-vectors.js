@@ -164,7 +164,7 @@ LatLonV.prototype.bearingTo = function(point) {
  *
  * @example
  *   var p1 = new LatLonV(52.205, 0.119), p2 = new LatLonV(48.857, 2.351);
- *   var pMid = p1.midpointTo(p2); // pMid.toString(): 0.5363°N, 001.2746°E
+ *   var pMid = p1.midpointTo(p2); // pMid.toString(): 50.5363°N, 001.2746°E
  */
 LatLonV.prototype.midpointTo = function(point) {
     var p1 = this.toVector();
@@ -186,7 +186,7 @@ LatLonV.prototype.midpointTo = function(point) {
  *
  * @example
  *   var p1 = new LatLonV(51.4778, -0.0015);
- *   var p2 = p1.rhumbDestinationPoint(300.7, 7.794); // p2.toString(): 51.5136°N, 000.0983°W
+ *   var p2 = p1.destinationPoint(300.7, 7.794); // p2.toString(): 51.5135°N, 000.0983°W
  */
 LatLonV.prototype.destinationPoint = function(bearing, distance) {
     var δ = Number(distance) / this.radius; // angular distance in radians
@@ -217,17 +217,17 @@ LatLonV.prototype.destinationPoint = function(bearing, distance) {
  * @example
  *   var p1 = LatLonV(51.8853, 0.2545), brng1 = 108.55;
  *   var p2 = LatLonV(49.0034, 2.5735), brng2 =  32.44;
- *   var pInt = LatLonV.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9078°N, 4.5084°E
+ *   var pInt = LatLonV.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9078°N, 004.5084°E
  */
 LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
-    if (path1brngEnd instanceof LatLonV) {       // path 1 defined by endpoint
+    if (path1brngEnd instanceof LatLonV) { // path 1 defined by endpoint
         var c1 = path1start.toVector().cross(path1brngEnd.toVector());
-    } else {                                     // path 1 defined by initial bearing
+    } else {                               // path 1 defined by initial bearing
         var c1 = path1start.greatCircle(path1brngEnd);
     }
-    if (path2brngEnd instanceof LatLonV) {       // path 2 defined by endpoint
+    if (path2brngEnd instanceof LatLonV) { // path 2 defined by endpoint
         var c2 = path2start.toVector().cross(path2brngEnd.toVector());
-    } else {                                     // path 2 defined by initial bearing
+    } else {                               // path 2 defined by initial bearing
         var c2 = path2start.greatCircle(path2brngEnd);
     }
 
@@ -240,8 +240,8 @@ LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngE
 /**
  * Returns (signed) distance from ‘this’ point to great circle defined by start-point and end-point/bearing.
  *
- * @param   {LatLonV}        pathstart - Start point of great circle path.
- * @param   {LatLonV|number} pathbrngEnd - End point of great circle path or initial bearing from great circle start point.
+ * @param   {LatLonV}        pathStart - Start point of great circle path.
+ * @param   {LatLonV|number} pathBrngEnd - End point of great circle path or initial bearing from great circle start point.
  * @returns {number}         Distance to great circle (+ve if to left, -ve if to right).
  *
  * @example
@@ -347,7 +347,7 @@ LatLonV.meanOf = function(points) {
  *
  * @example
  *   var p1 = new LatLonV(52.205, 0.119), p2 = new LatLonV(52.205, 0.119);
- *   var equal = p1,equals(p2); // equals: true
+ *   var equal = p1.equals(p2); // equals: true
  */
 LatLonV.prototype.equals = function(point) {
     if (this.lat != point.lat) return false;
@@ -394,4 +394,4 @@ if (typeof Math.sign == 'undefined') {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (!window.console) window.console = { log: function() {} };
+if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub

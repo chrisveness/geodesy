@@ -111,10 +111,11 @@ function LatLonE(lat, lon, datum, height) {
  *
  * @param   {GeoParams.datum} toDatum - Datum this coordinate is to be converted to.
  * @returns {LatLonE} This point converted to new datum.
+ * @requires GeoParams
  *
  * @example
  *     var pWGS84 = new LatLonE(51.4778, -0.0016, GeoParams.datum.WGS84);
- *     var pOSGB = pWGS84.convertDatum(GeoParams.datum.OSGB36); // pOSGB.toString(): 51.4773°N, 000.0000°W
+ *     var pOSGB = pWGS84.convertDatum(GeoParams.datum.OSGB36); // pOSGB.toString(): 51.4773°N, 000.0000°E
  */
 LatLonE.prototype.convertDatum = function(toDatum) {
     var oldLatLon = this;
@@ -259,4 +260,4 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (!window.console) window.console = { log: function() {} };
+if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
