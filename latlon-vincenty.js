@@ -101,7 +101,7 @@ LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
  * @returns {number}  Final bearing in degrees from north (0°..360°).
  *
  * @example
- *   var p1 = new LatLongE(-37.95103, 144.42487);
+ *   var p1 = new LatLonE(-37.95103, 144.42487);
  *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // b2.toFixed(4): 307.1736
  */
 LatLonE.prototype.finalBearingOn = function(initialBearing, distance) {
@@ -116,6 +116,7 @@ LatLonE.prototype.finalBearingOn = function(initialBearing, distance) {
  * @param   {number} initialBearing - Initial bearing in degrees from north.
  * @param   {number} distance - Distance along bearing in metres.
  * @returns (Object} Object including point (destination point), finalBearing.
+ * @throws  {Error}  If formula failed to converge.
  */
 LatLonE.prototype.direct = function(initialBearing, distance) {
     var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
@@ -144,7 +145,8 @@ LatLonE.prototype.direct = function(initialBearing, distance) {
             B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
         σʹ = σ;
         σ = s / (b*A) + Δσ;
-    } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations);
+    } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<200);
+    if (iterations>=200) throw new Error('Formula failed to converge'); // not possible?
 
     var x = sinU1*sinσ - cosU1*cosσ*cosα1;
     var φ2 = Math.atan2(sinU1*cosσ + cosU1*sinσ*cosα1, (1-f)*Math.sqrt(sinα*sinα + x*x));
@@ -196,8 +198,8 @@ LatLonE.prototype.inverse = function(point) {
         var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
         λʹ = λ;
         λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
-    } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<100);
-    if (iterations>=100) throw new Error('Formula failed to converge');
+    } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<200);
+    if (iterations>=200) throw new Error('Formula failed to converge');
 
     var uSq = cosSqα * (a*a - b*b) / (b*b);
     var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
