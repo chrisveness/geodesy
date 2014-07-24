@@ -212,6 +212,9 @@ LatLonE.prototype.inverse = function(point) {
     var α1 = Math.atan2(cosU2*sinλ,  cosU1*sinU2-sinU1*cosU2*cosλ);
     var α2 = Math.atan2(cosU1*sinλ, -sinU1*cosU2+cosU1*sinU2*cosλ);
 
+    α1 = (α1 + 2*Math.PI) % (2*Math.PI); // normalise to 0...360
+    α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0...360
+
     s = Number(s.toFixed(3)); // round to 1mm precision
     return { distance: s, initialBearing: α1.toDegrees(), finalBearing: α2.toDegrees() };
 }
