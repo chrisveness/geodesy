@@ -1,0 +1,29 @@
+{
+    "name": "geodesy-libraries",
+    "description": "Libraries of geodesy functions",
+    "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
+    "repository": { "type": "git", "url": "https://github.com/chrisveness/geodesy" },
+    "author": "Chris Veness",
+    "version": "0.0.0",
+    "devDependencies": {
+        "browserify": "^4.0.0",
+        "tap-spec": "^0.2.0",
+        "tape": "^2.12.0"
+    },
+    "testling": {
+        "files": "test.js",
+        "browsers": [
+            "iexplore/7..latest",
+            "chrome/26..latest",
+            "firefox/21..latest",
+            "safari/4..latest",
+            "opera/11.5..latest",
+            "iphone/6..latest",
+            "ipad/6..latest",
+            "android-browser/4.2..latest"
+        ]
+    },
+    "scripts": {
+        "test": "tape test.js | tap-spec"
+    }
+}
