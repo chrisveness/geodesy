@@ -179,4 +179,6 @@ if (typeof String.prototype.trim == 'undefined') {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (!window.console) window.console = { log: function() {} };
+if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module != 'undefined' && module.exports) module.exports = Geo; // CommonJS
+if (typeof define == 'function' && define.amd) define([], function() { return Geo; }); // AMD

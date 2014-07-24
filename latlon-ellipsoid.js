@@ -14,6 +14,8 @@
 /*                                                                                                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
+if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node.js)
+if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js'); // CommonJS (Node.js)
 
 
 /**
@@ -249,3 +251,7 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module != 'undefined' && module.exports) module.exports = LatLonE; // CommonJS
+if (typeof module != 'undefined' && module.exports) module.exports.Vector3d = Vector3d; // CommonJs
+if (typeof define == 'function' && define.amd) define([], function() { return LatLonE; }); // AMD
+if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD??

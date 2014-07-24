@@ -7,6 +7,8 @@
 /*      or vectors normal to the plane of a great circle                                          */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
+if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node.js)
+if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js'); // CommonJS (Node.js)
 
 
 /**
@@ -16,7 +18,7 @@
  *     using a vector-based approach using ‘n-vectors’ (rather than the more common spherical
  *     trigonometry; a vector-based approach makes most calculations much simpler, and easier to
  *     follow, compared with trigonometric equivalents).
- * @requires Vector3d
+ * @augments Vector3d
  * @requires Geo
  *
  * @constructor
@@ -70,7 +72,6 @@ LatLonV.prototype.toVector = function() {
  * Converts ‘this’ n-vector to latitude/longitude point.
  *
  * @private
- * @augments Vector3d
  * @returns  {LatLonV} Latitude/longitude point vector points to.
  *
  * @example
@@ -397,3 +398,7 @@ if (typeof Math.sign == 'undefined') {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module != 'undefined' && module.exports) module.exports = LatLonV; // CommonJS
+if (typeof module != 'undefined' && module.exports) module.exports.Vector3d = Vector3d; // CommonJS
+if (typeof define == 'function' && define.amd) define([], function() { return LatLonV; }); // AMD
+if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD??

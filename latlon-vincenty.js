@@ -6,6 +6,7 @@
 /*       http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
+if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
 
 
 /**
@@ -234,3 +235,5 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module != 'undefined' && module.exports) module.exports = LatLonE; // CommonJS
+if (typeof define == 'function' && define.amd) define([], function() { return LatLonE; }); // AMD

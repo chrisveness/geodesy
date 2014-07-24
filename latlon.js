@@ -3,6 +3,7 @@
 /*   - www.movable-type.co.uk/scripts/latlong.html                                                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
+if (typeof module!='undefined' && module.exports) var Geo = require('./geo'); // CommonJS (Node.js)
 
 
 /**
@@ -391,3 +392,5 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module != 'undefined' && module.exports) module.exports = LatLon; // CommonJS
+if (typeof define == 'function' && define.amd) define(['Geo'], function() { return LatLon; }); // AMD

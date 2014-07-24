@@ -219,3 +219,5 @@ Vector3d.prototype.toString = function(precision) {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module != 'undefined' && module.exports) module.exports = Vector3d; // CommonJS
+if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD
