@@ -152,8 +152,8 @@ Vector3d.prototype.unit = function() {
  * Calculates the angle between ‘this’ vector and supplied vector.
  *
  * @param   {Vector3d} v
- * @param   {Vector3d} [vSign] - If supplied, angle is signed +ve if clockwise looking along vSign,
- *     -ve in opposite direction (otherwise unsigned angle).
+ * @param   {Vector3d} [vSign] - If supplied (and out of plane of this and v), angle is signed +ve if
+ *     this->v is clockwise looking along vSign, -ve in opposite direction (otherwise unsigned angle).
  * @returns {number} Angle (in radians) between this vector and supplied vector.
  */
 Vector3d.prototype.angleTo = function(v, vSign) {
@@ -218,4 +218,4 @@ Vector3d.prototype.toString = function(precision) {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (!window.console) window.console = { log: function() {} };
+if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
