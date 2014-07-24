@@ -10,8 +10,7 @@
  * Creates an OsGridRef object.
  *
  * @classdesc Convert OS grid references to/from OSGB latitude/longitude points.
- * @requires  LatLonE (from latlon-ellipsoid.js).
- * @requires  GeoParams (from latlon-ellipsoid.js).
+ * @requires  LatLonE
  *
  * @constructor
  * @param {number} easting - Easting in metres from OS false origin.
@@ -37,11 +36,11 @@ function OsGridRef(easting, northing) {
  * @throws  {Error}     If datum of point is not OSGB36.
  *
  * @example
- *   var p = new LatLonE(52.65757, 1.71791, GeoParams.datum.OSGB36);
+ *   var p = new LatLonE(52.65757, 1.71791, LatLonE.datum.OSGB36);
  *   var grid = OsGridRef.latLonToOsGrid(p); // grid.toString(): TG 51409 13177
  */
 OsGridRef.latLonToOsGrid = function(point) {
-    if (point.datum != GeoParams.datum.OSGB36) throw new Error('Can only convert OSGB36 point to OsGrid');
+    if (point.datum != LatLonE.datum.OSGB36) throw new Error('Can only convert OSGB36 point to OsGrid');
     var φ = point.lat.toRadians();
     var λ = point.lon.toRadians();
 
@@ -140,7 +139,7 @@ OsGridRef.osGridToLatLon = function(gridref) {
     φ = φ - VII*dE2 + VIII*dE4 - IX*dE6;
     var λ = λ0 + X*dE - XI*dE3 + XII*dE5 - XIIA*dE7;
 
-    return new LatLonE(φ.toDegrees(), λ.toDegrees(), GeoParams.datum.OSGB36);
+    return new LatLonE(φ.toDegrees(), λ.toDegrees(), LatLonE.datum.OSGB36);
 }
 
 
@@ -250,4 +249,4 @@ if (typeof Number.prototype.pad == 'undefined') {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (!window.console) window.console = { log: function() {} };
+if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub

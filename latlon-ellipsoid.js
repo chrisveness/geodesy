@@ -1,12 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* Geodesy tools for an ellipsoidal earth model                       (c) Chris Veness 2005-2014  */
 /*                                                                                                */
-/* Includes methods for converting lat/lon coordinates bewteen different coordinate systems.      */
+/* Includes methods for converting lat/lon coordinates between different coordinate systems.      */
 /*   - www.movable-type.co.uk/scripts/latlong-convert-coords.html                                 */
 /*                                                                                                */
 /*  Usage: to eg convert WGS84 coordinate to OSGB coordinate:                                     */
-/*   - var wgs84 = new LatLonE(latWGS84, lonWGS84, GeoParams.datum.WGS84);                        */
-/*   - var osgb = wgs84.convertDatum(GeoParams.datum.OSGB36);                                     */
+/*   - var wgs84 = new LatLonE(latWGS84, lonWGS84, LatLonE.datum.WGS84);                          */
+/*   - var osgb = wgs84.convertDatum(LatLonE.datum.OSGB36);                                       */
 /*   - var latOSGB = osgb.lat, lonOSGB = osgb.lon;                                                */
 /*                                                                                                */
 /*  q.v. Ordnance Survey 'A guide to coordinate systems in Great Britain' Section 6               */
@@ -17,18 +17,40 @@
 
 
 /**
- * Ellipsoid parameters and datum parameters for transforming lat/lon coordinates between different
- * coordinate systems.
+ * Creates lat/lon (polar) point with latitude & longitude values and height above ellipsoid, on a
+ * specified datum.
  *
- * @namespace
+ * @classdesc Library of geodesy functions for operations on an ellipsoidal earth model.
+ * @augments Vector3d
+ * @requires Geo
+ *
+ * @constructor
+ * @param {number}          lat - Geodetic latitude in degrees.
+ * @param {number}          lon - Longitude in degrees.
+ * @param {LatLonE.datum} [datum=WGS84] - Datum this point is defined within.
+ * @param {number}          [height=0] - Height above ellipsoid, in metres.
+ *
+ * @example
+ *     var p1 = new LatLonE(51.4778, -0.0016, LatLonE.datum.WGS84);
  */
-var GeoParams = {};
+function LatLonE(lat, lon, datum, height) {
+    // allow instantiation without 'new'
+    if (!(this instanceof LatLonE)) return new LatLonE(lat, lon, datum, height);
+
+    if (typeof datum == 'undefined') datum = LatLonE.datum.WGS84;
+    if (typeof height == 'undefined') height = 0;
+
+    this.lat = Number(lat);
+    this.lon = Number(lon);
+    this.datum = datum;
+    this.height = Number(height);
+}
 
 
 /**
  * Ellipsoid parameters; major axis (a), minor axis (b), and flattening (f) for each ellipsoid.
  */
-GeoParams.ellipsoid = {
+LatLonE.ellipsoid = {
     WGS84:        { a: 6378137,     b: 6356752.3142,   f: 1/298.257223563 },
     GRS80:        { a: 6378137,     b: 6356752.314140, f: 1/298.257222101 },
     Airy1830:     { a: 6377563.396, b: 6356256.909,    f: 1/299.3249646   },
@@ -41,33 +63,33 @@ GeoParams.ellipsoid = {
  * Datums; with associated *ellipsoid* and Helmert *transform* parameters to convert from WGS84
  * into given datum.
  */
-GeoParams.datum = {
+LatLonE.datum = {
     WGS84: {
-        ellipsoid: GeoParams.ellipsoid.WGS84,
+        ellipsoid: LatLonE.ellipsoid.WGS84,
         transform: { tx:    0.0,    ty:    0.0,     tz:    0.0,    // m
                      rx:    0.0,    ry:    0.0,     rz:    0.0,    // sec
                       s:    0.0 }                                  // ppm
     },
     OSGB36: { // www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
-        ellipsoid: GeoParams.ellipsoid.Airy1830,
+        ellipsoid: LatLonE.ellipsoid.Airy1830,
         transform: { tx: -446.448,  ty:  125.157,   tz: -542.060,  // m
                      rx:   -0.1502, ry:   -0.2470,  rz:   -0.8421, // sec
                       s:   20.4894 }                               // ppm
     },
     ED50: { // og.decc.gov.uk/en/olgs/cms/pons_and_cop/pons/pon4/pon4.aspx
-        ellipsoid: GeoParams.ellipsoid.Intl1924,
+        ellipsoid: LatLonE.ellipsoid.Intl1924,
         transform: { tx:   89.5,    ty:   93.8,     tz:  123.1,    // m
                      rx:    0.0,    ry:    0.0,     rz:    0.156,  // sec
                       s:   -1.2 }                                  // ppm
     },
     Irl1975: { // maps.osni.gov.uk/CMS_UserFiles/file/The_irish_grid.pdf
-        ellipsoid: GeoParams.ellipsoid.AiryModified,
+        ellipsoid: LatLonE.ellipsoid.AiryModified,
         transform: { tx: -482.530,  ty:  130.596,   tz: -564.557,  // m
                      rx:   -1.042,  ry:   -0.214,   rz:   -0.631,  // sec
                       s:   -8.150 }                                // ppm
     },
     TokyoJapan: { // www.geocachingtoolbox.com?page=datumEllipsoidDetails
-        ellipsoid: GeoParams.ellipsoid.Bessel1841,
+        ellipsoid: LatLonE.ellipsoid.Bessel1841,
         transform: { tx:  148,      ty: -507,       tz: -685,      // m
                      rx:    0,      ry:    0,       rz:    0,      // sec
                       s:    0 }                                    // ppm
@@ -76,55 +98,23 @@ GeoParams.datum = {
 
 
 /**
- * Creates lat/lon (polar) point with latitude & longitude values and height above ellipsoid, on a
- * specified datum.
- *
- * @classdesc Library of geodesy functions for operations on an ellipsoidal earth model.
- * @requires GeoParams
- * @requires Vector3d
- *
- * @constructor
- * @param {number}          lat - Geodetic latitude in degrees.
- * @param {number}          lon - Longitude in degrees.
- * @param {GeoParams.datum} [datum=WGS84] - Datum this point is defined within.
- * @param {number}          [height=0] - Height above ellipsoid, in metres.
- *
- * @example
- *     var p1 = new LatLonE(51.4778, -0.0016, GeoParams.datum.WGS84);
- */
-function LatLonE(lat, lon, datum, height) {
-    // allow instantiation without 'new'
-    if (!(this instanceof LatLonE)) return new LatLonE(lat, lon, datum, height);
-
-    if (typeof datum == 'undefined') datum = GeoParams.datum.WGS84;
-    if (typeof height == 'undefined') height = 0;
-
-    this.lat = Number(lat);
-    this.lon = Number(lon);
-    this.datum = datum;
-    this.height = Number(height);
-}
-
-
-/**
  * Converts ‘this’ lat/lon coordinate to new coordinate system.
  *
- * @param   {GeoParams.datum} toDatum - Datum this coordinate is to be converted to.
+ * @param   {LatLonE.datum} toDatum - Datum this coordinate is to be converted to.
  * @returns {LatLonE} This point converted to new datum.
- * @requires GeoParams
  *
  * @example
- *     var pWGS84 = new LatLonE(51.4778, -0.0016, GeoParams.datum.WGS84);
- *     var pOSGB = pWGS84.convertDatum(GeoParams.datum.OSGB36); // pOSGB.toString(): 51.4773°N, 000.0000°E
+ *     var pWGS84 = new LatLonE(51.4778, -0.0016, LatLonE.datum.WGS84);
+ *     var pOSGB = pWGS84.convertDatum(LatLonE.datum.OSGB36); // pOSGB.toString(): 51.4773°N, 000.0000°E
  */
 LatLonE.prototype.convertDatum = function(toDatum) {
     var oldLatLon = this;
 
-    if (oldLatLon.datum == GeoParams.datum.WGS84) {
+    if (oldLatLon.datum == LatLonE.datum.WGS84) {
         // converting from WGS84
         var transform = toDatum.transform;
     }
-    if (toDatum == GeoParams.datum.WGS84) {
+    if (toDatum == LatLonE.datum.WGS84) {
         // converting to WGS84; use inverse transform (don't overwrite original!)
         var transform = {};
         for (var param in oldLatLon.datum.transform) {
@@ -133,7 +123,7 @@ LatLonE.prototype.convertDatum = function(toDatum) {
     }
     if (typeof transform == 'undefined') {
         // neither this.datum nor toDatum are WGS84: convert this to WGS84 first
-        oldLatLon = this.convertDatum(GeoParams.datum.WGS84);
+        oldLatLon = this.convertDatum(LatLonE.datum.WGS84);
         var transform = toDatum.transform;
     }
 
@@ -179,8 +169,7 @@ LatLonE.prototype.toCartesian = function() {
  * Converts ‘this’ point from cartesian (x/y/z) coordinates to polar (lat/lon) coordinates on
  * specified datum.
  *
- * @augments Vector3d
- * @param {GeoParams.datum.transform} datum - Datum to use when converting point.
+ * @param {LatLonE.datum.transform} datum - Datum to use when converting point.
  */
 Vector3d.prototype.toLatLon = function(datum) {
     var x = this.x, y = this.y, z = this.z;
@@ -211,8 +200,7 @@ Vector3d.prototype.toLatLon = function(datum) {
  * Applies Helmert transform to ‘this’ point using transform parameters t.
  *
  * @private
- * @augments Vector3d
- * @param {GeoParams.datum.transform} t - Transform to apply to this point.
+ * @param {LatLonE.datum.transform} t - Transform to apply to this point.
  */
 Vector3d.prototype.applyTransform = function(t)   {
     var x1 = this.x, y1 = this.y, z1 = this.z;
