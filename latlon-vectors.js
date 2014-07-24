@@ -90,7 +90,7 @@ Vector3d.prototype.toLatLon = function() {
  *
  * @private
  * @param   {number}   bearing - Compass bearing in degrees.
- * @returns {Vector3d} Vector representing great circle.
+ * @returns {Vector3d} Normalised vector representing great circle.
  *
  * @example
  *   var p1 = new LatLonV(53.3206, -1.7297);
@@ -242,7 +242,7 @@ LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngE
  *
  * @param   {LatLonV}        pathStart - Start point of great circle path.
  * @param   {LatLonV|number} pathBrngEnd - End point of great circle path or initial bearing from great circle start point.
- * @returns {number}         Distance to great circle (+ve if to left, -ve if to right).
+ * @returns {number}         Distance to great circle (-ve if to left, +ve if to right of path).
  *
  * @example
  *   var pCurrent = new LatLonV(53.2611, -0.7972);
@@ -266,7 +266,9 @@ LatLonV.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd) {
         var gc = pathStart.greatCircle(pathBrng);
     }
 
-    var α = Math.PI/2 - p.angleTo(gc, p);
+    var α = gc.angleTo(p, p.cross(gc)); // (signed) angle between point & great-circle normal vector
+    var α = α<0 ? -Math.PI/2 - α : Math.PI/2 - α; // (signed) angle between point & great-circle
+
     var d = α * this.radius;
 
     return d;
