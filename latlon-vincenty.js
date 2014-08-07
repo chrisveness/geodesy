@@ -1,3 +1,5 @@
+/* jshint node:true */
+/* globals define */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2014  */
 /*                                                                                                */
@@ -6,7 +8,7 @@
 /*       http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
-if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
+if (typeof module!=='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
 
 
 /**
@@ -33,7 +35,7 @@ LatLonE.prototype.distanceTo = function(point) {
     } catch (e) {
         return NaN; // failed to converge
     }
-}
+};
 
 
 /**
@@ -53,7 +55,7 @@ LatLonE.prototype.initialBearingTo = function(point) {
     } catch (e) {
         return NaN; // failed to converge
     }
-}
+};
 
 
 /**
@@ -73,7 +75,7 @@ LatLonE.prototype.finalBearingTo = function(point) {
     } catch (e) {
         return NaN; // failed to converge
     }
-}
+};
 
 
 /**
@@ -90,7 +92,7 @@ LatLonE.prototype.finalBearingTo = function(point) {
  */
 LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).point;
-}
+};
 
 
 /**
@@ -107,7 +109,7 @@ LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
  */
 LatLonE.prototype.finalBearingOn = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).finalBearing;
-}
+};
 
 
 /**
@@ -138,10 +140,11 @@ LatLonE.prototype.direct = function(initialBearing, distance) {
     var B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
 
     var σ = s / (b*A), σʹ, iterations = 0;
+    var sinσ,cosσ,cos2σM;
     do {
-        var cos2σM = Math.cos(2*σ1 + σ);
-        var sinσ = Math.sin(σ);
-        var cosσ = Math.cos(σ);
+        cos2σM = Math.cos(2*σ1 + σ);
+        sinσ = Math.sin(σ);
+        cosσ = Math.cos(σ);
         var Δσ = B*sinσ*(cos2σM+B/4*(cosσ*(-1+2*cos2σM*cos2σM)-
             B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
         σʹ = σ;
@@ -162,7 +165,7 @@ LatLonE.prototype.direct = function(initialBearing, distance) {
 
     return { point: new LatLonE(φ2.toDegrees(), λ2.toDegrees(), this.datum),
         finalBearing: α2.toDegrees() };
-}
+};
 
 
 /**
@@ -185,16 +188,18 @@ LatLonE.prototype.inverse = function(point) {
     var tanU2 = (1-f) * Math.tan(φ2), cosU2 = 1 / Math.sqrt((1 + tanU2*tanU2)), sinU2 = tanU2 * cosU2;
 
     var λ = L, λʹ, iterations = 0;
+    var cosSqα,sinσ,cosσ,cos2σM,σ,sinλ,cosλ;
     do {
-        var sinλ = Math.sin(λ), cosλ = Math.cos(λ);
+        sinλ = Math.sin(λ);
+        cosλ = Math.cos(λ);
         var sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
-        var sinσ = Math.sqrt(sinSqσ);
-        if (sinσ==0) return 0;  // co-incident points
-        var cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
-        var σ = Math.atan2(sinσ, cosσ);
+        sinσ = Math.sqrt(sinSqσ);
+        if (sinσ===0) return 0;  // co-incident points
+        cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
+        σ = Math.atan2(sinσ, cosσ);
         var sinα = cosU1 * cosU2 * sinλ / sinσ;
-        var cosSqα = 1 - sinα*sinα;
-        var cos2σM = cosσ - 2*sinU1*sinU2/cosSqα;
+        cosSqα = 1 - sinα*sinα;
+        cos2σM = cosσ - 2*sinU1*sinU2/cosSqα;
         if (isNaN(cos2σM)) cos2σM = 0;  // equatorial line: cosSqα=0 (§6)
         var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
         λʹ = λ;
@@ -218,22 +223,22 @@ LatLonE.prototype.inverse = function(point) {
 
     s = Number(s.toFixed(3)); // round to 1mm precision
     return { distance: s, initialBearing: α1.toDegrees(), finalBearing: α2.toDegrees() };
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /** Extend Number object with method to convert numeric degrees to radians */
-if (typeof Number.prototype.toRadians == 'undefined') {
-    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
+if (typeof Number.prototype.toRadians === 'undefined') {
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; };
 }
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
-if (typeof Number.prototype.toDegrees == 'undefined') {
-    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
+if (typeof Number.prototype.toDegrees === 'undefined') {
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; };
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
-if (typeof module != 'undefined' && module.exports) module.exports = LatLonE; // CommonJS
-if (typeof define == 'function' && define.amd) define([], function() { return LatLonE; }); // AMD
+if (typeof console === 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module !== 'undefined' && module.exports) module.exports = LatLonE; // CommonJS
+if (typeof define === 'function' && define.amd) define([], function() { return LatLonE; }); // AMD
