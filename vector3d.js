@@ -1,3 +1,5 @@
+/* jshint node:true*/
+/* globals define */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Vector handling functions                                         (c) Chris Veness 2011-2014  */
 /*                                                                                                */
@@ -44,7 +46,7 @@ function Vector3d(x, y, z) {
  */
 Vector3d.prototype.plus = function(v) {
     return new Vector3d(this.x + v.x, this.y + v.y, this.z + v.z);
-}
+};
 
 
 /**
@@ -55,7 +57,7 @@ Vector3d.prototype.plus = function(v) {
  */
 Vector3d.prototype.minus = function(v) {
     return new Vector3d(this.x - v.x, this.y - v.y, this.z - v.z);
-}
+};
 
 
 /**
@@ -68,7 +70,7 @@ Vector3d.prototype.times = function(x) {
     x = Number(x);
     //console.log(this.toString(), x, (new Vector3d(this.x * x, this.y * x, this.z * x)).toString());
     return new Vector3d(this.x * x, this.y * x, this.z * x);
-}
+};
 
 
 /**
@@ -80,7 +82,7 @@ Vector3d.prototype.times = function(x) {
 Vector3d.prototype.dividedBy = function(x) {
     x = Number(x);
     return new Vector3d(this.x / x, this.y / x, this.z / x);
-}
+};
 
 
 /**
@@ -91,7 +93,7 @@ Vector3d.prototype.dividedBy = function(x) {
  */
 Vector3d.prototype.dot = function(v) {
     return this.x*v.x + this.y*v.y + this.z*v.z;
-}
+};
 
 
 /**
@@ -106,7 +108,7 @@ Vector3d.prototype.cross = function(v) {
     var z = this.x*v.y - this.y*v.x;
 
     return new Vector3d(x, y, z);
-}
+};
 
 
 /**
@@ -116,7 +118,7 @@ Vector3d.prototype.cross = function(v) {
  */
 Vector3d.prototype.negate = function() {
     return new Vector3d(-this.x, -this.y, -this.z);
-}
+};
 
 
 /**
@@ -126,7 +128,7 @@ Vector3d.prototype.negate = function() {
  */
 Vector3d.prototype.length = function() {
     return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
-}
+};
 
 
 /**
@@ -137,15 +139,15 @@ Vector3d.prototype.length = function() {
  */
 Vector3d.prototype.unit = function() {
     var norm = this.length();
-    if (norm == 1) return this;
-    if (norm == 0) return this;
+    if (norm === 1) return this;
+    if (norm === 0) return this;
 
     var x = this.x/norm;
     var y = this.y/norm;
     var z = this.z/norm;
     
     return new Vector3d(x, y, z);
-}
+};
 
 
 /**
@@ -160,13 +162,13 @@ Vector3d.prototype.angleTo = function(v, vSign) {
     var sinθ = this.cross(v).length();
     var cosθ = this.dot(v);
 
-    if (typeof vSign != 'undefined') {
+    if (typeof vSign !== 'undefined') {
         // use vSign as reference to get sign of sinθ
         sinθ = this.cross(v).dot(vSign)<0 ? -sinθ : sinθ;
     }
 
     return Math.atan2(sinθ, cosθ);
-}
+};
 
 
 /**
@@ -198,7 +200,7 @@ Vector3d.prototype.rotateAround = function(axis, theta) {
     var p2 = new Vector3d(qp[0], qp[1], qp[2]);
     return p2;
     // qv en.wikipedia.org/wiki/Rodrigues'_rotation_formula...
-}
+};
 
 
 /**
@@ -208,16 +210,16 @@ Vector3d.prototype.rotateAround = function(axis, theta) {
  * @returns {string} Vector represented as [x,y,z].
  */
 Vector3d.prototype.toString = function(precision) {
-    if (typeof precision == 'undefined') precision = 3;
+    if (typeof precision === 'undefined') precision = 3;
 
     var p = Number(precision);
 
     var str = '[' + this.x.toFixed(p) + ',' + this.y.toFixed(p) + ',' + this.z.toFixed(p) + ']';
 
     return str;
-}
+};
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
-if (typeof module != 'undefined' && module.exports) module.exports = Vector3d; // CommonJS
-if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD
+if (typeof console === 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module !== 'undefined' && module.exports) module.exports = Vector3d; // CommonJS
+if (typeof define === 'function' && define.amd) define([], function() { return Vector3d; }); // AMD

@@ -1,3 +1,5 @@
+/* jshint node: true */
+/* globals define */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* Geodesy tools for an ellipsoidal earth model                       (c) Chris Veness 2005-2014  */
 /*                                                                                                */
@@ -14,8 +16,8 @@
 /*                                                                                                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 'use strict';
-if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node.js)
-if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js'); // CommonJS (Node.js)
+if (typeof module!=='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node.js)
+if (typeof module!=='undefined' && module.exports) var Geo = require('./geo.js'); // CommonJS (Node.js)
 
 
 /**
@@ -39,8 +41,8 @@ function LatLonE(lat, lon, datum, height) {
     // allow instantiation without 'new'
     if (!(this instanceof LatLonE)) return new LatLonE(lat, lon, datum, height);
 
-    if (typeof datum == 'undefined') datum = LatLonE.datum.WGS84;
-    if (typeof height == 'undefined') height = 0;
+    if (typeof datum === 'undefined') datum = LatLonE.datum.WGS84;
+    if (typeof height === 'undefined') height = 0;
 
     this.lat = Number(lat);
     this.lon = Number(lon);
@@ -111,14 +113,14 @@ LatLonE.datum = {
  */
 LatLonE.prototype.convertDatum = function(toDatum) {
     var oldLatLon = this;
-
+    var transform;
     if (oldLatLon.datum == LatLonE.datum.WGS84) {
         // converting from WGS84
-        var transform = toDatum.transform;
+        transform = toDatum.transform;
     }
     if (toDatum == LatLonE.datum.WGS84) {
         // converting to WGS84; use inverse transform (don't overwrite original!)
-        var transform = {};
+        transform = {};
         for (var param in oldLatLon.datum.transform) {
             transform[param] = -oldLatLon.datum.transform[param];
         }
@@ -126,7 +128,7 @@ LatLonE.prototype.convertDatum = function(toDatum) {
     if (typeof transform == 'undefined') {
         // neither this.datum nor toDatum are WGS84: convert this to WGS84 first
         oldLatLon = this.convertDatum(LatLonE.datum.WGS84);
-        var transform = toDatum.transform;
+        transform = toDatum.transform;
     }
 
     // convert polar to cartesian
@@ -139,7 +141,7 @@ LatLonE.prototype.convertDatum = function(toDatum) {
     var newLatLon = cartesian.toLatLon(toDatum);
 
     return newLatLon;
-}
+};
 
 
 /**
@@ -164,7 +166,7 @@ LatLonE.prototype.toCartesian = function() {
     var point = new Vector3d(x, y, z);
 
     return point;
-}
+};
 
 
 /**
@@ -183,9 +185,10 @@ Vector3d.prototype.toLatLon = function(datum) {
     var φ = Math.atan2(z, p*(1-eSq)), φʹ; // initial value of φ
 
     var precision = 1 / a;  // 1m: Helmert transform cannot generally do better than a few metres
+    var ν;
     do {
         var sinφ = Math.sin(φ);
-        var ν = a / Math.sqrt(1 - eSq*sinφ*sinφ);
+        ν = a / Math.sqrt(1 - eSq*sinφ*sinφ);
         φʹ = φ;
         φ = Math.atan2(z + eSq*ν*sinφ, p);
     } while (Math.abs(φ-φʹ) > precision);
@@ -196,7 +199,7 @@ Vector3d.prototype.toLatLon = function(datum) {
     var point = new LatLonE(φ.toDegrees(), λ.toDegrees(), datum, H);
 
     return point;
-}
+};
 
 /**
  * Applies Helmert transform to ‘this’ point using transform parameters t.
@@ -221,7 +224,7 @@ Vector3d.prototype.applyTransform = function(t)   {
     var point = new Vector3d(x2, y2, z2);
 
     return point;
-}
+};
 
 
 /**
@@ -234,19 +237,19 @@ Vector3d.prototype.applyTransform = function(t)   {
  */
 LatLonE.prototype.toString = function(format, dp) {
     return Geo.toLat(this.lat, format, dp) + ', ' + Geo.toLon(this.lon, format, dp);
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
-    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; };
 }
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
-    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; };
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
