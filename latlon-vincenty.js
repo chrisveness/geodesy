@@ -5,6 +5,8 @@
 /*       of nested equations", Survey Review, vol XXIII no 176, 1975                              */
 /*       http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
 
@@ -33,7 +35,7 @@ LatLonE.prototype.distanceTo = function(point) {
     } catch (e) {
         return NaN; // failed to converge
     }
-}
+};
 
 
 /**
@@ -53,7 +55,7 @@ LatLonE.prototype.initialBearingTo = function(point) {
     } catch (e) {
         return NaN; // failed to converge
     }
-}
+};
 
 
 /**
@@ -73,7 +75,7 @@ LatLonE.prototype.finalBearingTo = function(point) {
     } catch (e) {
         return NaN; // failed to converge
     }
-}
+};
 
 
 /**
@@ -90,7 +92,7 @@ LatLonE.prototype.finalBearingTo = function(point) {
  */
 LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).point;
-}
+};
 
 
 /**
@@ -107,7 +109,7 @@ LatLonE.prototype.destinationPoint = function(initialBearing, distance) {
  */
 LatLonE.prototype.finalBearingOn = function(initialBearing, distance) {
     return this.direct(initialBearing, distance).finalBearing;
-}
+};
 
 
 /**
@@ -137,12 +139,14 @@ LatLonE.prototype.direct = function(initialBearing, distance) {
     var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
     var B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
 
+    var cos2σM, sinσ, cosσ, Δσ;
+
     var σ = s / (b*A), σʹ, iterations = 0;
     do {
-        var cos2σM = Math.cos(2*σ1 + σ);
-        var sinσ = Math.sin(σ);
-        var cosσ = Math.cos(σ);
-        var Δσ = B*sinσ*(cos2σM+B/4*(cosσ*(-1+2*cos2σM*cos2σM)-
+        cos2σM = Math.cos(2*σ1 + σ);
+        sinσ = Math.sin(σ);
+        cosσ = Math.cos(σ);
+        Δσ = B*sinσ*(cos2σM+B/4*(cosσ*(-1+2*cos2σM*cos2σM)-
             B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
         σʹ = σ;
         σ = s / (b*A) + Δσ;
@@ -162,7 +166,7 @@ LatLonE.prototype.direct = function(initialBearing, distance) {
 
     return { point: new LatLonE(φ2.toDegrees(), λ2.toDegrees(), this.datum),
         finalBearing: α2.toDegrees() };
-}
+};
 
 
 /**
@@ -184,19 +188,22 @@ LatLonE.prototype.inverse = function(point) {
     var tanU1 = (1-f) * Math.tan(φ1), cosU1 = 1 / Math.sqrt((1 + tanU1*tanU1)), sinU1 = tanU1 * cosU1;
     var tanU2 = (1-f) * Math.tan(φ2), cosU2 = 1 / Math.sqrt((1 + tanU2*tanU2)), sinU2 = tanU2 * cosU2;
 
+    var sinλ, cosλ, sinSqσ, sinσ, cosσ, σ, sinα, cosSqα, cos2σM, C;
+
     var λ = L, λʹ, iterations = 0;
     do {
-        var sinλ = Math.sin(λ), cosλ = Math.cos(λ);
-        var sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
-        var sinσ = Math.sqrt(sinSqσ);
-        if (sinσ==0) return 0;  // co-incident points
-        var cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
-        var σ = Math.atan2(sinσ, cosσ);
-        var sinα = cosU1 * cosU2 * sinλ / sinσ;
-        var cosSqα = 1 - sinα*sinα;
-        var cos2σM = cosσ - 2*sinU1*sinU2/cosSqα;
+        sinλ = Math.sin(λ);
+        cosλ = Math.cos(λ);
+        sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
+        sinσ = Math.sqrt(sinSqσ);
+        if (sinσ == 0) return 0;  // co-incident points
+        cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
+        σ = Math.atan2(sinσ, cosσ);
+        sinα = cosU1 * cosU2 * sinλ / sinσ;
+        cosSqα = 1 - sinα*sinα;
+        cos2σM = cosσ - 2*sinU1*sinU2/cosSqα;
         if (isNaN(cos2σM)) cos2σM = 0;  // equatorial line: cosSqα=0 (§6)
-        var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
+        C = f/16*cosSqα*(4+f*(4-3*cosSqα));
         λʹ = λ;
         λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
     } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<200);
@@ -218,22 +225,21 @@ LatLonE.prototype.inverse = function(point) {
 
     s = Number(s.toFixed(3)); // round to 1mm precision
     return { distance: s, initialBearing: α1.toDegrees(), finalBearing: α2.toDegrees() };
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
-    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; };
 }
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
-    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; };
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = LatLonE; // CommonJS
 if (typeof define == 'function' && define.amd) define([], function() { return LatLonE; }); // AMD

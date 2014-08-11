@@ -3,6 +3,8 @@
 /*   - www.movable-type.co.uk/scripts/latlon-gridref.html                                         */
 /*   - www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf           */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
 
@@ -83,7 +85,7 @@ OsGridRef.latLonToOsGrid = function(point) {
     var E = E0 + IV*Δλ + V*Δλ3 + VI*Δλ5;
 
     return new OsGridRef(E, N);
-}
+};
 
 
 /**
@@ -141,7 +143,7 @@ OsGridRef.osGridToLatLon = function(gridref) {
     var λ = λ0 + X*dE - XI*dE3 + XII*dE5 - XIIA*dE7;
 
     return new LatLonE(φ.toDegrees(), λ.toDegrees(), LatLonE.datum.OSGB36);
-}
+};
 
 
 /**
@@ -187,7 +189,7 @@ OsGridRef.parse = function(gridref) {
     }
 
     return new OsGridRef(e, n);
-}
+};
 
 
 /**
@@ -200,7 +202,7 @@ OsGridRef.prototype.toString = function(digits) {
     digits = (typeof digits == 'undefined') ? 10 : digits;
     var e = this.easting;
     var n = this.northing;
-    if (e==NaN || n==NaN) return '??';
+    if (isNaN(e) || isNaN(n)) return '??';
 
     // get the 100km-grid indices
     var e100k = Math.floor(e/100000), n100k = Math.floor(n/100000);
@@ -223,7 +225,7 @@ OsGridRef.prototype.toString = function(digits) {
     var gridRef = letPair + ' ' + e.pad(digits/2) + ' ' + n.pad(digits/2);
 
     return gridRef;
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -234,7 +236,7 @@ OsGridRef.prototype.toString = function(digits) {
 if (typeof String.prototype.trim == 'undefined') {
     String.prototype.trim = function() {
         return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    }
+    };
 }
 
 
@@ -245,11 +247,10 @@ if (typeof Number.prototype.pad == 'undefined') {
         var n = this.toString();
         while (n.length < w) n = '0' + n;
         return n;
-    }
+    };
 }
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = OsGridRef; // CommonJS
 if (typeof define == 'function' && define.amd) define([], function() { return OsGridRef; }); // AMD

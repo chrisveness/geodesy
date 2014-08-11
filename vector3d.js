@@ -10,6 +10,8 @@
 /*   - motion vector on Earth's surface                                                           */
 /*   - etc                                                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define */
 'use strict';
 
 
@@ -44,7 +46,7 @@ function Vector3d(x, y, z) {
  */
 Vector3d.prototype.plus = function(v) {
     return new Vector3d(this.x + v.x, this.y + v.y, this.z + v.z);
-}
+};
 
 
 /**
@@ -55,7 +57,7 @@ Vector3d.prototype.plus = function(v) {
  */
 Vector3d.prototype.minus = function(v) {
     return new Vector3d(this.x - v.x, this.y - v.y, this.z - v.z);
-}
+};
 
 
 /**
@@ -66,9 +68,8 @@ Vector3d.prototype.minus = function(v) {
  */
 Vector3d.prototype.times = function(x) {
     x = Number(x);
-    //console.log(this.toString(), x, (new Vector3d(this.x * x, this.y * x, this.z * x)).toString());
     return new Vector3d(this.x * x, this.y * x, this.z * x);
-}
+};
 
 
 /**
@@ -80,7 +81,7 @@ Vector3d.prototype.times = function(x) {
 Vector3d.prototype.dividedBy = function(x) {
     x = Number(x);
     return new Vector3d(this.x / x, this.y / x, this.z / x);
-}
+};
 
 
 /**
@@ -91,7 +92,7 @@ Vector3d.prototype.dividedBy = function(x) {
  */
 Vector3d.prototype.dot = function(v) {
     return this.x*v.x + this.y*v.y + this.z*v.z;
-}
+};
 
 
 /**
@@ -106,7 +107,7 @@ Vector3d.prototype.cross = function(v) {
     var z = this.x*v.y - this.y*v.x;
 
     return new Vector3d(x, y, z);
-}
+};
 
 
 /**
@@ -116,7 +117,7 @@ Vector3d.prototype.cross = function(v) {
  */
 Vector3d.prototype.negate = function() {
     return new Vector3d(-this.x, -this.y, -this.z);
-}
+};
 
 
 /**
@@ -126,7 +127,7 @@ Vector3d.prototype.negate = function() {
  */
 Vector3d.prototype.length = function() {
     return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
-}
+};
 
 
 /**
@@ -145,7 +146,7 @@ Vector3d.prototype.unit = function() {
     var z = this.z/norm;
     
     return new Vector3d(x, y, z);
-}
+};
 
 
 /**
@@ -166,7 +167,7 @@ Vector3d.prototype.angleTo = function(v, vSign) {
     }
 
     return Math.atan2(sinθ, cosθ);
-}
+};
 
 
 /**
@@ -186,8 +187,8 @@ Vector3d.prototype.rotateAround = function(axis, theta) {
     var c = Math.cos(theta);
     // quaternion-derived rotation matrix
     var q = [ [ a.x*a.x*(1-c) + c,     a.x*a.y*(1-c) - a.z*s, a.x*a.z*(1-c) + a.y*s],
-        [ a.y*a.x*(1-c) + a.z*s, a.y*a.y*(1-c) + c,     a.y*a.z*(1-c) - a.x*s],
-        [ a.z*a.x*(1-c) - a.y*s, a.z*a.y*(1-c) + a.x*s, a.z*a.z*(1-c) + c    ] ];
+              [ a.y*a.x*(1-c) + a.z*s, a.y*a.y*(1-c) + c,     a.y*a.z*(1-c) - a.x*s],
+              [ a.z*a.x*(1-c) - a.y*s, a.z*a.y*(1-c) + a.x*s, a.z*a.z*(1-c) + c    ] ];
     // multiply q × p
     var qp = [0, 0, 0];
     for (var i=0; i<3; i++) {
@@ -198,7 +199,7 @@ Vector3d.prototype.rotateAround = function(axis, theta) {
     var p2 = new Vector3d(qp[0], qp[1], qp[2]);
     return p2;
     // qv en.wikipedia.org/wiki/Rodrigues'_rotation_formula...
-}
+};
 
 
 /**
@@ -215,9 +216,9 @@ Vector3d.prototype.toString = function(precision) {
     var str = '[' + this.x.toFixed(p) + ',' + this.y.toFixed(p) + ',' + this.z.toFixed(p) + ']';
 
     return str;
-}
+};
+
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = Vector3d; // CommonJS
 if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD

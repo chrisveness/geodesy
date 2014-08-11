@@ -2,6 +2,8 @@
 /*  Latitude/longitude spherical geodesy formulae & scripts           (c) Chris Veness 2002-2014  */
 /*   - www.movable-type.co.uk/scripts/latlong.html                                                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Geo = require('./geo'); // CommonJS (Node.js)
 
@@ -60,7 +62,7 @@ LatLon.prototype.distanceTo = function(point) {
     var d = R * c;
 
     return d;
-}
+};
 
 
 /**
@@ -84,7 +86,7 @@ LatLon.prototype.bearingTo = function(point) {
     var θ = Math.atan2(y, x);
 
     return (θ.toDegrees()+360) % 360;
-}
+};
 
 
 /**
@@ -101,7 +103,7 @@ LatLon.prototype.bearingTo = function(point) {
 LatLon.prototype.finalBearingTo = function(point) {
     // get initial bearing from destination point to this point & reverse it by adding 180°
     return ( point.bearingTo(this)+180 ) % 360;
-}
+};
 
 
 /**
@@ -130,7 +132,7 @@ LatLon.prototype.midpointTo = function(point) {
     λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
 
     return new LatLon(φ3.toDegrees(), λ3.toDegrees());
-}
+};
 
 
 /**
@@ -161,7 +163,7 @@ LatLon.prototype.destinationPoint = function(brng, dist) {
     λ2 = (λ2+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
 
     return new LatLon(φ2.toDegrees(), λ2.toDegrees());
-}
+};
 
 
 /**
@@ -197,12 +199,13 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     var θ2 = Math.acos( ( Math.sin(φ1) - Math.sin(φ2)*Math.cos(δ12) ) /
                         ( Math.sin(δ12)*Math.cos(φ2) ) );
 
+    var θ12, θ21;
     if (Math.sin(λ2-λ1) > 0) {
-        var θ12 = θ1;
-        var θ21 = 2*Math.PI - θ2;
+        θ12 = θ1;
+        θ21 = 2*Math.PI - θ2;
     } else {
-        var θ12 = 2*Math.PI - θ1;
-        var θ21 = θ2;
+        θ12 = 2*Math.PI - θ1;
+        θ21 = θ2;
     }
 
     var α1 = (θ13 - θ12 + Math.PI) % (2*Math.PI) - Math.PI; // angle 2-1-3
@@ -218,7 +221,7 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     var α3 = Math.acos( -Math.cos(α1)*Math.cos(α2) +
                          Math.sin(α1)*Math.sin(α2)*Math.cos(δ12) );
     var δ13 = Math.atan2( Math.sin(δ12)*Math.sin(α1)*Math.sin(α2),
-                          Math.cos(α2)+Math.cos(α1)*Math.cos(α3) )
+                          Math.cos(α2)+Math.cos(α1)*Math.cos(α3) );
     var φ3 = Math.asin( Math.sin(φ1)*Math.cos(δ13) +
                         Math.cos(φ1)*Math.sin(δ13)*Math.cos(θ13) );
     var Δλ13 = Math.atan2( Math.sin(θ13)*Math.sin(δ13)*Math.cos(φ1),
@@ -227,7 +230,7 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
 
     return new LatLon(φ3.toDegrees(), λ3.toDegrees());
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -262,7 +265,7 @@ LatLon.prototype.rhumbDistanceTo = function(point) {
     var dist = δ * R;
 
     return dist;
-}
+};
 
 
 /**
@@ -286,7 +289,7 @@ LatLon.prototype.rhumbBearingTo = function(point) {
     var θ = Math.atan2(Δλ, Δψ);
 
     return (θ.toDegrees()+360) % 360;
-}
+};
 
 
 /**
@@ -322,7 +325,7 @@ LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
     λ2 = (λ2 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
 
     return new LatLon(φ2.toDegrees(), λ2.toDegrees());
-}
+};
 
 
 /**
@@ -354,7 +357,7 @@ LatLon.prototype.rhumbMidpointTo = function(point) {
     λ3 = (λ3 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
 
     return new LatLon(φ3.toDegrees(), λ3.toDegrees());
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -372,7 +375,7 @@ LatLon.prototype.toString = function(format, dp) {
     if (typeof format == 'undefined') format = 'dms';
 
     return Geo.toLat(this.lat, format, dp) + ', ' + Geo.toLon(this.lon, format, dp);
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -380,17 +383,16 @@ LatLon.prototype.toString = function(format, dp) {
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
-    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; };
 }
 
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
-    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; };
 }
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = LatLon; // CommonJS
 if (typeof define == 'function' && define.amd) define(['Geo'], function() { return LatLon; }); // AMD

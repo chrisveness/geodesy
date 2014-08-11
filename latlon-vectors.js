@@ -6,6 +6,8 @@
 /*   b) 3D vectors used as n-vectors representing points on the surface of the earth's surface,   */
 /*      or vectors normal to the plane of a great circle                                          */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node.js)
 if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js'); // CommonJS (Node.js)
@@ -65,7 +67,7 @@ LatLonV.prototype.toVector = function() {
     var z = Math.sin(φ);
 
     return new Vector3d(x, y, z);
-}
+};
 
 
 /**
@@ -83,7 +85,7 @@ Vector3d.prototype.toLatLon = function() {
     var λ = Math.atan2(this.y, this.x);
 
     return new LatLonV(φ.toDegrees(), λ.toDegrees());
-}
+};
 
 
 /**
@@ -107,7 +109,7 @@ LatLonV.prototype.greatCircle = function(bearing) {
     var z =  Math.cos(φ) * Math.sin(θ);
 
     return new Vector3d(x, y, z);
-}
+};
 
 
 /**
@@ -128,7 +130,7 @@ LatLonV.prototype.distanceTo = function(point) {
     var d = δ * this.radius;
 
     return d;
-}
+};
 
 
 /**
@@ -154,7 +156,7 @@ LatLonV.prototype.bearingTo = function(point) {
     var bearing = c1.angleTo(c2, p1).toDegrees();
 
     return (bearing+360) % 360; // normalise to 0..360
-}
+};
 
 
 /**
@@ -174,7 +176,7 @@ LatLonV.prototype.midpointTo = function(point) {
     var mid = p1.plus(p2).unit();
 
     return mid.toLatLon();
-}
+};
 
 
 /**
@@ -203,7 +205,7 @@ LatLonV.prototype.destinationPoint = function(bearing, distance) {
     var p2 = x.plus(y).unit();
 
     return p2.toLatLon();
-}
+};
 
 
 /**
@@ -221,21 +223,22 @@ LatLonV.prototype.destinationPoint = function(bearing, distance) {
  *   var pInt = LatLonV.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9078°N, 004.5084°E
  */
 LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
+    var c1, c2;
     if (path1brngEnd instanceof LatLonV) { // path 1 defined by endpoint
-        var c1 = path1start.toVector().cross(path1brngEnd.toVector());
+        c1 = path1start.toVector().cross(path1brngEnd.toVector());
     } else {                               // path 1 defined by initial bearing
-        var c1 = path1start.greatCircle(path1brngEnd);
+        c1 = path1start.greatCircle(path1brngEnd);
     }
     if (path2brngEnd instanceof LatLonV) { // path 2 defined by endpoint
-        var c2 = path2start.toVector().cross(path2brngEnd.toVector());
+        c2 = path2start.toVector().cross(path2brngEnd.toVector());
     } else {                               // path 2 defined by initial bearing
-        var c2 = path2start.greatCircle(path2brngEnd);
+        c2 = path2start.greatCircle(path2brngEnd);
     }
 
     var intersection = c1.cross(c2);
 
     return intersection.toLatLon();
-}
+};
 
 
 /**
@@ -257,23 +260,24 @@ LatLonV.intersection = function(path1start, path1brngEnd, path2start, path2brngE
 LatLonV.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd) {
     var p = this.toVector();
 
+    var gc;
     if (pathBrngEnd instanceof LatLonV) {
         // great circle defined by two points
         var pathEnd = pathBrngEnd;
-        var gc = pathStart.toVector().cross(pathEnd.toVector());
+        gc = pathStart.toVector().cross(pathEnd.toVector());
     } else {
         // great circle defined by point + bearing
         var pathBrng = Number(pathBrngEnd);
-        var gc = pathStart.greatCircle(pathBrng);
+        gc = pathStart.greatCircle(pathBrng);
     }
 
     var α = gc.angleTo(p, p.cross(gc)); // (signed) angle between point & great-circle normal vector
-    var α = α<0 ? -Math.PI/2 - α : Math.PI/2 - α; // (signed) angle between point & great-circle
+    α = α<0 ? -Math.PI/2 - α : Math.PI/2 - α; // (signed) angle between point & great-circle
 
     var d = α * this.radius;
 
     return d;
-}
+};
 
 
 /**
@@ -318,7 +322,7 @@ LatLonV.prototype.enclosedBy = function(points) {
     }
 
     return true;
-}
+};
 
 
 /**
@@ -338,7 +342,7 @@ LatLonV.meanOf = function(points) {
 
     // m is now geographic mean
     return m.unit().toLatLon();
-}
+};
 
 
 /**
@@ -359,7 +363,7 @@ LatLonV.prototype.equals = function(point) {
     if (this.radius != point.radius) return false;
 
     return true;
-}
+};
 
 
 /**
@@ -373,19 +377,19 @@ LatLonV.prototype.toString = function(format, dp) {
     if (typeof format == 'undefined') format = 'dms';
 
     return Geo.toLat(this.lat, format, dp) + ', ' + Geo.toLon(this.lon, format, dp);
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
-    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; };
 }
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
 if (typeof Number.prototype.toDegrees == 'undefined') {
-    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; };
 }
 
 /** Extend Math object to test the sign of a number, indicating whether it's positive, negative or zero */
@@ -393,11 +397,10 @@ if (typeof Math.sign == 'undefined') {
     // stackoverflow.com/questions/7624920/number-sign-in-javascript
     Math.sign = function(x) {
         return typeof x == 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
-    }
+    };
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = LatLonV; // CommonJS
 if (typeof module != 'undefined' && module.exports) module.exports.Vector3d = Vector3d; // CommonJS
 if (typeof define == 'function' && define.amd) define([], function() { return LatLonV; }); // AMD
