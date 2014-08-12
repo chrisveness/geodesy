@@ -103,6 +103,21 @@ The library includes:
 
 More information at www.movable-type.co.uk/scripts/latlong-gridref.html.
 
+geohash.js
+------------
+
+Functions to convert [geohash](http://en.wikipedia.org/wiki/Geohash) to/from latitude/longitude
+points, also to determine bounds of a geohash cell and find neighbours of a geohash.
+
+The library includes:
+
+- `encode`: latitude/longitude point to geohash
+- `decode`: geohash to latitude/longitude
+- `bounds` of a geohash cell
+- `neighbours`: of a geohash
+
+More information at www.movable-type.co.uk/scripts/geohash.html.
+
 geo.js
 ------
 
