@@ -25,7 +25,7 @@ The library includes the following functions:
 - `rhumbDestinationPoint` following given bearing for given distance
 - `rhumbMidpointTo` destination point
 
-Full details are available at www.movable-type.co.uk/scripts/latlong.html
+Full details are available at www.movable-type.co.uk/scripts/latlong.html.
 
 latlon-vincenty.js
 ------------------
@@ -47,25 +47,30 @@ The heaving lifting is done in two routines:
 - `direct` (implementing the direct solution of geodesics on the ellipsoid)
 - `inverse` (implementing the inverse solution of geodesics on the ellipsoid)
 
-Full details are available at www.movable-type.co.uk/scripts/latlong-vincenty.html
+Full details are available at www.movable-type.co.uk/scripts/latlong-vincenty.html.
 
 latlon-ellipsoid.js
 -------------------
 
-Geodesy tools for an ellipsoidal earth model. The `LatLonE` object incorporates not just latitude &
-longitude coordinates, but also the datum the lat/lon point is defined on, along with functions for
-translating between different datums (e.g. between OSGB36 & WGS-84). Also included is the
-`GeoParams` object with ellipsoid parameters and datum transform parameters.
+Geodesy tools for an ellipsoidal earth model.
+
+The `LatLonE` object incorporates not just latitude & longitude coordinates, but also the datum the
+lat/lon point is defined on.
+
+`LatLonE` also holds ellipsoid parameters and Helmert transform parameters for translating between
+different datums (e.g. between OSGB36 & WGS-84).
+
+The `convertDatum` function performs such translations between datums.
 
 The library includes:
 
-- ellipsoid parameters
-- datum ellipsoid & Helmert transform parameters
-- `convertDatum`
-- `toCartesian` (ECEF 3-d vector)
-- `toLatLon` (from ECEF 3-d vector)
+- `ellipsoid` parameters
+- `datum` parameters (reference ellipsoid & Helmert transform parameters)
+- `convertDatum`: convert lat/lon point to new datum
+- `toCartesian`: convert lat/lon point to ECEF 3-d vector
+- `toLatLon`: convert ECEF 3-d vector to lat/lon point
 
-More information at www.movable-type.co.uk/scripts/latlong-convert-coords.html
+More information at www.movable-type.co.uk/scripts/latlong-convert-coords.html.
 
 latlon-vectors.js
 -----------------
@@ -86,7 +91,7 @@ The library includes:
 - `enclosedBy` polygon
 - `meanOf` set of points
 
-More information at www.movable-type.co.uk/scripts/latlong-vectors.html
+More information at www.movable-type.co.uk/scripts/latlong-vectors.html.
 
 osgridref.js
 ------------

@@ -29,10 +29,10 @@ if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js');
  * @requires Geo
  *
  * @constructor
- * @param {number}          lat - Geodetic latitude in degrees.
- * @param {number}          lon - Longitude in degrees.
+ * @param {number}        lat - Geodetic latitude in degrees.
+ * @param {number}        lon - Longitude in degrees.
  * @param {LatLonE.datum} [datum=WGS84] - Datum this point is defined within.
- * @param {number}          [height=0] - Height above ellipsoid, in metres.
+ * @param {number}        [height=0] - Height above ellipsoid, in metres.
  *
  * @example
  *     var p1 = new LatLonE(51.4778, -0.0016, LatLonE.datum.WGS84);
@@ -74,6 +74,12 @@ LatLonE.datum = {
                      rx:    0.0,    ry:    0.0,     rz:    0.0,    // sec
                       s:    0.0 }                                  // ppm
     },
+    NAD83: { // (2009); functionally ≡ WGS84 - www.uvm.edu/giv/resources/WGS84_NAD83.pdf
+        ellipsoid: LatLonE.ellipsoid.GRS80,
+        transform: { tx:    1.004,  ty:   -1.910,   tz:   -0.515,  // m
+                     rx:    0.0267 ,ry:    0.00034, rz:    0.011,  // sec
+                      s:   -0.0015 }                               // ppm
+    }, // note: if you *really* need to convert WGS84<->NAD83, you need more knowledge than this!
     OSGB36: { // www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
         ellipsoid: LatLonE.ellipsoid.Airy1830,
         transform: { tx: -446.448,  ty:  125.157,   tz: -542.060,  // m
