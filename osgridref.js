@@ -26,8 +26,8 @@ function OsGridRef(easting, northing) {
     // allow instantiation without 'new'
     if (!(this instanceof OsGridRef)) return new OsGridRef(easting, northing);
 
-    this.easting = Math.floor(Number(easting));
-    this.northing = Math.floor(Number(northing));
+    this.easting = Math.floor(Number(easting));   // truncate if necessary to left of 1m grid square
+    this.northing = Math.floor(Number(northing)); // truncate if necessary to bottom of 1m grid square
 }
 
 
@@ -84,7 +84,7 @@ OsGridRef.latLonToOsGrid = function(point) {
     var N = I + II*Δλ2 + III*Δλ4 + IIIA*Δλ6;
     var E = E0 + IV*Δλ + V*Δλ3 + VI*Δλ5;
 
-    return new OsGridRef(E, N);
+    return new OsGridRef(E, N); // gets truncated to SW corner of 1m grid square
 };
 
 
@@ -99,8 +99,8 @@ OsGridRef.latLonToOsGrid = function(point) {
  *   var p = OsGridRef.osGridToLatLon(grid); // p.toString(): 52°39′27″N, 001°43′04″E
  */
 OsGridRef.osGridToLatLon = function(gridref) {
-    var E = gridref.easting;
-    var N = gridref.northing;
+    var E = gridref.easting + 0.5;  // easting of centre of 1m grid square
+    var N = gridref.northing + 0.5; // northing of centre of 1m grid square
 
     var a = 6377563.396, b = 6356256.909;         // Airy 1830 major & minor semi-axes
     var F0 = 0.9996012717;                        // NatGrid scale factor on central meridian
@@ -117,14 +117,14 @@ OsGridRef.osGridToLatLon = function(gridref) {
         var Mb = (3*n + 3*n*n + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
         var Mc = ((15/8)*n2 + (15/8)*n3) * Math.sin(2*(φ-φ0)) * Math.cos(2*(φ+φ0));
         var Md = (35/24)*n3 * Math.sin(3*(φ-φ0)) * Math.cos(3*(φ+φ0));
-        M = b * F0 * (Ma - Mb + Mc - Md);                // meridional arc
+        M = b * F0 * (Ma - Mb + Mc - Md);              // meridional arc
 
     } while (N-N0-M >= 0.00001);  // ie until < 0.01mm
 
     var cosφ = Math.cos(φ), sinφ = Math.sin(φ);
-    var ν = a*F0/Math.sqrt(1-e2*sinφ*sinφ);             // nu = transverse radius of curvature
+    var ν = a*F0/Math.sqrt(1-e2*sinφ*sinφ);            // nu = transverse radius of curvature
     var ρ = a*F0*(1-e2)/Math.pow(1-e2*sinφ*sinφ, 1.5); // rho = meridional radius of curvature
-    var η2 = ν/ρ-1;                                      // eta = ?
+    var η2 = ν/ρ-1;                                    // eta = ?
 
     var tanφ = Math.tan(φ);
     var tan2φ = tanφ*tanφ, tan4φ = tan2φ*tan2φ, tan6φ = tan4φ*tan2φ;

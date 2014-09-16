@@ -89,6 +89,12 @@ test('os-gridref', function(assert) {
     assert.equal(OsGridRef.latLonToOsGrid(osgb).toString(), 'TG 51409 13177', 'll -> grid (txt)');
     assert.equal(OsGridRef.osGridToLatLon(OsGridRef(651409, 313177)).toString(), '52°39′27″N, 001°43′04″E', 'grid (num) -> ll');
     assert.deepEqual(OsGridRef.parse('TG 51409 13177'), OsGridRef(651409, 313177), 'parse grid (txt) -> grid (num)');
+
+    var djg = OsGridRef.osGridToLatLon(OsGridRef(544359, 180653));
+    assert.equal(djg.toString('d',6), '51.505867°N, 000.080296°E', 'DJG NGR->OSGB36');
+    assert.equal(djg.convertDatum(LatLonE.datum.WGS84).toString('d',6), '51.506381°N, 000.078666°E', 'DJG NGR->WGS84');
+    assert.equal(OsGridRef.latLonToOsGrid(djg).toString(), 'TQ 44359 80653', 'DJG round-trip');
+
     assert.end();
 });
 
