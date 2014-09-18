@@ -129,7 +129,7 @@ LatLon.prototype.midpointTo = function(point) {
     var φ3 = Math.atan2(Math.sin(φ1)+Math.sin(φ2),
              Math.sqrt( (Math.cos(φ1)+Bx)*(Math.cos(φ1)+Bx) + By*By) );
     var λ3 = λ1 + Math.atan2(By, Math.cos(φ1) + Bx);
-    λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
+    λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
     return new LatLon(φ3.toDegrees(), λ3.toDegrees());
 };
@@ -160,7 +160,7 @@ LatLon.prototype.destinationPoint = function(brng, dist) {
                         Math.cos(φ1)*Math.sin(δ)*Math.cos(θ) );
     var λ2 = λ1 + Math.atan2(Math.sin(θ)*Math.sin(δ)*Math.cos(φ1),
                              Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2));
-    λ2 = (λ2+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
+    λ2 = (λ2+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
     return new LatLon(φ2.toDegrees(), λ2.toDegrees());
 };
@@ -227,7 +227,7 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     var Δλ13 = Math.atan2( Math.sin(θ13)*Math.sin(δ13)*Math.cos(φ1),
                            Math.cos(δ13)-Math.sin(φ1)*Math.sin(φ3) );
     var λ3 = λ1 + Δλ13;
-    λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
+    λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
     return new LatLon(φ3.toDegrees(), λ3.toDegrees());
 };
@@ -322,7 +322,7 @@ LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
 
     var λ2 = λ1 + Δλ;
 
-    λ2 = (λ2 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
+    λ2 = (λ2 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
     return new LatLon(φ2.toDegrees(), λ2.toDegrees());
 };
@@ -354,7 +354,7 @@ LatLon.prototype.rhumbMidpointTo = function(point) {
 
     if (!isFinite(λ3)) λ3 = (λ1+λ2)/2; // parallel of latitude
 
-    λ3 = (λ3 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
+    λ3 = (λ3 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
     return new LatLon(φ3.toDegrees(), λ3.toDegrees());
 };
