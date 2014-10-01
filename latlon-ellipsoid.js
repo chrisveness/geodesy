@@ -54,12 +54,12 @@ function LatLonE(lat, lon, datum, height) {
  * Ellipsoid parameters; major axis (a), minor axis (b), and flattening (f) for each ellipsoid.
  */
 LatLonE.ellipsoid = {
-    WGS84:        { a: 6378137,     b: 6356752.3142,   f: 1/298.257223563 },
-    GRS80:        { a: 6378137,     b: 6356752.314140, f: 1/298.257222101 },
-    Airy1830:     { a: 6377563.396, b: 6356256.909,    f: 1/299.3249646   },
-    AiryModified: { a: 6377340.189, b: 6356034.448,    f: 1/299.32496     },
-    Intl1924:     { a: 6378388.000, b: 6356911.946,    f: 1/297.0         },
-    Bessel1841:   { a: 6377397.155, b: 6356078.963,    f: 1/299.152815351 }
+    WGS84:        { a: 6378137,     b: 6356752.31425, f: 1/298.257223563 },
+    GRS80:        { a: 6378137,     b: 6356752.31414, f: 1/298.257222101 },
+    Airy1830:     { a: 6377563.396, b: 6356256.909,   f: 1/299.3249646   },
+    AiryModified: { a: 6377340.189, b: 6356034.448,   f: 1/299.3249646   },
+    Intl1924:     { a: 6378388,     b: 6356911.946,   f: 1/297           },
+    Bessel1841:   { a: 6377397.155, b: 6356078.963,   f: 1/299.152815351 }
 };
 
 /**
@@ -91,7 +91,7 @@ LatLonE.datum = {
                      rx:    0.0,    ry:    0.0,     rz:    0.156,  // sec
                       s:   -1.2 }                                  // ppm
     },
-    Irl1975: { // maps.osni.gov.uk/CMS_UserFiles/file/The_irish_grid.pdf
+    Irl1975: { // osi.ie/OSI/media/OSI/Content/Publications/transformations_booklet.pdf
         ellipsoid: LatLonE.ellipsoid.AiryModified,
         transform: { tx: -482.530,  ty:  130.596,   tz: -564.557,  // m
                      rx:   -1.042,  ry:   -0.214,   rz:   -0.631,  // sec
