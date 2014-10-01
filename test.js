@@ -160,3 +160,58 @@ test('geo', function(assert) {
 });
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/* Utm                                                                                            */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+test('utm', function(assert) {
+    var LatLonE = require('./latlon-ellipsoid.js');
+    var Utm = require('./utm.js');
+    var Mgrs = require('./mgrs.js');
+
+    // http://www.rcn.montana.edu/resources/converter.aspx
+
+    // latitude/longitude -> UTM
+    assert.equal(LatLonE( 0,  0).toUtm().toString(6), '31 N 166021.443081 0.000000', 'LL->UTM 0,0');
+    assert.equal(LatLonE( 1,  1).toUtm().toString(6), '31 N 277438.263521 110597.972524', 'LL->UTM 1,1');
+    assert.equal(LatLonE(-1, -1).toUtm().toString(6), '30 S 722561.736479 9889402.027476', 'LL->UTM -1,-1');
+    assert.equal(LatLonE( 48.8583,   2.2945).toUtm().toString(3), '31 N 448251.898 5411943.794', 'LL->UTM eiffel tower');
+    assert.equal(LatLonE(-33.857 , 151.215 ).toUtm().toString(3), '56 S 334873.199 6252266.092', 'LL->UTM sidney o/h');
+    assert.equal(LatLonE( 38.8977, -77.0365).toUtm().toString(3), '18 N 323394.296 4307395.634', 'LL->UTM white house');
+    assert.equal(LatLonE(-22.9519, -43.2106).toUtm().toString(3), '23 S 683466.254 7460687.433', 'LL->UTM rio christ');
+    assert.equal(LatLonE( 60.39135,  5.3249).toUtm().toString(3), '32 N 297508.410 6700645.296', 'LL->UTM bergen');
+
+    // UTM -> latitude/longitude
+    assert.equal(Utm.parse('31 N 166021.443081 0.000000').toLatLon().toString(), LatLonE(0, 0).toString(), 'UTM->LL 0,0');
+    assert.equal(Utm.parse('31 N 277438.263521 110597.972524').toLatLon().toString(), LatLonE( 1,  1).toString(), 'UTM->LL 1,1');
+    assert.equal(Utm.parse('30 S 722561.736479 9889402.027476').toLatLon().toString(), LatLonE(-1, -1).toString(), 'UTM->LL -1,-1');
+    assert.equal(Utm.parse('31 N 448251.898 5411943.794').toLatLon().toString(), LatLonE( 48.8583,   2.2945).toString(), 'UTM->LL eiffel tower');
+    assert.equal(Utm.parse('56 S 334873.199 6252266.092').toLatLon().toString(), LatLonE(-33.857 , 151.215 ).toString(), 'UTM->LL sidney o/h');
+    assert.equal(Utm.parse('18 N 323394.296 4307395.634').toLatLon().toString(), LatLonE( 38.8977, -77.0365).toString(), 'UTM->LL white house');
+    assert.equal(Utm.parse('23 S 683466.254 7460687.433').toLatLon().toString(), LatLonE(-22.9519, -43.2106).toString(), 'UTM->LL rio christ');
+    assert.equal(Utm.parse('32 N 297508.410 6700645.296').toLatLon().toString(), LatLonE( 60.39135,  5.3249).toString(), 'UTM->LL bergen');
+
+    // UTM -> MGRS
+    assert.equal(Utm.parse('31 N 166021.443081 0.000000').toMgrs().toString(), '31N AA 66021 00000', 'UTM->MGRS 0,0');
+    assert.equal(Utm.parse('31 N 277438.263521 110597.972524').toMgrs().toString(), '31N BB 77438 10597', 'UTM->MGRS 1,1');
+    assert.equal(Utm.parse('30 S 722561.736479 9889402.027476').toMgrs().toString(), '30M YD 22561 89402', 'UTM->MGRS -1,-1');
+    assert.equal(Utm.parse('31 N 448251.898 5411943.794').toMgrs().toString(), '31U DQ 48251 11943', 'UTM->MGRS eiffel tower');
+    assert.equal(Utm.parse('56 S 334873.199 6252266.092').toMgrs().toString(), '56H LH 34873 52266', 'UTM->MGRS sidney o/h');
+    assert.equal(Utm.parse('18 N 323394.296 4307395.634').toMgrs().toString(), '18S UJ 23394 07395', 'UTM->MGRS white house');
+    assert.equal(Utm.parse('23 S 683466.254 7460687.433').toMgrs().toString(), '23K PQ 83466 60687', 'UTM->MGRS rio christ');
+    assert.equal(Utm.parse('32 N 297508.410 6700645.296').toMgrs().toString(), '32V KN 97508 00645', 'UTM->MGRS bergen');
+
+    // MGRS -> UTM
+    assert.equal(Mgrs.parse('31N AA 66021 00000').toUtm().toString(), '31 N 166021 0', 'MGRS->UTM 0,0');
+    assert.equal(Mgrs.parse('31N BB 77438 10597').toUtm().toString(), '31 N 277438 110597', 'MGRS->UTM 1,1');
+    assert.equal(Mgrs.parse('30M YD 22561 89402').toUtm().toString(), '30 S 722561 9889402', 'MGRS->UTM -1,-1');
+    assert.equal(Mgrs.parse('31U DQ 48251 11943').toUtm().toString(), '31 N 448251 5411943', 'MGRS->UTM eiffel tower');
+    assert.equal(Mgrs.parse('56H LH 34873 52266').toUtm().toString(), '56 S 334873 6252266', 'MGRS->UTM sidney o/h');
+    assert.equal(Mgrs.parse('18S UJ 23394 07395').toUtm().toString(), '18 N 323394 4307395', 'MGRS->UTM white house');
+    assert.equal(Mgrs.parse('23K PQ 83466 60687').toUtm().toString(), '23 S 683466 7460687', 'MGRS->UTM rio christ');
+    assert.equal(Mgrs.parse('32V KN 97508 00645').toUtm().toString(), '32 N 297508 6700645', 'MGRS->UTM bergen');
+
+
+    assert.end();
+});
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
