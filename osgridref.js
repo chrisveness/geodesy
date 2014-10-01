@@ -47,23 +47,23 @@ OsGridRef.latLonToOsGrid = function(point) {
     var φ = point.lat.toRadians();
     var λ = point.lon.toRadians();
 
-    var a = 6377563.396, b = 6356256.909;      // Airy 1830 major & minor semi-axes
-    var F0 = 0.9996012717;                     // NatGrid scale factor on central meridian
+    var a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
+    var F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
     var φ0 = (49).toRadians(), λ0 = (-2).toRadians();  // NatGrid true origin is 49°N,2°W
-    var N0 = -100000, E0 = 400000;             // northing & easting of true origin, metres
-    var e2 = 1 - (b*b)/(a*a);                  // eccentricity squared
-    var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n; // n, n², n³
+    var N0 = -100000, E0 = 400000;                     // northing & easting of true origin, metres
+    var e2 = 1 - (b*b)/(a*a);                          // eccentricity squared
+    var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;         // n, n², n³
 
     var cosφ = Math.cos(φ), sinφ = Math.sin(φ);
-    var ν = a*F0/Math.sqrt(1-e2*sinφ*sinφ);             // nu = transverse radius of curvature
+    var ν = a*F0/Math.sqrt(1-e2*sinφ*sinφ);            // nu = transverse radius of curvature
     var ρ = a*F0*(1-e2)/Math.pow(1-e2*sinφ*sinφ, 1.5); // rho = meridional radius of curvature
-    var η2 = ν/ρ-1;                                      // eta = ?
+    var η2 = ν/ρ-1;                                    // eta = ?
 
     var Ma = (1 + n + (5/4)*n2 + (5/4)*n3) * (φ-φ0);
     var Mb = (3*n + 3*n*n + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
     var Mc = ((15/8)*n2 + (15/8)*n3) * Math.sin(2*(φ-φ0)) * Math.cos(2*(φ+φ0));
     var Md = (35/24)*n3 * Math.sin(3*(φ-φ0)) * Math.cos(3*(φ+φ0));
-    var M = b * F0 * (Ma - Mb + Mc - Md);                // meridional arc
+    var M = b * F0 * (Ma - Mb + Mc - Md);              // meridional arc
 
     var cos3φ = cosφ*cosφ*cosφ;
     var cos5φ = cos3φ*cosφ*cosφ;
@@ -102,12 +102,12 @@ OsGridRef.osGridToLatLon = function(gridref) {
     var E = gridref.easting + 0.5;  // easting of centre of 1m grid square
     var N = gridref.northing + 0.5; // northing of centre of 1m grid square
 
-    var a = 6377563.396, b = 6356256.909;         // Airy 1830 major & minor semi-axes
-    var F0 = 0.9996012717;                        // NatGrid scale factor on central meridian
-    var φ0 = 49*Math.PI/180, λ0 = -2*Math.PI/180; // NatGrid true origin
-    var N0 = -100000, E0 = 400000;                // northing & easting of true origin, metres
-    var e2 = 1 - (b*b)/(a*a);                     // eccentricity squared
-    var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;    // n, n², n³
+    var a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
+    var F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
+    var φ0 = 49*Math.PI/180, λ0 = -2*Math.PI/180;      // NatGrid true origin
+    var N0 = -100000, E0 = 400000;                     // northing & easting of true origin, metres
+    var e2 = 1 - (b*b)/(a*a);                          // eccentricity squared
+    var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;         // n, n², n³
 
     var φ=φ0, M=0;
     do {
@@ -231,7 +231,7 @@ OsGridRef.prototype.toString = function(digits) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
-/** Extend Number object with method to  trim whitespace from string
+/** Extend String object with method to trim whitespace from string
  *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
 if (typeof String.prototype.trim == 'undefined') {
     String.prototype.trim = function() {

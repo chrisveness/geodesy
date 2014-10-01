@@ -20,7 +20,6 @@ if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js');
  *     using a vector-based approach using ‘n-vectors’ (rather than the more common spherical
  *     trigonometry; a vector-based approach makes most calculations much simpler, and easier to
  *     follow, compared with trigonometric equivalents).
- * @augments Vector3d
  * @requires Geo
  *
  * @constructor

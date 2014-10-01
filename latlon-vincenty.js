@@ -13,8 +13,6 @@ if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlo
 
 /**
  * Direct and inverse solutions of geodesics on the ellipsoid using Vincenty formulae
- *
- * @augments LatLonE
  */
 
 

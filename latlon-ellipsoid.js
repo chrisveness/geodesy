@@ -4,7 +4,7 @@
 /* Includes methods for converting lat/lon coordinates between different coordinate systems.      */
 /*   - www.movable-type.co.uk/scripts/latlong-convert-coords.html                                 */
 /*                                                                                                */
-/*  Usage: to eg convert WGS84 coordinate to OSGB coordinate:                                     */
+/*  Usage: to eg convert WGS 84 coordinate to OSGB coordinate:                                    */
 /*   - var wgs84 = new LatLonE(latWGS84, lonWGS84, LatLonE.datum.WGS84);                          */
 /*   - var osgb = wgs84.convertDatum(LatLonE.datum.OSGB36);                                       */
 /*   - var latOSGB = osgb.lat, lonOSGB = osgb.lon;                                                */
@@ -25,7 +25,6 @@ if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js');
  * specified datum.
  *
  * @classdesc Library of geodesy functions for operations on an ellipsoidal earth model.
- * @augments Vector3d
  * @requires Geo
  *
  * @constructor
@@ -64,7 +63,7 @@ LatLonE.ellipsoid = {
 };
 
 /**
- * Datums; with associated *ellipsoid* and Helmert *transform* parameters to convert from WGS84
+ * Datums; with associated *ellipsoid* and Helmert *transform* parameters to convert from WGS 84
  * into given datum.
  */
 LatLonE.datum = {
@@ -122,11 +121,11 @@ LatLonE.prototype.convertDatum = function(toDatum) {
     var transform;
 
     if (oldLatLon.datum == LatLonE.datum.WGS84) {
-        // converting from WGS84
+        // converting from WGS 84
         transform = toDatum.transform;
     }
     if (toDatum == LatLonE.datum.WGS84) {
-        // converting to WGS84; use inverse transform (don't overwrite original!)
+        // converting to WGS 84; use inverse transform (don't overwrite original!)
         transform = {};
         for (var param in oldLatLon.datum.transform) {
             if (oldLatLon.datum.transform.hasOwnProperty(param)) {
