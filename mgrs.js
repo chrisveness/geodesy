@@ -108,8 +108,8 @@ Utm.prototype.toMgrs = function() {
     var northing = this.northing % 100000;
 
     // round to nm precision
-    easting = Math.round(easting*1e6)/1e6;
-    northing = Math.round(northing*1e6)/1e6;
+    easting = Number(easting.toFixed(6));
+    northing = Number(northing.toFixed(6));
 
     return new Mgrs(zone, band, e100k, n100k, easting, northing);
 };
