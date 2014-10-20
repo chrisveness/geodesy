@@ -179,6 +179,8 @@ test('utm', function(assert) {
     assert.equal(LatLonE( 38.8977, -77.0365).toUtm().toString(3), '18 N 323394.296 4307395.634', 'LL->UTM white house');
     assert.equal(LatLonE(-22.9519, -43.2106).toUtm().toString(3), '23 S 683466.254 7460687.433', 'LL->UTM rio christ');
     assert.equal(LatLonE( 60.39135,  5.3249).toUtm().toString(3), '32 N 297508.410 6700645.296', 'LL->UTM bergen');
+    assert.equal(LatLonE( 60.39135,  5.3249).toUtm().convergence, -3.196281440, 'LL->UTM bergen convergence');
+    assert.equal(LatLonE( 60.39135,  5.3249).toUtm().scale,     1.000102473211, 'LL->UTM bergen scale');
 
     // UTM -> latitude/longitude
     assert.equal(Utm.parse('31 N 166021.443081 0.000000').toLatLon().toString(), LatLonE(0, 0).toString(), 'UTM->LL 0,0');
@@ -189,6 +191,8 @@ test('utm', function(assert) {
     assert.equal(Utm.parse('18 N 323394.296 4307395.634').toLatLon().toString(), LatLonE( 38.8977, -77.0365).toString(), 'UTM->LL white house');
     assert.equal(Utm.parse('23 S 683466.254 7460687.433').toLatLon().toString(), LatLonE(-22.9519, -43.2106).toString(), 'UTM->LL rio christ');
     assert.equal(Utm.parse('32 N 297508.410 6700645.296').toLatLon().toString(), LatLonE( 60.39135,  5.3249).toString(), 'UTM->LL bergen');
+    assert.equal(Utm.parse('32 N 297508.410 6700645.296').toLatLon().convergence, -3.196281443, 'UTM->LL bergen convergence');
+    assert.equal(Utm.parse('32 N 297508.410 6700645.296').toLatLon().scale,     1.000102473212, 'UTM->LL bergen scale');
 
     // UTM -> MGRS
     assert.equal(Utm.parse('31 N 166021.443081 0.000000').toMgrs().toString(), '31N AA 66021 00000', 'UTM->MGRS 0,0');
