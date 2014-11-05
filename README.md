@@ -108,8 +108,24 @@ The library includes:
 
 More information at www.movable-type.co.uk/scripts/latlong-gridref.html.
 
+utm.js, mgrs.js
+---------------
+
+Routines for converting between UTM (Universal Transverse Mercator) coordinates and latitude/longitude 
+coordinates (WGS84 or any other ellipsoid datum), and between UTM and MGRS (Military Grid Reference 
+System) grid references. Based on Karney 2011 ‘Transverse Mercator with an accuracy of a few nanometers’.
+
+The libraries include:
+
+- `LatLonE.toUtm`: convert (WGS84) latitude/longitude to UTM coordinate
+- `Utm.toLatLon`: convert UTM coordinate to (WGS84) latitude/longitude
+- `Utm.toMgrs` convert UTM coordinate to MGRS grid reference (including Norway and Svalbard exceptions)
+- `Mgrs.toUtm`: convert MGRS grid reference to UTM coordinate
+
+More information at www.movable-type.co.uk/scripts/latlong-utm-mgrs.html.
+
 geohash.js
-------------
+----------
 
 Functions to convert [geohash](http://en.wikipedia.org/wiki/Geohash) to/from latitude/longitude
 points, also to determine bounds of a geohash cell and find neighbours of a geohash.
