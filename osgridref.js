@@ -1,5 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Ordnance Survey Grid Reference functions                          (c) Chris Veness 2005-2014  */
+/*  Ordnance Survey Grid Reference functions            (c) Chris Veness 2005-2014 / MIT Licence  */
+/*                                                                                                */
 /*   - www.movable-type.co.uk/scripts/latlon-gridref.html                                         */
 /*   - www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf           */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */

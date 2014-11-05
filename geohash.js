@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geohash encoding/decoding and associated functions                      (c) Chris Veness 2014  */
+/* Geohash encoding/decoding and associated functions        (c) Chris Veness 2014 / MIT Licence  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /* jshint node:true, bitwise:false *//* global define */

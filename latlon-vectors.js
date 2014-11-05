@@ -1,6 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Vector-based geodetic (latitude/longitude) functions              (c) Chris Veness 2011-2014  */
-/*                                                                                                */
+/*                                                                                   MIT Licence  */
 /*  These functions work with                                                                     */
 /*   a) geodesic (polar) latitude/longitude points on the earth's surface (in degrees)            */
 /*   b) 3D vectors used as n-vectors representing points on the surface of the earth's surface,   */

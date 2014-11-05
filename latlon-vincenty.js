@@ -1,5 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2014  */
+/*                                                                                   MIT Licence  */
 /*                                                                                                */
 /* from: T Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with application */
 /*       of nested equations", Survey Review, vol XXIII no 176, 1975                              */

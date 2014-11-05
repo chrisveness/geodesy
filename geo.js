@@ -1,6 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Geodesy representation conversion functions                       (c) Chris Veness 2002-2014  */
-/*   - www.movable-type.co.uk/scripts/latlong.html                                                */
+/*   - www.movable-type.co.uk/scripts/latlong.html                                   MIT Licence  */
 /*                                                                                                */
 /*  Sample usage:                                                                                 */
 /*    var lat = Geo.parseDMS('51° 28′ 40.12″ N');                                                 */

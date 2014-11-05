@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  UTM / WGS 84 Conversion Functions                                      (c) Chris Veness 2014  */
+/*  UTM / WGS 84 Conversion Functions                        (c) Chris Veness 2014 / MIT Licence  */
 /*                                                                                                */
 /* Convert between Universal Transverse Mercator coordinates and WGS 84 latitude/longitude points */
 /*                                                                                                */

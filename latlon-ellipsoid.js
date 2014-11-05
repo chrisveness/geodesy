@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy tools for an ellipsoidal earth model                       (c) Chris Veness 2005-2014  */
+/* Geodesy tools for an ellipsoidal earth model         (c) Chris Veness 2005-2014 / MIT Licence  */
 /*                                                                                                */
 /* Includes methods for converting lat/lon coordinates between different coordinate systems.      */
 /*   - www.movable-type.co.uk/scripts/latlong-convert-coords.html                                 */

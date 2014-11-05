@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  MGRS / UTM Conversion Functions                                        (c) Chris Veness 2014  */
+/*  MGRS / UTM Conversion Functions                          (c) Chris Veness 2014 / MIT Licence  */
 /*                                                                                                */
 /* Convert between Universal Transverse Mercator (UTM) coordinates and Military Grid Reference    */
 /* System (MGRS/NATO) grid references                                                             */

@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Vector handling functions                                         (c) Chris Veness 2011-2014  */
+/*  Vector handling functions                           (c) Chris Veness 2011-2014 / MIT Licence  */
 /*                                                                                                */
 /*  These are generic 3-d vector manipulation routines.                                           */
 /*                                                                                                */
