@@ -48,6 +48,28 @@ test('rhumb', function(assert) {
     assert.end();
 });
 
+test('compass-point', function(assert) {
+    var Geo = require('./geo.js');
+
+    assert.equal(Geo.compassPoint(1), 'N',        '1 -> N');
+    assert.equal(Geo.compassPoint(0), 'N',        '0 -> N');
+    assert.equal(Geo.compassPoint(-1), 'N',       '-1 -> N');
+    assert.equal(Geo.compassPoint(359), 'N',      '359 -> N');
+    assert.equal(Geo.compassPoint(24), 'NNE',     '24 -> NNE');
+    assert.equal(Geo.compassPoint(24, 1), 'N',    '24:1 -> N');
+    assert.equal(Geo.compassPoint(24, 2), 'NE',   '24:2 -> NE');
+    assert.equal(Geo.compassPoint(24, 3), 'NNE',  '24:3 -> NNE');
+    assert.equal(Geo.compassPoint(226), 'SW',     '226 -> SW');
+    assert.equal(Geo.compassPoint(226, 1), 'W',   '226:1 -> W');
+    assert.equal(Geo.compassPoint(226, 2), 'SW',  '226:2 -> SW');
+    assert.equal(Geo.compassPoint(226, 3), 'SW',  '226:3 -> SW');
+    assert.equal(Geo.compassPoint(237), 'WSW',    '237 -> WSW');
+    assert.equal(Geo.compassPoint(237, 1), 'W',   '237:1 -> W');
+    assert.equal(Geo.compassPoint(237, 2), 'SW',  '237:2 -> SW');
+    assert.equal(Geo.compassPoint(237, 3), 'WSW', '237:3 -> WSW');
+    assert.end();
+});
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* LatLonE / Vincenty                                                                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -214,6 +236,19 @@ test('utm', function(assert) {
     assert.equal(Mgrs.parse('23K PQ 83466 60687').toUtm().toString(), '23 S 683466 7460687', 'MGRS->UTM rio christ');
     assert.equal(Mgrs.parse('32V KN 97508 00645').toUtm().toString(), '32 N 297508 6700645', 'MGRS->UTM bergen');
 
+    /* http://www.ibm.com/developerworks/library/j-coordconvert/
+     ( 0.0000    0.0000  )     "31 N 166021 0"
+     ( 0.1300   -0.2324  )     "30 N 808084 14385"
+     (-45.6456   23.3545 )     "34 G 683473 4942631"
+     (-12.7650  -33.8765 )     "25 L 404859 8588690"
+     (-80.5434  -170.6540)     "02 C 506346 1057742"
+     ( 90.0000   177.0000)     "60 Z 500000 9997964"
+     (-90.0000  -177.0000)     "01 A 500000 2035"
+     ( 90.0000    3.0000 )     "31 Z 500000 9997964"
+     ( 23.4578  -135.4545)     "08 Q 453580 2594272"
+     ( 77.3450   156.9876)     "57 X 450793 8586116"
+     (-89.3454  -48.9306 )     "22 A 502639 75072"
+     */
 
     assert.end();
 });
