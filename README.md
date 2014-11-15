@@ -139,7 +139,8 @@ The library includes the following functions:
 geohash.js
 ----------
 
-Geohash is now moved to [its own repository](latlon-geohash), as this one is becoming bloated.
+Geohash is now moved to [its own repository](https://github.com/chrisveness/latlon-geohash), as this
+one is becoming bloated.
 
 Documentation
 -------------
