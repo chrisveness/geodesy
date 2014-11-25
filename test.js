@@ -163,6 +163,15 @@ test('geo', function(assert) {
     assert.equal(LatLon(51.521470, -0.138833).toString('dms', 2), '51°31′17.29″N, 000°08′19.80″W', 'toString dms');
     assert.equal(LatLon(Geo.parseDMS('51.521470°N'), Geo.parseDMS('000.138833°W')).toString('dms', 2), '51°31′17.29″N, 000°08′19.80″W', 'parse d');
     assert.equal(LatLon(Geo.parseDMS('51°31′17.29″N'), Geo.parseDMS('000°08′19.80″W')).toString('dms', 2), '51°31′17.29″N, 000°08′19.80″W', 'parse dms');
+    assert.equal(Geo.parseDMS('0.0°'), 0, 'parse 0°');
+    assert.equal(Geo.toDMS(0, 'd'), '000.0000°', 'output 000.0000°');
+    assert.equal(Geo.parseDMS('0°'), 0, 'parse 0°');
+    assert.equal(Geo.toDMS(0, 'd',0), '000°', 'output 000°');
+    assert.equal(Geo.parseDMS('000°00′00″'), 0, 'parse 000°00′00″');
+    assert.equal(Geo.toDMS(0), '000°00′00″', 'output 000°00′00″');
+    assert.equal(Geo.parseDMS('000°00′00.0″'), 0, 'parse 000°00′00.0″');
+    assert.equal(Geo.toDMS(0,'dms',2), '000°00′00.00″', 'output 000°00′00.00″');
+
     // assorted variations on DMS including whitespace, different d/m/s symbols (ordinal, ascii/typo quotes)
     var variations = [
         '45.76260',
