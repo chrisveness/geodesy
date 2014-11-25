@@ -121,21 +121,6 @@ test('os-gridref', function(assert) {
 });
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geohash                                                                                        */
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-test('geohash', function(assert) {
-    var Geohash = require('./geohash.js');
-
-    assert.equal(Geohash.encode(57.648, 10.410, 6), 'u4pruy', 'encode Jutland');
-    assert.deepEqual(Geohash.decode('u4pruy'), { lat: 57.648, lon: 10.410 }, 'decode Jutland');
-    assert.equal(Geohash.encode(-25.38262, -49.26561, 8), '6gkzwgjz', 'encode Curitiba');
-    assert.deepEqual(Geohash.decode('6gkzwgjz'), { lat: -25.38262, lon: -49.26561 }, 'decode Curitiba');
-    assert.deepEqual(Geohash.neighbours('ezzz'), { n:'gbpb', ne:'u000', e:'spbp', se:'spbn', s:'ezzy', sw:'ezzw', w:'ezzx', nw:'gbp8' }, 'neighbours');
-    assert.end();
-});
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* LatLonV                                                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
@@ -178,6 +163,37 @@ test('geo', function(assert) {
     assert.equal(LatLon(51.521470, -0.138833).toString('dms', 2), '51°31′17.29″N, 000°08′19.80″W', 'toString dms');
     assert.equal(LatLon(Geo.parseDMS('51.521470°N'), Geo.parseDMS('000.138833°W')).toString('dms', 2), '51°31′17.29″N, 000°08′19.80″W', 'parse d');
     assert.equal(LatLon(Geo.parseDMS('51°31′17.29″N'), Geo.parseDMS('000°08′19.80″W')).toString('dms', 2), '51°31′17.29″N, 000°08′19.80″W', 'parse dms');
+    // assorted variations on DMS including whitespace, different d/m/s symbols (ordinal, ascii/typo quotes)
+    var variations = [
+        '45.76260',
+        '45.76260 ',
+        '45.76260°',
+        '45°45.756′',
+        '45° 45.756′',
+        '45 45.756',
+        '45°45′45.36″',
+        '45º45\'45.36"',
+        '45°45’45.36”',
+        '45 45 45.36 ',
+        '45° 45′ 45.36″',
+        '45º 45\' 45.36"',
+        '45° 45’ 45.36”'
+    ];
+    for (var v in variations) assert.equal(Geo.parseDMS(variations[v]),      45.76260, 'parse dms variations '+variations[v]);
+    for (var v in variations) assert.equal(Geo.parseDMS('-'+variations[v]), -45.76260, 'parse dms variations '+'-'+variations[v]);
+    for (var v in variations) assert.equal(Geo.parseDMS(variations[v]+'N'),  45.76260, 'parse dms variations '+variations[v]+'N');
+    for (var v in variations) assert.equal(Geo.parseDMS(variations[v]+'S'), -45.76260, 'parse dms variations '+variations[v]+'S');
+    for (var v in variations) assert.equal(Geo.parseDMS(variations[v]+'E'),  45.76260, 'parse dms variations '+variations[v]+'E');
+    for (var v in variations) assert.equal(Geo.parseDMS(variations[v]+'W'), -45.76260, 'parse dms variations '+variations[v]+'W');
+    assert.equal(Geo.parseDMS(' 45°45′45.36″ '), 45.76260, 'parse dms variations '+' ws before+after ');
+    // output formats
+    assert.equal(Geo.toDMS(45.76260),           '045°45′45″',    'output dms ');
+    assert.equal(Geo.toDMS(45.76260, 'd'),      '045.7626°',     'output dms '+'d');
+    assert.equal(Geo.toDMS(45.76260, 'dm'),     '045°45.76′',    'output dms '+'dm');
+    assert.equal(Geo.toDMS(45.76260, 'dms'),    '045°45′45″',    'output dms '+'dms');
+    assert.equal(Geo.toDMS(45.76260, 'd', 6),   '045.762600°',   'output dms '+'dm,6');
+    assert.equal(Geo.toDMS(45.76260, 'dm', 4),  '045°45.7560′',  'output dms '+'dm,4');
+    assert.equal(Geo.toDMS(45.76260, 'dms', 2), '045°45′45.36″', 'output dms '+'dms,2');
     assert.end();
 });
 
