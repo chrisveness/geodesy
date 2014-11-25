@@ -54,8 +54,8 @@ function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
     this.easting = Number(easting);
     this.northing = Number(northing);
     this.datum = datum;
-    this.convergence = convergence;
-    this.scale = scale;
+    this.convergence = convergence===null ? null : Number(convergence);
+    this.scale = scale===null ? null : Number(scale);
 }
 
 
@@ -327,7 +327,7 @@ Utm.parse = function(utmCoord) {
  * @returns {string} A string representation of the coordinate.
  */
 Utm.prototype.toString = function(digits) {
-    digits = (typeof digits == 'undefined') ? 0 : digits; // default if not supplied
+    digits = Number(digits||0); // default 0 if not supplied
 
     var z = this.zone;
     var h = this.hemisphere;
