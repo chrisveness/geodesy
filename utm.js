@@ -241,7 +241,8 @@ Utm.prototype.toLatLon = function() {
         var δτi = (τʹ - τiʹ)/Math.sqrt(1+τiʹ*τiʹ)
             * (1 + (1-e*e)*τi*τi) / ((1-e*e)*Math.sqrt(1+τi*τi));
          τi += δτi;
-    } while (Math.abs(δτi) > 1e-24); // using IEEE 754 δτi -> 0 after 2-3 iterations
+    } while (Math.abs(δτi) > 1e-12); // using IEEE 754 δτi -> 0 after 2-3 iterations
+    // note relatively large iteration test as δτi toggles on ±1.12e-16 for eg 31 N 400000 5000000
     var τ = τi;
 
     var φ = Math.atan(τ);
