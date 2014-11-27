@@ -44,10 +44,10 @@ function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
     if (typeof convergence == 'undefined') convergence = null;    // default if not supplied
     if (typeof scale == 'undefined') scale = null;                // default if not supplied
 
-    if (!(1<=zone && zone<=60)) throw new Error('Invalid UTM coordinate');
-    if (!hemisphere.match(/[NS]/i)) throw new Error('Invalid UTM coordinate');
-    if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM coordinate'); // 40km overlap
-    if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM coordinate');
+    if (!(1<=zone && zone<=60)) throw new Error('Invalid UTM zone '+zone);
+    if (!hemisphere.match(/[NS]/i)) throw new Error('Invalid UTM hemisphere '+hemisphere);
+    if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM easting'); // 40km overlap
+    if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM northing');
 
     this.zone = Number(zone);
     this.hemisphere = hemisphere.toUpperCase();
