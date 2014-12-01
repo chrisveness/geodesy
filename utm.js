@@ -46,8 +46,9 @@ function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
 
     if (!(1<=zone && zone<=60)) throw new Error('Invalid UTM zone '+zone);
     if (!hemisphere.match(/[NS]/i)) throw new Error('Invalid UTM hemisphere '+hemisphere);
-    if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM easting'); // 40km overlap
-    if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM northing');
+    // range-check easting/northing (with 40km overlap between zones) - this this worthwhile?
+    if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM easting '+ easting);
+    if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM northing '+ northing);
 
     this.zone = Number(zone);
     this.hemisphere = hemisphere.toUpperCase();
@@ -242,7 +243,7 @@ Utm.prototype.toLatLon = function() {
             * (1 + (1-e*e)*τi*τi) / ((1-e*e)*Math.sqrt(1+τi*τi));
          τi += δτi;
     } while (Math.abs(δτi) > 1e-12); // using IEEE 754 δτi -> 0 after 2-3 iterations
-    // note relatively large iteration test as δτi toggles on ±1.12e-16 for eg 31 N 400000 5000000
+    // note relatively large convergence test as δτi toggles on ±1.12e-16 for eg 31 N 400000 5000000
     var τ = τi;
 
     var φ = Math.atan(τ);
@@ -298,7 +299,8 @@ Utm.prototype.toLatLon = function() {
  *  - easting
  *  - northing.
  *
- * @param   {string}   gridref - UTM grid reference (WGS 84).
+ * @param   {string} utmCoord - UTM coordinate (WGS 84).
+ * @param   {Datum}  [datum=WGS84] - Datum coordinate is defined in (default WGS 84).
  * @returns {Utm}
  * @throws  Error Invalid UTM coordinate
  *
@@ -306,15 +308,17 @@ Utm.prototype.toLatLon = function() {
  *   var utmCoord = Utm.parse('31 N 448251 5411932');
  *   // utmCoord: {zone: 31, hemisphere: 'N', easting: 448251, northing: 5411932 }
  */
-Utm.parse = function(utmCoord) {
+Utm.parse = function(utmCoord, datum) {
+    if (typeof datum == 'undefined') datum = LatLonE.datum.WGS84; // default if not supplied
+
     // match separate elements (separated by whitespace)
     utmCoord = utmCoord.trim().match(/\S+/g);
 
     if (utmCoord==null || utmCoord.length!=4) throw new Error('Invalid UTM coordinate');
 
-    var z = utmCoord[0], h = utmCoord[1], e = utmCoord[2], n = utmCoord[3];
+    var zone = utmCoord[0], hemisphere = utmCoord[1], easting = utmCoord[2], northing = utmCoord[3];
 
-    return new Utm(z, h, e, n);
+    return new Utm(zone, hemisphere, easting, northing, datum);
 };
 
 
@@ -343,35 +347,35 @@ Utm.prototype.toString = function(digits) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
-/** Extend Math object with hyperbolic sin function */
+/** Polyfill Math.sinh for old browsers / IE */
 if (typeof Math.sinh == 'undefined') {
     Math.sinh = function(x) {
         return (Math.exp(x) - Math.exp(-x)) / 2;
     };
 }
 
-/** Extend Math object with hyperbolic cos function */
+/** Polyfill Math.cosh for old browsers / IE */
 if (typeof Math.cosh == 'undefined') {
     Math.cosh = function(x) {
         return (Math.exp(x) + Math.exp(-x)) / 2;
     };
 }
 
-/** Extend Math object with hyperbolic tan function */
+/** Polyfill Math.tanh for old browsers / IE */
 if (typeof Math.tanh == 'undefined') {
     Math.tanh = function(x) {
         return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
     };
 }
 
-/** Extend Math object with hyperbolic asin function */
+/** Polyfill Math.asinh for old browsers / IE */
 if (typeof Math.asinh == 'undefined') {
     Math.asinh = function(x) {
         return Math.log(x + Math.sqrt(1 + x*x));
     };
 }
 
-/** Extend Math object with hyperbolic atan function */
+/** Polyfill Math.atanh for old browsers / IE */
 if (typeof Math.atanh == 'undefined') {
     Math.atanh = function(x) {
         return Math.log((1+x) / (1-x)) / 2;
@@ -379,7 +383,7 @@ if (typeof Math.atanh == 'undefined') {
 }
 
 
-/** Extend String object with method to trim whitespace from string
+/** Polyfill String.trim for old browsers
  *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
 if (typeof String.prototype.trim == 'undefined') {
     String.prototype.trim = function() {
