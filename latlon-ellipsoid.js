@@ -153,12 +153,14 @@ LatLonE.prototype.convertDatum = function(toDatum) {
 
 
 /**
- * Converts ‘this’ point from polar (lat/lon) coordinates to cartesian (x/y/z) coordinates.
+ * Converts ‘this’ point from (geodetic) latitude/longitude coordinates to (geocentric) cartesian
+ * (x/y/z) coordinates.
  *
  * @returns {Vector3d} Vector pointing to lat/lon point, with x, y, z in metres from earth centre.
  */
 LatLonE.prototype.toCartesian = function() {
-    var φ = this.lat.toRadians(), λ = this.lon.toRadians(), H = this.height;
+    var φ = this.lat.toRadians(), λ = this.lon.toRadians();
+    var h = this.height; // above ellipsoid
     var a = this.datum.ellipsoid.a, b = this.datum.ellipsoid.b;
 
     var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
@@ -167,9 +169,9 @@ LatLonE.prototype.toCartesian = function() {
     var eSq = (a*a - b*b) / (a*a);
     var ν = a / Math.sqrt(1 - eSq*sinφ*sinφ);
 
-    var x = (ν+H) * cosφ * cosλ;
-    var y = (ν+H) * cosφ * sinλ;
-    var z = ((1-eSq)*ν + H) * sinφ;
+    var x = (ν+h) * cosφ * cosλ;
+    var y = (ν+h) * cosφ * sinλ;
+    var z = ((1-eSq)*ν + h) * sinφ;
 
     var point = new Vector3d(x, y, z);
 
@@ -178,33 +180,40 @@ LatLonE.prototype.toCartesian = function() {
 
 
 /**
- * Converts ‘this’ point from cartesian (x/y/z) coordinates to polar (lat/lon) coordinates on
- * specified datum.
+ * Converts ‘this’ (geocentric) cartesian (x/y/z) point to (ellipsoidal geodetic) latitude/longitude
+ * coordinates on specified datum.
+ *
+ * Uses Bowring’s (1985) formulation for μm precision.
  *
  * @param {LatLonE.datum.transform} datum - Datum to use when converting point.
  */
 Vector3d.prototype.toLatLon = function(datum) {
     var x = this.x, y = this.y, z = this.z;
-
     var a = datum.ellipsoid.a, b = datum.ellipsoid.b;
 
-    var eSq = (a*a - b*b) / (a*a);
+    var e2 = (a*a-b*b) / (a*a); // 1st eccentricity squared
+    var ε2 = (a*a-b*b) / (b*b); // 2nd eccentricity squared
     var p = Math.sqrt(x*x + y*y);
-    var φ = Math.atan2(z, p*(1-eSq)), φʹ; // initial value of φ
-    var ν;
+    var R = Math.sqrt(p*p + z*z); // radius
 
-    var precision = 1 / a;  // 1m: Helmert transform cannot generally do better than a few metres
-    do {
-        var sinφ = Math.sin(φ);
-        ν = a / Math.sqrt(1 - eSq*sinφ*sinφ);
-        φʹ = φ;
-        φ = Math.atan2(z + eSq*ν*sinφ, p);
-    } while (Math.abs(φ-φʹ) > precision);
+    // u = parametric latitude (Bowring eqn 17)
+    var tanu = (b*z)/(a*p) * (1+ε2*b/R);
+    var sinu = tanu / Math.sqrt(1+tanu*tanu);
+    var cosu = sinu / tanu;
 
+    // geodetic latitude (Bowring eqn 18)
+    var B = Math.atan2(z + ε2*b*sinu*sinu*sinu,
+                       p - e2*a*cosu*cosu*cosu);
+
+    // longitude
     var λ = Math.atan2(y, x);
-    var H = p/Math.cos(φ) - ν;
 
-    var point = new LatLonE(φ.toDegrees(), λ.toDegrees(), datum, H);
+    // height above ellipsoid (Bowring eqn 7)
+    var sinB = Math.sin(B), cosB = Math.cos(B);
+    var ν = a*Math.sqrt(1-e2*sinB*sinB); // length of the normal terminated by the minor axis
+    var h = p*cosB + z*sinB - (a*a/ν);
+
+    var point = new LatLonE(B.toDegrees(), λ.toDegrees(), datum, h);
 
     return point;
 };
