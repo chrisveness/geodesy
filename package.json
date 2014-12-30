@@ -4,7 +4,7 @@
     "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
     "repository": { "type": "git", "url": "https://github.com/chrisveness/geodesy" },
     "author": "Chris Veness",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "devDependencies": {
         "browserify": "^4.0.0",
         "tap-spec": "^0.2.0",
