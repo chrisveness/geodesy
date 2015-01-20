@@ -37,6 +37,14 @@ if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js');
  *     var p1 = new LatLonE(51.4778, -0.0016, LatLonE.datum.WGS84);
  */
 function LatLonE(lat, lon, datum, height) {
+    // allow instantiation with a "LatLonE-similar" object as first argument
+    if (typeof lat == 'object') {
+      lat = lat.lat
+      lon = lat.lon
+      height = lat.height
+      radius = lat.radius
+    }
+
     // allow instantiation without 'new'
     if (!(this instanceof LatLonE)) return new LatLonE(lat, lon, datum, height);
 
