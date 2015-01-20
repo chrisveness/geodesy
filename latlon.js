@@ -24,6 +24,14 @@ if (typeof module!='undefined' && module.exports) var Geo = require('./geo'); //
  *     var p1 = new LatLon(52.205, 0.119);
  */
 function LatLon(lat, lon, height, radius) {
+    // allow instantiation with a "LatLon-similar" object as first argument
+    if (typeof lat == 'object') {
+      lon = lat.lon
+      height = lat.height
+      radius = lat.radius
+      lat = lat.lat
+    }
+
     // allow instantiation without 'new'
     if (!(this instanceof LatLon)) return new LatLon(lat, lon, height, radius);
 

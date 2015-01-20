@@ -32,6 +32,14 @@ if (typeof module!='undefined' && module.exports) var Geo = require('./geo.js');
  *   var p1 = new LatLonV(52.205, 0.119);
  */
 function LatLonV(lat, lon, height, radius) {
+    // allow instantiation with a "LatLonV-similar" object as first argument
+    if (typeof lat == 'object') {
+      lon = lat.lon
+      height = lat.height
+      radius = lat.radius
+      lat = lat.lat
+    }
+
     // allow instantiation without 'new'
     if (!(this instanceof LatLonV)) return new LatLonV(lat, lon, height, radius);
 
