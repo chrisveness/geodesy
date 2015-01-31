@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  UTM / WGS 84 Conversion Functions                        (c) Chris Veness 2014 / MIT Licence  */
+/*  UTM / WGS 84 Conversion Functions                   (c) Chris Veness 2014-2015 / MIT Licence  */
 /*                                                                                                */
 /* Convert between Universal Transverse Mercator coordinates and WGS 84 latitude/longitude points */
 /*                                                                                                */
@@ -10,7 +10,7 @@
 
 /* jshint node:true, laxbreak:true *//* global define */
 'use strict';
-if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
+if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
 
 
 /**
@@ -26,7 +26,7 @@ if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlo
  * @param  {string} hemisphere - N for northern hemisphere, S for southern hemisphere.
  * @param  {number} easting - Easting in metres from false easting (-500km from central meridian).
  * @param  {number} northing - Northing in metres from equator (N) or from false northing -10,000km (S).
- * @param  {LatLonE.datum} [datum=WGS84] - Datum UTM coordinate is based on.
+ * @param  {LatLon.datum} [datum=WGS84] - Datum UTM coordinate is based on.
  * @param  {number} [convergence] - Meridian convergence (bearing of grid north clockwise from true
  *                  north), in degrees
  * @param  {number} [scale] - Grid scale factor
@@ -40,15 +40,15 @@ function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
         return new Utm(zone, hemisphere, easting, northing, datum, convergence, scale);
     }
 
-    if (typeof datum == 'undefined') datum = LatLonE.datum.WGS84; // default if not supplied
-    if (typeof convergence == 'undefined') convergence = null;    // default if not supplied
-    if (typeof scale == 'undefined') scale = null;                // default if not supplied
+    if (datum === undefined) datum = LatLon.datum.WGS84; // default if not supplied
+    if (convergence === undefined) convergence = null;   // default if not supplied
+    if (scale === undefined) scale = null;               // default if not supplied
 
     if (!(1<=zone && zone<=60)) throw new Error('Invalid UTM zone '+zone);
     if (!hemisphere.match(/[NS]/i)) throw new Error('Invalid UTM hemisphere '+hemisphere);
     // range-check easting/northing (with 40km overlap between zones) - this this worthwhile?
-    if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM easting '+ easting);
-    if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM northing '+ northing);
+    //if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM easting '+ easting);
+    //if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM northing '+ northing);
 
     this.zone = Number(zone);
     this.hemisphere = hemisphere.toUpperCase();
@@ -70,10 +70,10 @@ function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
  * @throws  {Error} If point not valid, if point outside latitude range.
  *
  * @example
- *   var latlong = new LatLonE(48.8582, 2.2945, LatLonE.datum.WGS84);
- *   var utmCoord = latlong.toUtm(); // utmCoord.toString(): '31 448251 5411932'
+ *   var latlong = new LatLon(48.8582, 2.2945, LatLon.datum.WGS84);
+ *   var utmCoord = latlong.toUtm(); // utmCoord.toString(): '31 N 448252 5411933'
  */
-LatLonE.prototype.toUtm = function() {
+LatLon.prototype.toUtm = function() {
     if (isNaN(this.lat) || isNaN(this.lon)) throw new Error('Invalid point');
     if (!(-80<=this.lat && this.lat<=84)) throw new Error('Outside UTM limits');
 
@@ -181,13 +181,13 @@ LatLonE.prototype.toUtm = function() {
  * Converts UTM zone/easting/northing coordinate to latitude/longitude
  *
  * @param   {Utm}     utmCoord - UTM coordinate to be converted to latitude/longitude.
- * @returns {LatLonE} Latitude/longitude of supplied grid reference.
+ * @returns {LatLon} Latitude/longitude of supplied grid reference.
  *
  * @example
  *   var grid = new Utm(31, 'N', 448251.795, 5411932.678);
- *   var latlong = grid.toLatLon(); // latlong.toString(): 48°51′29.52″N, 002°17′40.20″E
+ *   var latlong = grid.toLatLonE(); // latlong.toString(): 48°51′29.52″N, 002°17′40.20″E
  */
-Utm.prototype.toLatLon = function() {
+Utm.prototype.toLatLonE = function() {
     var z = this.zone;
     var h = this.hemisphere;
     var x = this.easting;
@@ -281,8 +281,8 @@ Utm.prototype.toLatLon = function() {
     var convergence = Number(γ.toDegrees().toFixed(9));
     var scale = Number(k.toFixed(12));
 
-    var latLong = new LatLonE(lat, lon, this.datum);
-    // ... and add the convergence and scale into the LatLonE object ... wonderful JavaScript!
+    var latLong = new LatLon(lat, lon, this.datum);
+    // ... and add the convergence and scale into the LatLon object ... wonderful JavaScript!
     latLong.convergence = convergence;
     latLong.scale = scale;
 
@@ -309,7 +309,7 @@ Utm.prototype.toLatLon = function() {
  *   // utmCoord: {zone: 31, hemisphere: 'N', easting: 448251, northing: 5411932 }
  */
 Utm.parse = function(utmCoord, datum) {
-    if (typeof datum == 'undefined') datum = LatLonE.datum.WGS84; // default if not supplied
+    if (datum === undefined) datum = LatLon.datum.WGS84; // default if not supplied
 
     // match separate elements (separated by whitespace)
     utmCoord = utmCoord.trim().match(/\S+/g);
@@ -348,35 +348,35 @@ Utm.prototype.toString = function(digits) {
 
 
 /** Polyfill Math.sinh for old browsers / IE */
-if (typeof Math.sinh == 'undefined') {
+if (Math.sinh === undefined) {
     Math.sinh = function(x) {
         return (Math.exp(x) - Math.exp(-x)) / 2;
     };
 }
 
 /** Polyfill Math.cosh for old browsers / IE */
-if (typeof Math.cosh == 'undefined') {
+if (Math.cosh === undefined) {
     Math.cosh = function(x) {
         return (Math.exp(x) + Math.exp(-x)) / 2;
     };
 }
 
 /** Polyfill Math.tanh for old browsers / IE */
-if (typeof Math.tanh == 'undefined') {
+if (Math.tanh === undefined) {
     Math.tanh = function(x) {
         return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
     };
 }
 
 /** Polyfill Math.asinh for old browsers / IE */
-if (typeof Math.asinh == 'undefined') {
+if (Math.asinh === undefined) {
     Math.asinh = function(x) {
         return Math.log(x + Math.sqrt(1 + x*x));
     };
 }
 
 /** Polyfill Math.atanh for old browsers / IE */
-if (typeof Math.atanh == 'undefined') {
+if (Math.atanh === undefined) {
     Math.atanh = function(x) {
         return Math.log((1+x) / (1-x)) / 2;
     };
@@ -385,7 +385,7 @@ if (typeof Math.atanh == 'undefined') {
 
 /** Polyfill String.trim for old browsers
  *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-if (typeof String.prototype.trim == 'undefined') {
+if (String.prototype.trim === undefined) {
     String.prototype.trim = function() {
         return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     };
@@ -394,7 +394,7 @@ if (typeof String.prototype.trim == 'undefined') {
 
 /** Extend Number object with method to pad with leading zeros to make it w chars wide
  *  (q.v. stackoverflow.com/questions/2998784 */
-if (typeof Number.prototype.pad == 'undefined') {
+if (Number.prototype.pad === undefined) {
     Number.prototype.pad = function(w) {
         var n = this.toString();
         while (n.length < w) n = '0' + n;
@@ -404,5 +404,5 @@ if (typeof Number.prototype.pad == 'undefined') {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Utm; // CommonJS
+if (typeof module != 'undefined' && module.exports) module.exports = Utm; // CommonJS (Node)
 if (typeof define == 'function' && define.amd) define([], function() { return Utm; }); // AMD

@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Ordnance Survey Grid Reference functions            (c) Chris Veness 2005-2014 / MIT Licence  */
+/*  Ordnance Survey Grid Reference functions            (c) Chris Veness 2005-2015 / MIT Licence  */
 /*                                                                                                */
 /*   - www.movable-type.co.uk/scripts/latlon-gridref.html                                         */
 /*   - www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf           */
@@ -7,14 +7,14 @@
 
 /* jshint node:true *//* global define */
 'use strict';
-if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
+if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
 
 
 /**
  * Creates an OsGridRef object.
  *
  * @classdesc Convert OS grid references to/from OSGB latitude/longitude points.
- * @requires  LatLonE
+ * @requires  LatLon from 'latlon-ellipsoidal.js'
  *
  * @constructor
  * @param {number} easting - Easting in metres from OS false origin.
@@ -35,16 +35,16 @@ function OsGridRef(easting, northing) {
 /**
  * Converts (OSGB36) latitude/longitude to Ordnance Survey grid reference easting/northing coordinate.
  *
- * @param   {LatLonE}   point - OSGB36 latitude/longitude.
+ * @param   {LatLon}    point - OSGB36 latitude/longitude.
  * @returns {OsGridRef} OS Grid Reference easting/northing.
  * @throws  {Error}     If datum of point is not OSGB36.
  *
  * @example
- *   var p = new LatLonE(52.65757, 1.71791, LatLonE.datum.OSGB36);
+ *   var p = new LatLon(52.65757, 1.71791, LatLon.datum.OSGB36);
  *   var grid = OsGridRef.latLonToOsGrid(p); // grid.toString(): TG 51409 13177
  */
 OsGridRef.latLonToOsGrid = function(point) {
-    if (point.datum != LatLonE.datum.OSGB36) throw new Error('Can only convert OSGB36 point to OsGrid');
+    if (point.datum != LatLon.datum.OSGB36) throw new Error('Can only convert OSGB36 point to OsGrid');
     var φ = point.lat.toRadians();
     var λ = point.lon.toRadians();
 
@@ -93,7 +93,7 @@ OsGridRef.latLonToOsGrid = function(point) {
  * Converts Ordnance Survey grid reference easting/northing coordinate to (OSGB36) latitude/longitude
  *
  * @param   {OsGridRef} gridref - Easting/northing to be converted to latitude/longitude.
- * @returns {LatLonE}   Latitude/longitude (in OSGB36) of supplied grid reference.
+ * @returns {LatLon}    Latitude/longitude (in OSGB36) of supplied grid reference.
  *
  * @example
  *   var grid = new OsGridRef(651409, 313177);
@@ -143,7 +143,7 @@ OsGridRef.osGridToLatLon = function(gridref) {
     φ = φ - VII*dE2 + VIII*dE4 - IX*dE6;
     var λ = λ0 + X*dE - XI*dE3 + XII*dE5 - XIIA*dE7;
 
-    return new LatLonE(φ.toDegrees(), λ.toDegrees(), LatLonE.datum.OSGB36);
+    return new LatLon(φ.toDegrees(), λ.toDegrees(), LatLon.datum.OSGB36);
 };
 
 
@@ -200,7 +200,7 @@ OsGridRef.parse = function(gridref) {
  * @returns {string} This grid reference in standard format.
  */
 OsGridRef.prototype.toString = function(digits) {
-    digits = (typeof digits == 'undefined') ? 10 : digits;
+    digits = (digits === undefined) ? 10 : digits;
     var e = this.easting;
     var n = this.northing;
     if (isNaN(e) || isNaN(n)) return '??';
@@ -232,9 +232,9 @@ OsGridRef.prototype.toString = function(digits) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
-/** Extend String object with method to trim whitespace from string
+/** Polyfill String.trim for old browsers
  *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-if (typeof String.prototype.trim == 'undefined') {
+if (String.prototype.trim === undefined) {
     String.prototype.trim = function() {
         return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     };
@@ -243,7 +243,7 @@ if (typeof String.prototype.trim == 'undefined') {
 
 /** Extend Number object with method to pad with leading zeros to make it w chars wide
  *  (q.v. stackoverflow.com/questions/2998784 */
-if (typeof Number.prototype.pad == 'undefined') {
+if (Number.prototype.pad === undefined) {
     Number.prototype.pad = function(w) {
         var n = this.toString();
         while (n.length < w) n = '0' + n;
@@ -253,5 +253,5 @@ if (typeof Number.prototype.pad == 'undefined') {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = OsGridRef; // CommonJS
+if (typeof module != 'undefined' && module.exports) module.exports = OsGridRef; // CommonJS (Node)
 if (typeof define == 'function' && define.amd) define([], function() { return OsGridRef; }); // AMD

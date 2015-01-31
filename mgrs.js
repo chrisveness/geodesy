@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  MGRS / UTM Conversion Functions                          (c) Chris Veness 2014 / MIT Licence  */
+/*  MGRS / UTM Conversion Functions                     (c) Chris Veness 2014-2015 / MIT Licence  */
 /*                                                                                                */
 /* Convert between Universal Transverse Mercator (UTM) coordinates and Military Grid Reference    */
 /* System (MGRS/NATO) grid references                                                             */
@@ -8,8 +8,8 @@
 
 /* jshint node:true, laxbreak:true *//* global define */
 'use strict';
-if (typeof module!='undefined' && module.exports) var Utm = require('./utm.js'); // CommonJS (Node.js)
-if (typeof module!='undefined' && module.exports) var LatLonE = require('./latlon-ellipsoid.js'); // CommonJS (Node.js)
+if (typeof module!='undefined' && module.exports) var Utm = require('./utm.js'); // CommonJS (Node)
+if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
 
 
 /* qv www.fgdc.gov/standards/projects/FGDC-standards-projects/usng/fgdc_std_011_2001_usng.pdf p10 */
@@ -48,7 +48,7 @@ Mgrs.n100kLetters = ['ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE'];
  * @param  {string} n100k - Second letter (N) of 100km grid square.
  * @param  {number} easting - Easting in metres within 100km grid square.
  * @param  {number} northing - Northing in metres within 100km grid square.
- * @param  {LatLonE.datum} [datum=WGS84] - Datum UTM coordinate is based on.
+ * @param  {LatLon.datum} [datum=WGS84] - Datum UTM coordinate is based on.
  * @throws {Error} Invalid MGRS grid reference
  *
  * @example
@@ -58,7 +58,7 @@ function Mgrs(zone, band, e100k, n100k, easting, northing, datum) {
     // allow instantiation without 'new'
     if (!(this instanceof Mgrs)) return new Mgrs(zone, band, e100k, n100k, easting, northing, datum);
 
-    if (typeof datum == 'undefined') datum = LatLonE.datum.WGS84; // default if not supplied
+    if (datum === undefined) datum = LatLon.datum.WGS84; // default if not supplied
 
     if (!(1<=zone && zone<=60)) throw new Error('Invalid MGRS grid reference');
     if (band.length != 1) throw new Error('Invalid MGRS grid reference');
@@ -91,7 +91,7 @@ Utm.prototype.toMgrs = function() {
     var zone = this.zone;
 
     // convert UTM to lat/long to get latitude to determine band
-    var latlong = this.toLatLon();
+    var latlong = this.toLatLonE();
     // grid zones are 8° tall, 0°N is 10th band
     var band = Mgrs.latBands.charAt(Math.floor(latlong.lat/8+10)); // latitude band
 
@@ -147,7 +147,7 @@ Mgrs.prototype.toUtm = function() {
 
     // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get
     // into required band
-    var nBand = new LatLonE(latBand, 0).toUtm().northing; // northing of bottom of band
+    var nBand = new LatLon(latBand, 0).toUtm().northing; // northing of bottom of band
     var n2M = 0; // northing of 2,000km block
     while (n2M + n100kNum + northing < nBand) n2M += 2000000;
 
@@ -218,7 +218,8 @@ Mgrs.parse = function(mgrsGridRef) {
  *   var mgrsStr = Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString(); // mgrsStr: '31U DQ 48251 11932'
  */
 Mgrs.prototype.toString = function(digits) {
-    if (typeof digits == 'undefined') digits = 10; // default if not supplied
+    if (digits === undefined) digits = 10; // default if not supplied
+    digits = Number(digits);
 
     var zone = this.zone.pad(2); // ensure leading zero
     var band = this.band;
@@ -239,5 +240,5 @@ Mgrs.prototype.toString = function(digits) {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Mgrs; // CommonJS
+if (typeof module != 'undefined' && module.exports) module.exports = Mgrs; // CommonJS (Node)
 if (typeof define == 'function' && define.amd) define([], function() { return Mgrs; }); // AMD

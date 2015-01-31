@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Vector handling functions                           (c) Chris Veness 2011-2014 / MIT Licence  */
+/*  Vector handling functions                           (c) Chris Veness 2011-2015 / MIT Licence  */
 /*                                                                                                */
 /*  These are generic 3-d vector manipulation routines.                                           */
 /*                                                                                                */
@@ -161,7 +161,7 @@ Vector3d.prototype.angleTo = function(v, vSign) {
     var sinθ = this.cross(v).length();
     var cosθ = this.dot(v);
 
-    if (typeof vSign != 'undefined') {
+    if (vSign !== undefined) {
         // use vSign as reference to get sign of sinθ
         sinθ = this.cross(v).dot(vSign)<0 ? -sinθ : sinθ;
     }
@@ -209,7 +209,7 @@ Vector3d.prototype.rotateAround = function(axis, theta) {
  * @returns {string} Vector represented as [x,y,z].
  */
 Vector3d.prototype.toString = function(precision) {
-    if (typeof precision == 'undefined') precision = 3;
+    if (precision === undefined) precision = 3;
 
     var p = Number(precision);
 
@@ -220,5 +220,5 @@ Vector3d.prototype.toString = function(precision) {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Vector3d; // CommonJS
+if (typeof module != 'undefined' && module.exports) module.exports = Vector3d; // CommonJS (Node)
 if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD
