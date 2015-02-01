@@ -107,6 +107,8 @@ Datum conversions etc on an ellipsoidal-model earth.
 
 *Notes: `LatLonE` now simply `LatLon`.*
 
+More information at www.movable-type.co.uk/scripts/latlong-convert-coords.html.
+
 
 *latlon-vincenty.js*: distances & bearings on geodesics
 -------------------------------------------------------
@@ -125,6 +127,8 @@ within 0.5mm distance, 0.000015â€³ bearing).
         - Destination point travelling distance on bearing (using Vincenty calculation)
     * `latlon.finalBearingOn(initialBearing, distance)`
         - Final bearing having travelled along a geodesic given by initial bearing for given distance
+
+Full details are available at www.movable-type.co.uk/scripts/latlong-vincenty.html.
 
 
 *latlon-vectors.js*: latitude/longitude geodesy functions using vector calculations
@@ -163,6 +167,8 @@ to a spherical earth model only.
 *Notes: `LatLonE` now simply `LatLon`; order of arguments to destination point method reversed.
 More thought is required on which of these functions operate on spherical model, which on n-vector
 (geodetic) ellipsoidal model, and which equally on either.*
+
+More information at www.movable-type.co.uk/scripts/latlong-vectors.html.
 
 
 *vector3d.js*: 3-d vector handling functions
@@ -219,6 +225,8 @@ Conversions between UTM coordinates and latitude-longitude points using Kearneyâ
     * `utm.toString([digits])`
         - String representation of UTM coordinate
 
+More information at www.movable-type.co.uk/scripts/latlong-utm-mgrs.html.
+
 
 *mgrs.js*: MGRS/NATO grid references
 ------------------------------------
@@ -237,6 +245,8 @@ Conversions between MGRS/NATO grid references and UTM coordinates.
         - Parse string representation of MGRS grid reference
     * `mgrs.toString([digits])`
         - String representation of MGRS grid reference
+
+More information at www.movable-type.co.uk/scripts/latlong-utm-mgrs.html.
 
 
 *osgridref.js*: UK Ordnance Survey grid references
@@ -257,6 +267,8 @@ Survey formulae).
         - Parse string representation of OS grid reference
     * `osGridRef.toString([digits])`
         - String representation of OS grid reference
+
+More information at www.movable-type.co.uk/scripts/latlong-gridref.html.
 
 
 *dms.js*: conversion routines for degrees, minutes, seconds
