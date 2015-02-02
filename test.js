@@ -79,7 +79,9 @@ test('ellipsoid', function(assert) {
     var LatLon = require('./npm.js').LatLonEllipsoidal;
 
     var greenwichWGS84 = new LatLon(51.4778, -0.0016); // default WGS84
-    assert.equal(greenwichWGS84.convertDatum(LatLon.datum.OSGB36).toString('d'), '51.4773°N, 000.0000°E', 'convert WGS84 -> OSGB36');
+    var greenwichOSGB36 = greenwichWGS84.convertDatum(LatLon.datum.OSGB36);
+    assert.equal(greenwichOSGB36.toString('d'), '51.4773°N, 000.0000°E', 'convert WGS84 -> OSGB36');
+    assert.equal(greenwichOSGB36.convertDatum(LatLon.datum.WGS84).toString('d'), '51.4778°N, 000.0016°W', 'convert OSGB36 -> WGS84');
 
     var le = new LatLon(50.06632, -5.71475), jog = new LatLon(58.64402, -3.07009);
     assert.equal(le.distanceTo(jog).toFixed(3), '969954.166', 'vincenty inverse distance');
@@ -104,23 +106,35 @@ test('ellipsoid', function(assert) {
 test('os-gridref', function(assert) {
     var LatLon = require('./npm.js').LatLonEllipsoidal;
     var OsGridRef = require('./npm.js').OsGridRef;
+    var Dms = require('./npm.js').Dms;
 
-    var osgb = LatLon(52.65757, 1.71791, LatLon.datum.OSGB36);
-    assert.equal(OsGridRef.latLonToOsGrid(osgb).toString(), 'TG 51409 13177', 'll -> grid (txt)');
-    assert.equal(OsGridRef.osGridToLatLon(OsGridRef(651409, 313177)).toString(), '52°39′27″N, 001°43′04″E', 'grid (num) -> ll');
-    assert.deepEqual(OsGridRef.parse('TG 51409 13177'), OsGridRef(651409, 313177), 'parse grid (txt) -> grid (num)');
+    // OS Guide to coordinate systems in Great Britain C.1, C.2; Caister water tower
 
-    var djg = OsGridRef.osGridToLatLon(OsGridRef(544359, 180653));
-    assert.equal(djg.toString('d',6), '51.505867°N, 000.080296°E', 'DJG NGR->OSGB36');
-    assert.equal(djg.convertDatum(LatLon.datum.WGS84).toString('d',6), '51.506381°N, 000.078666°E', 'DJG NGR->WGS84');
-    assert.equal(OsGridRef.latLonToOsGrid(djg).toString(), 'TQ 44359 80653', 'DJG round-trip 1');
+    var osgb = LatLon(Dms.parseDMS('52°39′27.2531″N'), Dms.parseDMS('1°43′4.5177″E'), LatLon.datum.OSGB36);
+    var gridref = OsGridRef.latLonToOsGrid(osgb);
+    assert.equal(gridref.easting.toFixed(3), '651409.903', 'C1 E');
+    assert.equal(gridref.northing.toFixed(3), '313177.270', 'C1 N');
+    var osgb2 = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
+    assert.equal(osgb2.toString('dms', 4), '52°39′27.2531″N, 001°43′04.5177″E', 'C1 round-trip');
 
-    var ngr1 = OsGridRef.parse('TQ 44359 80653');
-    var osgb1 = OsGridRef.osGridToLatLon(ngr1); // gridref to osgb36
-    var wgs84 = osgb1.convertDatum(LatLon.datum.WGS84); // osgb36 to wgs84
-    var osgb2 = wgs84.convertDatum(LatLon.datum.OSGB36); // wgs84 to osgb36
-    var ngr2 = OsGridRef.latLonToOsGrid(osgb2); // osgb36 to gridref
-    assert.deepEqual(ngr1, ngr2, 'DJG round-trip 2 NGR -> OSGB -> WGS84 -> OSGB -> NGR');
+    var gridref = OsGridRef(651409.903, 313177.270);
+    var osgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
+    assert.equal(osgb.toString('dms', 4), '52°39′27.2531″N, 001°43′04.5177″E', 'C2');
+    var gridref2 = OsGridRef.latLonToOsGrid(osgb);
+    assert.equal(gridref2.easting.toFixed(3), '651409.903', 'C2 E round-trip');
+    assert.equal(gridref2.northing.toFixed(3), '313177.270', 'C2 N round-trip');
+
+    // DG round-trip
+
+    var dgRef1 = OsGridRef.parse('TQ 44359 80653');
+    var osgb = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.OSGB36); // gridref to osgb36
+    var dgRef2 = OsGridRef.latLonToOsGrid(osgb);
+    assert.equal(dgRef1.toString(), dgRef2.toString(), 'DG round-trip OSGB');
+
+    var dgRef1 = OsGridRef.parse('TQ 44359 80653');
+    var wgs84 = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.WGS84); // gridref to wgs84
+    var dgRef2 = OsGridRef.latLonToOsGrid(osgb);
+    assert.equal(dgRef1.toString(), dgRef2.toString(), 'DG round-trip WGS84');
 
     assert.end();
 });

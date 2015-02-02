@@ -1,8 +1,14 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Ordnance Survey Grid Reference functions            (c) Chris Veness 2005-2015 / MIT Licence  */
 /*                                                                                                */
-/*   - www.movable-type.co.uk/scripts/latlon-gridref.html                                         */
+/*   - www.movable-type.co.uk/scripts/latlong-gridref.html                                        */
 /*   - www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf           */
+/*                                                                                                */
+/*  Converted 2015 to work with WGS84 by default, OSGB36 as option                                */
+/*   - www.ordnancesurvey.co.uk/blog/2014/12/confirmation-on-changes-to-latitude-and-longitude    */
+/*                                                                                                */
+/*  Formulation implemented here due to Thomas, Redfearn, etc is as published by OS, but is       */
+/*  inferior to Krüger as used by e.g. Karney 2011.                                               */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /* jshint node:true *//* global define */
@@ -27,24 +33,27 @@ function OsGridRef(easting, northing) {
     // allow instantiation without 'new'
     if (!(this instanceof OsGridRef)) return new OsGridRef(easting, northing);
 
-    this.easting = Math.floor(Number(easting));   // truncate if necessary to left of 1m grid square
-    this.northing = Math.floor(Number(northing)); // truncate if necessary to bottom of 1m grid square
+    this.easting = Number(easting);
+    this.northing = Number(northing);
 }
 
 
 /**
- * Converts (OSGB36) latitude/longitude to Ordnance Survey grid reference easting/northing coordinate.
+ * Converts latitude/longitude to Ordnance Survey grid reference easting/northing coordinate.
  *
- * @param   {LatLon}    point - OSGB36 latitude/longitude.
+ * @param   {LatLon}    point - latitude/longitude.
  * @returns {OsGridRef} OS Grid Reference easting/northing.
- * @throws  {Error}     If datum of point is not OSGB36.
  *
  * @example
- *   var p = new LatLon(52.65757, 1.71791, LatLon.datum.OSGB36);
+ *   var p = new LatLon(52.65798, 1.71605);
  *   var grid = OsGridRef.latLonToOsGrid(p); // grid.toString(): TG 51409 13177
+ *   // for conversion of (historical) OSGB36 latitude/longitude point:
+ *   var p = new LatLon(52.65757, 1.71791, LatLon.datum.OSGB36);
  */
 OsGridRef.latLonToOsGrid = function(point) {
-    if (point.datum != LatLon.datum.OSGB36) throw new Error('Can only convert OSGB36 point to OsGrid');
+    // if necessary convert to OSGB36 first
+    if (point.datum != LatLon.datum.OSGB36) point = point.convertDatum(LatLon.datum.OSGB36);
+
     var φ = point.lat.toRadians();
     var λ = point.lon.toRadians();
 
@@ -85,23 +94,30 @@ OsGridRef.latLonToOsGrid = function(point) {
     var N = I + II*Δλ2 + III*Δλ4 + IIIA*Δλ6;
     var E = E0 + IV*Δλ + V*Δλ3 + VI*Δλ5;
 
+    N = Number(N.toFixed(3)), E = Number(E.toFixed(3)); // round to mm precision
+
     return new OsGridRef(E, N); // gets truncated to SW corner of 1m grid square
 };
 
 
 /**
- * Converts Ordnance Survey grid reference easting/northing coordinate to (OSGB36) latitude/longitude
+ * Converts Ordnance Survey grid reference easting/northing coordinate to latitude/longitude
  *
- * @param   {OsGridRef} gridref - Easting/northing to be converted to latitude/longitude.
- * @returns {LatLon}    Latitude/longitude (in OSGB36) of supplied grid reference.
+ * @param   {OsGridRef}    gridref - Grid ref E/N to be converted to lat/long (SW corner of grid square).
+ * @param   {LatLon.datum} [datum=WGS84] - Datum to convert grid reference into.
+ * @returns {LatLon}       Latitude/longitude of supplied grid reference.
  *
  * @example
  *   var grid = new OsGridRef(651409, 313177);
- *   var p = OsGridRef.osGridToLatLon(grid); // p.toString(): 52°39′27″N, 001°43′04″E
+ *   var p = OsGridRef.osGridToLatLon(grid); // p.toString(): 52°39′29″N, 001°42′58″E
+ *   // to obtain (historical) OSGB36 latitude/longitude point:
+ *   var p = OsGridRef.osGridToLatLon(grid, LatLon.datum.OSGB36); // 52°39′27″N, 001°43′04″E
  */
-OsGridRef.osGridToLatLon = function(gridref) {
-    var E = gridref.easting + 0.5;  // easting of centre of 1m grid square
-    var N = gridref.northing + 0.5; // northing of centre of 1m grid square
+OsGridRef.osGridToLatLon = function(gridref, datum) {
+    if (datum === undefined) datum = LatLon.datum.WGS84;
+
+    var E = gridref.easting;
+    var N = gridref.northing;
 
     var a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
     var F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
@@ -143,7 +159,10 @@ OsGridRef.osGridToLatLon = function(gridref) {
     φ = φ - VII*dE2 + VIII*dE4 - IX*dE6;
     var λ = λ0 + X*dE - XI*dE3 + XII*dE5 - XIIA*dE7;
 
-    return new LatLon(φ.toDegrees(), λ.toDegrees(), LatLon.datum.OSGB36);
+    var point =  new LatLon(φ.toDegrees(), λ.toDegrees(), LatLon.datum.OSGB36);
+    if (datum != LatLon.datum.OSGB36) point = point.convertDatum(datum);
+
+    return point;
 };
 
 
@@ -151,14 +170,19 @@ OsGridRef.osGridToLatLon = function(gridref) {
  * Converts standard grid reference (eg 'SU387148') to fully numeric ref (eg [438700,114800]).
  *
  * @param   {string}    gridref - Standard format OS grid reference.
- * @returns {OsGridRef} Numeric version of grid reference in metres from false origin, centred on
- *   supplied grid square.
+ * @returns {OsGridRef} Numeric version of grid reference in metres from false origin (SW corner of
+ *   supplied grid square).
  *
  * @example
  *   var grid = OsGridRef.parse('TG 51409 13177'); // grid: { easting: 651409, northing: 313177 }
  */
 OsGridRef.parse = function(gridref) {
     gridref = String(gridref).trim();
+
+    // check for fully numeric gridref format
+    var match = gridref.match(/^(\d+),\s*(\d+)$/);
+    if (match) return new OsGridRef(match[1], match[2]);
+
     // get numeric values of letter references, mapping A->0, B->1, C->2, etc:
     var l1 = gridref.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0);
     var l2 = gridref.toUpperCase().charCodeAt(1) - 'A'.charCodeAt(0);
@@ -178,17 +202,6 @@ OsGridRef.parse = function(gridref) {
     e += gridref.slice(0, gridref.length/2);
     n += gridref.slice(gridref.length/2);
 
-    // normalise to 1m grid, rounding up to centre of grid square:
-    switch (gridref.length) {
-        case 0: e += '50000'; n += '50000'; break;
-        case 2: e += '5000'; n += '5000'; break;
-        case 4: e += '500'; n += '500'; break;
-        case 6: e += '50'; n += '50'; break;
-        case 8: e += '5'; n += '5'; break;
-        case 10: break; // 10-digit refs are already 1m
-        default: return new OsGridRef(NaN, NaN);
-    }
-
     return new OsGridRef(e, n);
 };
 
@@ -203,7 +216,10 @@ OsGridRef.prototype.toString = function(digits) {
     digits = (digits === undefined) ? 10 : digits;
     var e = this.easting;
     var n = this.northing;
-    if (isNaN(e) || isNaN(n)) return '??';
+    if (isNaN(e) || isNaN(n)) throw new Error('Invalid grid reference');
+
+    // use digits = 0 to return numeric format (in metres)
+    if (digits == 0) return e.pad(6)+','+n.pad(6);
 
     // get the 100km-grid indices
     var e100k = Math.floor(e/100000), n100k = Math.floor(n/100000);
