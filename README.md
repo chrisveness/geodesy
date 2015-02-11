@@ -1,7 +1,7 @@
 Geodesy functions
 =================
 
-These libraries started life (a long time ago) as simple ‘latitude/longitude’ code fragments intended 
+These libraries started life (a long time ago) as simple ‘latitude/longitude’ code fragments intended
 to help people who had little experience of geodesy, and perhaps limited programming experience.
 
 The intention was to have clear, simple illustrative code samples which could be adapted and re-used
@@ -12,7 +12,7 @@ exposing the algorithms with a minimum of syntactic distractions
 While still valid for that purpose, they have grown since then into considerable libraries, based
 around:
 - simpler trigonometric functions (distance, bearing, etc) based on a spherical earth model
-- more sophisticated trigonometric functions (distance, bearing, datum conversions, etc) based on a 
+- more sophisticated trigonometric functions (distance, bearing, datum conversions, etc) based on a
   more accurate ellipsoidal earth model
 - vector-based functions based (mostly) on a spherical earth model
 
@@ -42,8 +42,8 @@ legibility over the minor inconvenience in typing.
 *latlon-spherical.js*: latitude/longitude geodesy functions on a spherical earth model
 --------------------------------------------------------------------------------------
 
-Geodesy functions for working with points and paths (distances, bearings, destinations, etc) on a 
-spherical-model earth, including (orthodromic) great-circle geodesics and (loxodromic) rhumb lines. 
+Geodesy functions for working with points and paths (distances, bearings, destinations, etc) on a
+spherical-model earth, including (orthodromic) great-circle geodesics and (loxodromic) rhumb lines.
 All calculations are done using simple spherical trigonometric formulae.
 
 * *Constructor*
@@ -59,14 +59,14 @@ All calculations are done using simple spherical trigonometric formulae.
     * `latlon.midpointTo(point)`
         - Midpoint to 2nd point
     * `latlon.destinationPoint(distance, bearing[, radius])`
-        - Destination point travelling given distance on given bearing 
+        - Destination point travelling given distance on given bearing
     * `LatLon.intersection(point1, bearing1, point2, bearing2)`
         - Intersection point of two paths defined by point and bearing
     * `latlon.rhumbDistanceTo(point[, radius])`
         - Distance to point along rhumb line
     * `latlon.rhumbBearingTo(point)`
         - (Initial) bearing to point along rhumb line
-    * `latlon.rhumbDestinationPoint(bearing, distance[, radius])`
+    * `latlon.rhumbDestinationPoint(distance, bearing[, radius])`
         - Destination point travelling distance on bearing
     * `latlon.toCartesian()`
         - Convert point to cartesian Vector3d point
@@ -152,13 +152,13 @@ to a spherical earth model only.
     * `latlon.distanceTo(point[, radius])`
         - Distance to point
     * `latlon.bearingTo(point)`
-        - (Initial) bearing to point 
+        - (Initial) bearing to point
     * `latlon.midpointTo(point)`
-        - Midpoint to point 
+        - Midpoint to point
     * `latlon.destinationPoint(bearing, distance[, radius])`
-        - Destination point travelling distance on bearing 
+        - Destination point travelling distance on bearing
     * `latlon.intersection(path1start, path1brngEnd, path2start, path2brngEnd)`
-        - Intersection of two paths defined by start+bearing or start+end 
+        - Intersection of two paths defined by start+bearing or start+end
     * `latlon.crossTrackDistanceTo(pathStart, pathBrngEnd[, radius])`
         - Distance to great circle defined by start-point and end-point/bearing
     * `latlon.toString([format[, decimals]])`
@@ -233,7 +233,7 @@ More information at www.movable-type.co.uk/scripts/latlong-utm-mgrs.html.
 
 Conversions between MGRS/NATO grid references and UTM coordinates.
 
-* *Constructor*                                     
+* *Constructor*
     * `new Mgrs(zone, band, e100k, n100k, easting, northing[, datum])`
         - Create new MGRS grid reference on given datum (default WGS84)
 * *Methods*
