@@ -123,9 +123,9 @@ within 0.5mm distance, 0.000015″ bearing).
         - (Initial) bearing to point (using Vincenty calculation)
     * `latlon.finalBearingTo(point)`
         - Final bearing to point (using Vincenty calculation)
-    * `latlon.destinationPoint(bearing, distance)`
+    * `latlon.destinationPoint(distance, bearing)`
         - Destination point travelling distance on bearing (using Vincenty calculation)
-    * `latlon.finalBearingOn(initialBearing, distance)`
+    * `latlon.finalBearingOn(distance, initialBearing)`
         - Final bearing having travelled along a geodesic given by initial bearing for given distance
 
 Full details are available at www.movable-type.co.uk/scripts/latlong-vincenty.html.
@@ -155,7 +155,7 @@ to a spherical earth model only.
         - (Initial) bearing to point
     * `latlon.midpointTo(point)`
         - Midpoint to point
-    * `latlon.destinationPoint(bearing, distance[, radius])`
+    * `latlon.destinationPoint(distance, bearing[, radius])`
         - Destination point travelling distance on bearing
     * `latlon.intersection(path1start, path1brngEnd, path2start, path2brngEnd)`
         - Intersection of two paths defined by start+bearing or start+end

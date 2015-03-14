@@ -98,15 +98,15 @@ LatLon.prototype.destinationPoint = function(distance, initialBearing) {
  * Returns the final bearing (reverse azimuth) having travelled along a geodesic given by initial
  * bearing for a given distance from ‘this’ point, using Vincenty direct solution.
  *
- * @param   {LatLon} initialBearing - Initial bearing in degrees from north.
  * @param   {number} distance - Distance travelled along the geodesic in metres.
+ * @param   {LatLon} initialBearing - Initial bearing in degrees from north.
  * @returns {number} Final bearing in degrees from north (0°..360°).
  *
  * @example
  *   var p1 = new LatLon(-37.95103, 144.42487);
  *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // b2.toFixed(4): 307.1736
  */
-LatLon.prototype.finalBearingOn = function(initialBearing, distance) {
+LatLon.prototype.finalBearingOn = function(distance, initialBearing) {
     return this.direct(distance, initialBearing).finalBearing;
 };
 
