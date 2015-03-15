@@ -14,7 +14,6 @@
 /*                                                                                                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node)
 if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js'); // CommonJS (Node)
@@ -135,14 +134,9 @@ LatLon.prototype.convertDatum = function(toDatum) {
         transform = toDatum.transform;
     }
 
-    // convert polar to cartesian
-    var cartesian = oldLatLon.toCartesian();
-
-    // apply transform
-    cartesian = cartesian.applyTransform(transform);
-
-    // convert cartesian to polar
-    var newLatLon = cartesian.toLatLonE(toDatum);
+    var cartesian = oldLatLon.toCartesian();         // convert polar to cartesian...
+    cartesian = cartesian.applyTransform(transform); // ...apply transform...
+    var newLatLon = cartesian.toLatLonE(toDatum);    // ...and convert cartesian to polar
 
     return newLatLon;
 };
