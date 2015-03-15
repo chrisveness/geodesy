@@ -7,7 +7,6 @@
 /*      or vectors normal to the plane of a great circle                                          */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node)
 if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js'); // CommonJS (Node)

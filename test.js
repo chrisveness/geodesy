@@ -1,7 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Geodesy Test Harness                                              (c) Chris Veness 2014-2015  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-'use strict'
+
+'use strict';
 
 var test = require('tape');
 
@@ -12,7 +13,7 @@ var test = require('tape');
 test('inverse', function(assert) {
     var LatLon = require('./npm.js').LatLonSpherical;
 
-    var cambg = LatLon(52.205, 0.119), paris = LatLon(48.857, 2.351);
+    var cambg = new LatLon(52.205, 0.119), paris = new LatLon(48.857, 2.351);
     assert.equal(cambg.distanceTo(paris).toPrecision(4), '4.043e+5', 'distance');
     assert.equal(cambg.distanceTo(paris, 3959).toPrecision(4), '251.2', 'distance (miles)');
     assert.equal(cambg.bearingTo(paris).toFixed(1), '156.2', 'initial bearing');
@@ -24,7 +25,7 @@ test('inverse', function(assert) {
 test('direct', function(assert) {
     var LatLon = require('./npm.js').LatLonSpherical;
 
-    var bradwell = LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
+    var bradwell = new LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
     assert.equal(bradwell.destinationPoint(dist, brng).toString('d'), '51.5135°N, 000.0983°W', 'dest’n');
     assert.end();
 });
@@ -32,8 +33,8 @@ test('direct', function(assert) {
 test('intersection', function(assert) {
     var LatLon = require('./npm.js').LatLonSpherical;
 
-    var stn = LatLon(51.8853, 0.2545);
-    var cdg = LatLon(49.0034, 2.5735);
+    var stn = new LatLon(51.8853, 0.2545);
+    var cdg = new LatLon(49.0034, 2.5735);
     assert.equal(LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d'), '50.9078°N, 004.5084°E', 'dest’n');
     assert.end();
 });
@@ -41,7 +42,7 @@ test('intersection', function(assert) {
 test('rhumb', function(assert) {
     var LatLon = require('./npm.js').LatLonSpherical;
 
-    var dov = LatLon(51.127, 1.338), cal = LatLon(50.964, 1.853);
+    var dov = new LatLon(51.127, 1.338), cal = new LatLon(50.964, 1.853);
     assert.equal(dov.rhumbDistanceTo(cal).toPrecision(4), '4.031e+4', 'distance');
     assert.equal(dov.rhumbBearingTo(cal).toFixed(1), '116.7', 'bearing');
     assert.equal(dov.rhumbDestinationPoint(40310, 116.7).toString('d'), '50.9641°N, 001.8531°E', 'dest’n');
@@ -78,12 +79,12 @@ test('compass-point', function(assert) {
 test('ellipsoid', function(assert) {
     var LatLon = require('./npm.js').LatLonEllipsoidal;
 
-    var greenwichWGS84 = new LatLon(51.4778, -0.0016); // default WGS84
+    var greenwichWGS84 = LatLon(51.4778, -0.0016); // default WGS84
     var greenwichOSGB36 = greenwichWGS84.convertDatum(LatLon.datum.OSGB36);
     assert.equal(greenwichOSGB36.toString('d'), '51.4773°N, 000.0000°E', 'convert WGS84 -> OSGB36');
     assert.equal(greenwichOSGB36.convertDatum(LatLon.datum.WGS84).toString('d'), '51.4778°N, 000.0016°W', 'convert OSGB36 -> WGS84');
 
-    var le = new LatLon(50.06632, -5.71475), jog = new LatLon(58.64402, -3.07009);
+    var le = LatLon(50.06632, -5.71475), jog = LatLon(58.64402, -3.07009);
     assert.equal(le.distanceTo(jog).toFixed(3), '969954.166', 'vincenty inverse distance');
     assert.equal(le.initialBearingTo(jog).toFixed(4), '9.1419', 'vincenty inverse initial bearing');
     assert.equal(le.finalBearingTo(jog).toFixed(4), '11.2972', 'vincenty inverse final bearing');
@@ -91,7 +92,7 @@ test('ellipsoid', function(assert) {
     var flindersPeak = LatLon(-37.95103, 144.42487);
     var buninyong = LatLon(-37.6528, 143.9265);
     assert.equal(flindersPeak.destinationPoint(54972.271, 306.86816).toString('d'), '37.6528°S, 143.9265°E', 'vincenty direct destination');
-    assert.equal(flindersPeak.finalBearingOn(306.86816, 54972.271).toFixed(4), '307.1736', 'vincenty direct final brng');
+    assert.equal(flindersPeak.finalBearingOn(54972.271, 306.86816).toFixed(4), '307.1736', 'vincenty direct final brng');
     assert.equal(LatLon(0, 0).distanceTo(LatLon(0.5, 179.5)), 19936288.579, 'vincenty antipodal distance');
 
     assert.true(isNaN(LatLon(0, 0).distanceTo(LatLon(0.5, 179.7))), 'vincenty antipodal convergence failure');
@@ -104,21 +105,22 @@ test('ellipsoid', function(assert) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 test('os-gridref', function(assert) {
+    var osgb, gridref;
     var LatLon = require('./npm.js').LatLonEllipsoidal;
     var OsGridRef = require('./npm.js').OsGridRef;
     var Dms = require('./npm.js').Dms;
 
     // OS Guide to coordinate systems in Great Britain C.1, C.2; Caister water tower
 
-    var osgb = LatLon(Dms.parseDMS('52°39′27.2531″N'), Dms.parseDMS('1°43′4.5177″E'), LatLon.datum.OSGB36);
-    var gridref = OsGridRef.latLonToOsGrid(osgb);
+    osgb = LatLon(Dms.parseDMS('52°39′27.2531″N'), Dms.parseDMS('1°43′4.5177″E'), LatLon.datum.OSGB36);
+    gridref = OsGridRef.latLonToOsGrid(osgb);
     assert.equal(gridref.easting.toFixed(3), '651409.903', 'C1 E');
     assert.equal(gridref.northing.toFixed(3), '313177.270', 'C1 N');
     var osgb2 = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
     assert.equal(osgb2.toString('dms', 4), '52°39′27.2531″N, 001°43′04.5177″E', 'C1 round-trip');
 
-    var gridref = OsGridRef(651409.903, 313177.270);
-    var osgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
+    gridref = OsGridRef(651409.903, 313177.270);
+    osgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
     assert.equal(osgb.toString('dms', 4), '52°39′27.2531″N, 001°43′04.5177″E', 'C2');
     var gridref2 = OsGridRef.latLonToOsGrid(osgb);
     assert.equal(gridref2.easting.toFixed(3), '651409.903', 'C2 E round-trip');
@@ -126,14 +128,15 @@ test('os-gridref', function(assert) {
 
     // DG round-trip
 
-    var dgRef1 = OsGridRef.parse('TQ 44359 80653');
-    var osgb = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.OSGB36); // gridref to osgb36
-    var dgRef2 = OsGridRef.latLonToOsGrid(osgb);
+    var dgRef1, dgRef2, dgOsgb, dgWgs84;
+    dgRef1 = OsGridRef.parse('TQ 44359 80653');
+    dgOsgb = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.OSGB36); // gridref to osgb36
+    dgRef2 = OsGridRef.latLonToOsGrid(dgOsgb);
     assert.equal(dgRef1.toString(), dgRef2.toString(), 'DG round-trip OSGB');
 
-    var dgRef1 = OsGridRef.parse('TQ 44359 80653');
-    var wgs84 = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.WGS84); // gridref to wgs84
-    var dgRef2 = OsGridRef.latLonToOsGrid(osgb);
+    dgRef1 = OsGridRef.parse('TQ 44359 80653');
+    dgWgs84 = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.WGS84); // gridref to wgs84
+    dgRef2 = OsGridRef.latLonToOsGrid(dgOsgb);
     assert.equal(dgRef1.toString(), dgRef2.toString(), 'DG round-trip WGS84');
 
     assert.end();
@@ -158,12 +161,12 @@ test('latlon-vectors', function(assert) {
     var stn = LatLon(51.8853, 0.2545);
     var cdg = LatLon(49.0034, 2.5735);
     assert.equal(LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d'), '50.9078°N, 004.5084°E', 'intersection');
-    var here = new LatLon(53.1611, -0.7972);
-    var start = new LatLon(53.3206, -1.7297);
-    assert.equal(LatLon(10,0).crossTrackDistanceTo(LatLon(0,0), 90).toPrecision(4), '-1.112e+6', 'cross-track b');
-    assert.equal(LatLon(10,1).crossTrackDistanceTo(LatLon(0,0), LatLon(0,2)).toPrecision(4), '-1.112e+6', 'cross-track p');
-    assert.equal(LatLon(10,0).crossTrackDistanceTo(LatLon(0,0), 270).toPrecision(4), '1.112e+6', 'cross-track -');
-    var bounds = [ new LatLon(45,1), new LatLon(45,2), new LatLon(46,2), new LatLon(46,1) ];
+    var here = LatLon(53.1611, -0.7972);
+    var start = LatLon(53.3206, -1.7297);
+    assert.equal(LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 90).toPrecision(4), '-1.112e+6', 'cross-track b');
+    assert.equal(LatLon(10, 1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4), '-1.112e+6', 'cross-track p');
+    assert.equal(LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 270).toPrecision(4), '1.112e+6', 'cross-track -');
+    var bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
     assert.true(LatLon(45.1, 1.1).enclosedBy(bounds), 'enclosed in');
     assert.false(LatLon(46.1, 1.1).enclosedBy(bounds), 'enclosed out');
     assert.true(LatLon(52.205, 0.119).equals(LatLon(52.205, 0.119)), 'equals');
@@ -185,11 +188,11 @@ test('dms', function(assert) {
     assert.equal(Dms.parseDMS('0.0°'), 0, 'parse 0°');
     assert.equal(Dms.toDMS(0, 'd'), '000.0000°', 'output 000.0000°');
     assert.equal(Dms.parseDMS('0°'), 0, 'parse 0°');
-    assert.equal(Dms.toDMS(0, 'd',0), '000°', 'output 000°');
+    assert.equal(Dms.toDMS(0, 'd', 0), '000°', 'output 000°');
     assert.equal(Dms.parseDMS('000°00′00″'), 0, 'parse 000°00′00″');
     assert.equal(Dms.toDMS(0), '000°00′00″', 'output 000°00′00″');
     assert.equal(Dms.parseDMS('000°00′00.0″'), 0, 'parse 000°00′00.0″');
-    assert.equal(Dms.toDMS(0,'dms',2), '000°00′00.00″', 'output 000°00′00.00″');
+    assert.equal(Dms.toDMS(0, 'dms', 2), '000°00′00.00″', 'output 000°00′00.00″');
 
     // assorted variations on DMS including whitespace, different d/m/s symbols (ordinal, ascii/typo quotes)
     var variations = [
@@ -241,7 +244,7 @@ test('utm', function(assert) {
     assert.equal(LatLon( 1,  1).toUtm().toString(6), '31 N 277438.263521 110597.972524', 'LL->UTM 1,1');
     assert.equal(LatLon(-1, -1).toUtm().toString(6), '30 S 722561.736479 9889402.027476', 'LL->UTM -1,-1');
     assert.equal(LatLon( 48.8583,   2.2945).toUtm().toString(3), '31 N 448251.898 5411943.794', 'LL->UTM eiffel tower');
-    assert.equal(LatLon(-33.857 , 151.215 ).toUtm().toString(3), '56 S 334873.199 6252266.092', 'LL->UTM sidney o/h');
+    assert.equal(LatLon(-33.857,  151.215 ).toUtm().toString(3), '56 S 334873.199 6252266.092', 'LL->UTM sidney o/h');
     assert.equal(LatLon( 38.8977, -77.0365).toUtm().toString(3), '18 N 323394.296 4307395.634', 'LL->UTM white house');
     assert.equal(LatLon(-22.9519, -43.2106).toUtm().toString(3), '23 S 683466.254 7460687.433', 'LL->UTM rio christ');
     assert.equal(LatLon( 60.39135,  5.3249).toUtm().toString(3), '32 N 297508.410 6700645.296', 'LL->UTM bergen');
@@ -253,7 +256,7 @@ test('utm', function(assert) {
     assert.equal(Utm.parse('31 N 277438.263521 110597.972524').toLatLonE().toString(), LatLon( 1,  1).toString(), 'UTM->LL 1,1');
     assert.equal(Utm.parse('30 S 722561.736479 9889402.027476').toLatLonE().toString(), LatLon(-1, -1).toString(), 'UTM->LL -1,-1');
     assert.equal(Utm.parse('31 N 448251.898 5411943.794').toLatLonE().toString(), LatLon( 48.8583,   2.2945).toString(), 'UTM->LL eiffel tower');
-    assert.equal(Utm.parse('56 S 334873.199 6252266.092').toLatLonE().toString(), LatLon(-33.857 , 151.215 ).toString(), 'UTM->LL sidney o/h');
+    assert.equal(Utm.parse('56 S 334873.199 6252266.092').toLatLonE().toString(), LatLon(-33.857,  151.215 ).toString(), 'UTM->LL sidney o/h');
     assert.equal(Utm.parse('18 N 323394.296 4307395.634').toLatLonE().toString(), LatLon( 38.8977, -77.0365).toString(), 'UTM->LL white house');
     assert.equal(Utm.parse('23 S 683466.254 7460687.433').toLatLonE().toString(), LatLon(-22.9519, -43.2106).toString(), 'UTM->LL rio christ');
     assert.equal(Utm.parse('32 N 297508.410 6700645.296').toLatLonE().toString(), LatLon( 60.39135,  5.3249).toString(), 'UTM->LL bergen');

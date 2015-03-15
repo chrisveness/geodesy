@@ -5,8 +5,6 @@
 /* System (MGRS/NATO) grid references                                                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-
-/* jshint node:true, laxbreak:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Utm = require('./utm.js'); // CommonJS (Node)
 if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
@@ -169,7 +167,7 @@ Mgrs.prototype.toUtm = function() {
  * @example
  *   var mgrsRef = Mgrs.parse('31U DQ 48251 11932');
  *   var mgrsRef = Mgrs.parse('31UDQ4825111932');
- *   //  mgrsRef: { zone:31, band:'U', e100k:'D', n100k:'Q', easting:48251, northing:11932}
+ *   //  mgrsRef: { zone:31, band:'U', e100k:'D', n100k:'Q', easting:48251, northing:11932 }
  */
 Mgrs.parse = function(mgrsGridRef) {
     mgrsGridRef = mgrsGridRef.trim();
@@ -178,7 +176,7 @@ Mgrs.parse = function(mgrsGridRef) {
     if (!mgrsGridRef.match(/\s/)) {
         var en = mgrsGridRef.slice(5); // get easting/northing following zone/band/100ksq
         en = en.slice(0, en.length/2)+' '+en.slice(-en.length/2); // separate easting/northing
-        mgrsGridRef = mgrsGridRef.slice(0,3)+' '+mgrsGridRef.slice(3,5)+' '+en; // insert spaces
+        mgrsGridRef = mgrsGridRef.slice(0, 3)+' '+mgrsGridRef.slice(3, 5)+' '+en; // insert spaces
     }
 
     // match separate elements (separated by whitespace)

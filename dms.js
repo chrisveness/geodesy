@@ -8,7 +8,6 @@
 /*    var p1 = new LatLon(lat, lon);                                                              */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
 'use strict';
 
 
@@ -38,7 +37,7 @@ Dms.parseDMS = function(dmsStr) {
     if (typeof dmsStr == 'number' && isFinite(dmsStr)) return Number(dmsStr);
 
     // strip off any sign or compass dir'n & split out separate d/m/s
-    var dms = String(dmsStr).trim().replace(/^-/,'').replace(/[NSEW]$/i,'').split(/[^0-9.,]+/);
+    var dms = String(dmsStr).trim().replace(/^-/, '').replace(/[NSEW]$/i, '').split(/[^0-9.,]+/);
     if (dms[dms.length-1]=='') dms.splice(dms.length-1);  // from trailing symbol
 
     if (dms == '') return NaN;

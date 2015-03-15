@@ -72,7 +72,7 @@ LatLon.datum = {
     NAD83: { // (2009); functionally ≡ WGS84 - www.uvm.edu/giv/resources/WGS84_NAD83.pdf
         ellipsoid: LatLon.ellipsoid.GRS80,
         transform: { tx:    1.004,  ty:   -1.910,   tz:   -0.515,  // m
-                     rx:    0.0267 ,ry:    0.00034, rz:    0.011,  // sec
+                     rx:    0.0267, ry:    0.00034, rz:    0.011,  // sec
                       s:   -0.0015 }                               // ppm
     }, // note: if you *really* need to convert WGS84<->NAD83, you need more knowledge than this!
     OSGB36: { // www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf

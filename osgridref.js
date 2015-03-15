@@ -11,7 +11,6 @@
 /*  inferior to Krüger as used by e.g. Karney 2011.                                               */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
 
@@ -94,7 +93,8 @@ OsGridRef.latLonToOsGrid = function(point) {
     var N = I + II*Δλ2 + III*Δλ4 + IIIA*Δλ6;
     var E = E0 + IV*Δλ + V*Δλ3 + VI*Δλ5;
 
-    N = Number(N.toFixed(3)), E = Number(E.toFixed(3)); // round to mm precision
+    N = Number(N.toFixed(3)); // round to mm precision
+    E = Number(E.toFixed(3));
 
     return new OsGridRef(E, N); // gets truncated to SW corner of 1m grid square
 };
@@ -196,7 +196,7 @@ OsGridRef.parse = function(gridref) {
     if (e<0 || e>6 || n<0 || n>12) return new OsGridRef(NaN, NaN);
 
     // skip grid letters to get numeric part of ref, stripping any spaces:
-    gridref = gridref.slice(2).replace(/ /g,'');
+    gridref = gridref.slice(2).replace(/ /g, '');
 
     // append numeric part of references to grid index:
     e += gridref.slice(0, gridref.length/2);
@@ -236,8 +236,8 @@ OsGridRef.prototype.toString = function(digits) {
     var letPair = String.fromCharCode(l1+'A'.charCodeAt(0), l2+'A'.charCodeAt(0));
 
     // strip 100km-grid indices from easting & northing, and reduce precision
-    e = Math.floor((e%100000)/Math.pow(10,5-digits/2));
-    n = Math.floor((n%100000)/Math.pow(10,5-digits/2));
+    e = Math.floor((e%100000)/Math.pow(10, 5-digits/2));
+    n = Math.floor((n%100000)/Math.pow(10, 5-digits/2));
 
     var gridRef = letPair + ' ' + e.pad(digits/2) + ' ' + n.pad(digits/2);
 

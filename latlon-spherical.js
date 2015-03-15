@@ -3,7 +3,6 @@
 /*   - www.movable-type.co.uk/scripts/latlong.html                                   MIT Licence  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Dms = require('./dms'); // CommonJS (Node)
 

@@ -7,7 +7,6 @@
 /*       http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
 'use strict';
 if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
 
@@ -163,8 +162,10 @@ LatLon.prototype.direct = function(distance, initialBearing) {
     var α2 = Math.atan2(sinα, -x);
     α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0...360
 
-    return { point: new LatLon(φ2.toDegrees(), λ2.toDegrees(), this.datum),
-        finalBearing: α2.toDegrees() };
+    return {
+        point:        new LatLon(φ2.toDegrees(), λ2.toDegrees(), this.datum),
+        finalBearing: α2.toDegrees()
+    };
 };
 
 

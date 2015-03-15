@@ -11,7 +11,6 @@
 /*   - etc                                                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
 'use strict';
 
 
@@ -144,7 +143,7 @@ Vector3d.prototype.unit = function() {
     var x = this.x/norm;
     var y = this.y/norm;
     var z = this.z/norm;
-    
+
     return new Vector3d(x, y, z);
 };
 
@@ -186,9 +185,11 @@ Vector3d.prototype.rotateAround = function(axis, theta) {
     var s = Math.sin(theta);
     var c = Math.cos(theta);
     // quaternion-derived rotation matrix
-    var q = [ [ a.x*a.x*(1-c) + c,     a.x*a.y*(1-c) - a.z*s, a.x*a.z*(1-c) + a.y*s],
-              [ a.y*a.x*(1-c) + a.z*s, a.y*a.y*(1-c) + c,     a.y*a.z*(1-c) - a.x*s],
-              [ a.z*a.x*(1-c) - a.y*s, a.z*a.y*(1-c) + a.x*s, a.z*a.z*(1-c) + c    ] ];
+    var q = [
+        [ a.x*a.x*(1-c) + c,     a.x*a.y*(1-c) - a.z*s, a.x*a.z*(1-c) + a.y*s],
+        [ a.y*a.x*(1-c) + a.z*s, a.y*a.y*(1-c) + c,     a.y*a.z*(1-c) - a.x*s],
+        [ a.z*a.x*(1-c) - a.y*s, a.z*a.y*(1-c) + a.x*s, a.z*a.z*(1-c) + c    ]
+    ];
     // multiply q × p
     var qp = [0, 0, 0];
     for (var i=0; i<3; i++) {

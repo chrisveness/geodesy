@@ -7,8 +7,8 @@
     "version": "0.0.0",
     "main": "npm.js",
     "devDependencies": {
-        "jshint": "^2.6.0",
-        "tap-spec": "^2.2.0",
+        "eslint": "^0.17.0",
+        "tap-spec": "^2.2.2",
         "tape": "^3.5.0"
     },
     "testling": {
@@ -26,5 +26,22 @@
     },
     "scripts": {
         "test": "tape test.js | tap-spec"
+    },
+    "eslintConfig": {
+        "env": {
+            "node": true,
+            "amd": true
+        },
+        "rules": {
+            "curly": [ 2, "multi-line" ],
+            "eqeqeq": 0,
+            "quotes": [ 2, "single", "avoid-escape" ],
+            "key-spacing": 0,
+            "new-cap": [ 2, { "capIsNew": 1, "capIsNewExceptions": ["LatLon", "OsGridRef", "Vector3d"] } ],
+            "no-extend-native": 0,
+            "no-multi-spaces": 0,
+            "space-infix-ops": 0,
+            "yoda": [ 2, "never", { "exceptRange": true } ]
+        }
     }
 }
