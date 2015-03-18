@@ -128,16 +128,17 @@ test('os-gridref', function(assert) {
 
     // DG round-trip
 
-    var dgRef1, dgRef2, dgOsgb, dgWgs84;
-    dgRef1 = OsGridRef.parse('TQ 44359 80653');
-    dgOsgb = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.OSGB36); // gridref to osgb36
-    dgRef2 = OsGridRef.latLonToOsGrid(dgOsgb);
-    assert.equal(dgRef1.toString(), dgRef2.toString(), 'DG round-trip OSGB');
+    var dgGridRef = OsGridRef.parse('TQ 44359 80653');
 
-    dgRef1 = OsGridRef.parse('TQ 44359 80653');
-    dgWgs84 = OsGridRef.osGridToLatLon(dgRef1, LatLon.datum.WGS84); // gridref to wgs84
-    dgRef2 = OsGridRef.latLonToOsGrid(dgOsgb);
-    assert.equal(dgRef1.toString(), dgRef2.toString(), 'DG round-trip WGS84');
+    // round-tripping OSGB36 works perfectly
+    var dgOsgb = OsGridRef.osGridToLatLon(dgGridRef, LatLon.datum.OSGB36);
+    assert.equal(dgGridRef.toString(), OsGridRef.latLonToOsGrid(dgOsgb).toString(), 'DG round-trip OSGB36');
+    assert.equal(OsGridRef.latLonToOsGrid(dgOsgb).toString(0), '544359,180653', 'DG round-trip OSGB36 numeric');
+
+    // reversing Helmert transform (OSGB->WGS->OSGB) introduces small error (≈ 3mm in UK), so WGS84
+    // round-trip is not quite perfect: test needs to incorporate 3mm error to pass
+    var dgWgs = OsGridRef.osGridToLatLon(dgGridRef); // default is WGS84
+    assert.equal(OsGridRef.latLonToOsGrid(dgWgs).toString(0), '544358.997,180653', 'DG round-trip WGS84 numeric');
 
     assert.end();
 });
