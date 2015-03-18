@@ -11,7 +11,7 @@
         "lint": "eslint ."
     },
     "devDependencies": {
-        "eslint": "^0.17.0",
+        "eslint": "^0.17.1",
         "tap-spec": "^2.2.2",
         "tape": "^3.5.0"
     },
@@ -44,7 +44,7 @@
             "no-redeclare": 1,
             "no-unused-vars": 1,
             "space-infix-ops": 0,
-            "yoda": [ 1, "never", { "exceptRange": true } ]
+            "yoda": [ 2, "never", { "exceptRange": true } ]
         }
     }
 }

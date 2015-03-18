@@ -91,7 +91,7 @@ test('ellipsoid', function(assert) {
 
     var flindersPeak = LatLon(-37.95103, 144.42487);
     var buninyong = LatLon(-37.6528, 143.9265);
-    assert.equal(flindersPeak.destinationPoint(54972.271, 306.86816).toString('d'), '37.6528°S, 143.9265°E', 'vincenty direct destination');
+    assert.equal(flindersPeak.destinationPoint(54972.271, 306.86816).toString('d'), buninyong.toString('d'), 'vincenty direct destination');
     assert.equal(flindersPeak.finalBearingOn(54972.271, 306.86816).toFixed(4), '307.1736', 'vincenty direct final brng');
     assert.equal(LatLon(0, 0).distanceTo(LatLon(0.5, 179.5)), 19936288.579, 'vincenty antipodal distance');
 
@@ -161,8 +161,6 @@ test('latlon-vectors', function(assert) {
     var stn = LatLon(51.8853, 0.2545);
     var cdg = LatLon(49.0034, 2.5735);
     assert.equal(LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d'), '50.9078°N, 004.5084°E', 'intersection');
-    var here = LatLon(53.1611, -0.7972);
-    var start = LatLon(53.3206, -1.7297);
     assert.equal(LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 90).toPrecision(4), '-1.112e+6', 'cross-track b');
     assert.equal(LatLon(10, 1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4), '-1.112e+6', 'cross-track p');
     assert.equal(LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 270).toPrecision(4), '1.112e+6', 'cross-track -');
