@@ -303,7 +303,7 @@ Usage
 -----
 
 While originally intended as illustrative code fragments, these functions can be used ‘as-is’,
-either in-browser or with npm. I have no experience of using browserify.
+either client-side in-browser or with Node.js. I have no experience of using browserify.
 
 Usage in browser using `<script>` tags, eg for geodesic distance:
 
@@ -331,9 +331,13 @@ Usage in browser using `<script>` tags, eg for UTM conversions:
         console.log(latlon.toString('dms', 2)); // => '13°24′45.00″N, 103°52′00.00″E'
     </script>
 
+I’ve also made a packaged-up npm package available:
+
+    npm install geodesy
+
 Usage with npm using `require`, eg for geodesic distance:
 
-    var LatLon = require('./npm.js').LatLonEllipsoidal;
+    var LatLon = require('geodesy').LatLonEllipsoidal;
 
     var p1 = new LatLon(50.06632, -5.71475), p2 = new LatLon(58.64402, -3.07009);
     var d = p1.distanceTo(p2);
@@ -341,9 +345,9 @@ Usage with npm using `require`, eg for geodesic distance:
 
 Usage with npm using `require`, eg for UTM conversions:
 
-    var LatLon = require('./npm.js').LatLonEllipsoidal;
-    var Utm    = require('./npm.js').Utm;
-    var Dms    = require('./npm.js').Dms;
+    var LatLon = require('geodesy').LatLonEllipsoidal;
+    var Utm    = require('geodesy').Utm;
+    var Dms    = require('geodesy').Dms;
 
     var utm = Utm.parse('48 N 377298.745 1483034.794');
     var latlon = utm.toLatlon();

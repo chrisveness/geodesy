@@ -1,11 +1,14 @@
 {
-    "name": "geodesy-libraries",
+    "name": "geodesy",
     "description": "Libraries of geodesy functions",
     "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
     "repository": { "type": "git", "url": "https://github.com/chrisveness/geodesy" },
+    "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "wgs84", "utm", "mgrs" ],
     "author": "Chris Veness",
-    "version": "0.0.0",
+    "version": "1.0.0",
+    "license": "MIT",
     "main": "npm.js",
+    "bugs": "https://github.com/chrisveness/geodesy/issues",
     "scripts": {
         "test": "tape test.js | tap-spec",
         "lint": "eslint ."
