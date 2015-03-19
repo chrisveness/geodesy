@@ -28,6 +28,8 @@ if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon
  *   var d = p1.distanceTo(p2); // d: 969954.166
  */
 LatLon.prototype.distanceTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     try {
         return this.inverse(point).distance;
     } catch (e) {
@@ -48,6 +50,8 @@ LatLon.prototype.distanceTo = function(point) {
  *   var b1 = p1.initialBearingTo(p2); // b1.toFixed(4): 9.1419
  */
 LatLon.prototype.initialBearingTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     try {
         return this.inverse(point).initialBearing;
     } catch (e) {
@@ -68,6 +72,8 @@ LatLon.prototype.initialBearingTo = function(point) {
  *   var b2 = p1.finalBearingTo(p2); // b2.toFixed(4): 11.2972
  */
 LatLon.prototype.finalBearingTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     try {
         return this.inverse(point).finalBearing;
     } catch (e) {
@@ -89,7 +95,7 @@ LatLon.prototype.finalBearingTo = function(point) {
  *   var p2 = p1.destinationPoint(54972.271, 306.86816); // p2.toString(): 37.6528°S, 143.9265°E
  */
 LatLon.prototype.destinationPoint = function(distance, initialBearing) {
-    return this.direct(distance, initialBearing).point;
+    return this.direct(Number(distance), Number(initialBearing)).point;
 };
 
 
@@ -106,7 +112,7 @@ LatLon.prototype.destinationPoint = function(distance, initialBearing) {
  *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // b2.toFixed(4): 307.1736
  */
 LatLon.prototype.finalBearingOn = function(distance, initialBearing) {
-    return this.direct(distance, initialBearing).finalBearing;
+    return this.direct(Number(distance), Number(initialBearing)).finalBearing;
 };
 
 

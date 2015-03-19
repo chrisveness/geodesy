@@ -41,7 +41,8 @@ function LatLon(lat, lon) {
  *     var d = p1.distanceTo(p2); // Number(d.toPrecision(4)): 404300
  */
 LatLon.prototype.distanceTo = function(point, radius) {
-    if (radius === undefined) radius = 6371e3;
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
 
     var R = radius;
     var φ1 = this.lat.toRadians(),  λ1 = this.lon.toRadians();
@@ -70,6 +71,8 @@ LatLon.prototype.distanceTo = function(point, radius) {
  *     var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
  */
 LatLon.prototype.bearingTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
     var Δλ = (point.lon-this.lon).toRadians();
 
@@ -95,6 +98,8 @@ LatLon.prototype.bearingTo = function(point) {
  *     var b2 = p1.finalBearingTo(p2); // b2.toFixed(1): 157.9
  */
 LatLon.prototype.finalBearingTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     // get initial bearing from destination point to this point & reverse it by adding 180°
     return ( point.bearingTo(this)+180 ) % 360;
 };
@@ -111,6 +116,8 @@ LatLon.prototype.finalBearingTo = function(point) {
  *     var pMid = p1.midpointTo(p2); // pMid.toString(): 50.5363°N, 001.2746°E
  */
 LatLon.prototype.midpointTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     // see http://mathforum.org/library/drmath/view/51822.html for derivation
 
     var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
@@ -143,8 +150,9 @@ LatLon.prototype.midpointTo = function(point) {
  *     var p2 = p1.destinationPoint(7794, 300.7); // p2.toString(): 51.5135°N, 000.0983°W
  */
 LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
+
     // see http://williams.best.vwh.net/avform.htm#LL
-    if (radius === undefined) radius = 6371e3;
 
     var δ = Number(distance) / radius; // angular distance in radians
     var θ = Number(bearing).toRadians();
@@ -177,6 +185,9 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
  *     var pInt = LatLon.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9078°N, 004.5084°E
  */
 LatLon.intersection = function(p1, brng1, p2, brng2) {
+    if (!(p1 instanceof LatLon)) throw new TypeError('p1 is not LatLon object');
+    if (!(p2 instanceof LatLon)) throw new TypeError('p2 is not LatLon object');
+
     // see http://williams.best.vwh.net/avform.htm#Intersection
 
     var φ1 = p1.lat.toRadians(), λ1 = p1.lon.toRadians();
@@ -233,7 +244,7 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
  * Returns (signed) distance from ‘this’ point to great circle defined by start-point and end-point.
  *
  * @param   {LatLon} pathStart - Start point of great circle path.
- * @param   {LatLon} pathBrngEnd - End point of great circle path.
+ * @param   {LatLon} pathEnd - End point of great circle path.
  * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
  * @returns {number} Distance to great circle (-ve if to left, +ve if to right of path).
  *
@@ -243,7 +254,9 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
  *   var d = pCurrent.crossTrackDistanceTo(p1, p2);  // Number(d.toPrecision(4)): -307.5
  */
 LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathEnd, radius) {
-    if (radius === undefined) radius = 6371e3;
+    if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
+    if (!(pathEnd instanceof LatLon)) throw new TypeError('pathEnd is not LatLon object');
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
 
     var δ13 = pathStart.distanceTo(this, radius)/radius;
     var θ13 = pathStart.bearingTo(this).toRadians();
@@ -269,8 +282,10 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathEnd, radius) {
  *     var d = p1.distanceTo(p2); // Number(d.toPrecision(4)): 40310
  */
 LatLon.prototype.rhumbDistanceTo = function(point, radius) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
+
     // see http://williams.best.vwh.net/avform.htm#Rhumb
-    if (radius === undefined) radius = 6371e3;
 
     var R = radius;
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
@@ -303,6 +318,8 @@ LatLon.prototype.rhumbDistanceTo = function(point, radius) {
  *     var d = p1.rhumbBearingTo(p2); // d.toFixed(1): 116.7
  */
 LatLon.prototype.rhumbBearingTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
     var Δλ = (point.lon-this.lon).toRadians();
     // if dLon over 180° take shorter rhumb line across the anti-meridian:
@@ -330,7 +347,7 @@ LatLon.prototype.rhumbBearingTo = function(point) {
  *     var p2 = p1.rhumbDestinationPoint(40300, 116.7); // p2.toString(): 50.9642°N, 001.8530°E
  */
 LatLon.prototype.rhumbDestinationPoint = function(distance, bearing, radius) {
-    if (radius === undefined) radius = 6371e3;
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
 
     var δ = Number(distance) / radius; // angular distance in radians
     var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
@@ -366,6 +383,8 @@ LatLon.prototype.rhumbDestinationPoint = function(distance, bearing, radius) {
  *     var p2 = p1.rhumbMidpointTo(p2); // p2.toString(): 51.0455°N, 001.5957°E
  */
 LatLon.prototype.rhumbMidpointTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     // http://mathforum.org/kb/message.jspa?messageID=148837
 
     var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();

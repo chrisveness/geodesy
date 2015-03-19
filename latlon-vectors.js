@@ -114,7 +114,8 @@ LatLon.prototype.greatCircle = function(bearing) {
  *   var d = p1.distanceTo(p2); // Number(d.toPrecision(4)): 404300
  */
 LatLon.prototype.distanceTo = function(point, radius) {
-    if (radius === undefined) radius = 6371e3;
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
 
     var p1 = this.toVector();
     var p2 = point.toVector();
@@ -137,6 +138,8 @@ LatLon.prototype.distanceTo = function(point, radius) {
  *   var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
  */
 LatLon.prototype.bearingTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     var p1 = this.toVector();
     var p2 = point.toVector();
 
@@ -163,6 +166,8 @@ LatLon.prototype.bearingTo = function(point) {
  *   var pMid = p1.midpointTo(p2); // pMid.toString(): 50.5363°N, 001.2746°E
  */
 LatLon.prototype.midpointTo = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     var p1 = this.toVector();
     var p2 = point.toVector();
 
@@ -186,12 +191,12 @@ LatLon.prototype.midpointTo = function(point) {
  *   var p2 = p1.destinationPoint(7794, 300.7); // p2.toString(): 51.5135°N, 000.0983°W
  */
 LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
-    if (radius === undefined) radius = 6371e3;
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
 
     var δ = Number(distance) / radius; // angular distance in radians
 
     // get great circle obtained by starting from 'this' point on given bearing
-    var c = this.greatCircle(bearing);
+    var c = this.greatCircle(Number(bearing));
 
     var p1 = this.toVector();
 
@@ -219,16 +224,19 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
  *   var pInt = LatLon.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9076°N, 004.5086°E
  */
 LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
+    if (!(path1start instanceof LatLon)) throw new TypeError('path1start is not LatLon object');
+    if (!(path2start instanceof LatLon)) throw new TypeError('path2start is not LatLon object');
+
     var c1, c2;
     if (path1brngEnd instanceof LatLon) { // path 1 defined by endpoint
-        c1 = path1start.toVector().cross(path1brngEnd.toVector());
+        c1 = path1start.toVector().cross(Number(path1brngEnd).toVector());
     } else {                               // path 1 defined by initial bearing
         c1 = path1start.greatCircle(path1brngEnd);
     }
     if (path2brngEnd instanceof LatLon) { // path 2 defined by endpoint
         c2 = path2start.toVector().cross(path2brngEnd.toVector());
     } else {                               // path 2 defined by initial bearing
-        c2 = path2start.greatCircle(path2brngEnd);
+        c2 = path2start.greatCircle(Number(path2brngEnd));
     }
 
     var intersection = c1.cross(c2);
@@ -255,19 +263,18 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
  *   var d = pCurrent.crossTrackDistanceTo(p1, p2);  // Number(d.toPrecision(4)): -307.5
  */
 LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius) {
-    if (radius === undefined) radius = 6371e3;
+    if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
+    radius = (radius === undefined) ? 6371e3 : Number(radius);
 
     var p = this.toVector();
 
     var gc;
     if (pathBrngEnd instanceof LatLon) {
         // great circle defined by two points
-        var pathEnd = pathBrngEnd;
-        gc = pathStart.toVector().cross(pathEnd.toVector());
+        gc = pathStart.toVector().cross(pathBrngEnd.toVector());
     } else {
         // great circle defined by point + bearing
-        var pathBrng = Number(pathBrngEnd);
-        gc = pathStart.greatCircle(pathBrng);
+        gc = pathStart.greatCircle(Number(pathBrngEnd));
     }
 
     var α = gc.angleTo(p, p.cross(gc)); // (signed) angle between point & great-circle normal vector
@@ -356,6 +363,8 @@ LatLon.meanOf = function(points) {
  *   var equal = p1.equals(p2); // equal: true
  */
 LatLon.prototype.equals = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     if (this.lat != point.lat) return false;
     if (this.lon != point.lon) return false;
 

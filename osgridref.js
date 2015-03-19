@@ -50,6 +50,8 @@ function OsGridRef(easting, northing) {
  *   var p = new LatLon(52.65757, 1.71791, LatLon.datum.OSGB36);
  */
 OsGridRef.latLonToOsGrid = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
     // if necessary convert to OSGB36 first
     if (point.datum != LatLon.datum.OSGB36) point = point.convertDatum(LatLon.datum.OSGB36);
 
@@ -114,6 +116,7 @@ OsGridRef.latLonToOsGrid = function(point) {
  *   var p = OsGridRef.osGridToLatLon(grid, LatLon.datum.OSGB36); // 52°39′27″N, 001°43′04″E
  */
 OsGridRef.osGridToLatLon = function(gridref, datum) {
+    if (!(gridref instanceof OsGridRef)) throw new TypeError('gridref is not OsGridRef object');
     if (datum === undefined) datum = LatLon.datum.WGS84;
 
     var E = gridref.easting;
@@ -209,11 +212,12 @@ OsGridRef.parse = function(gridref) {
 /**
  * Converts ‘this’ numeric grid reference to standard OS grid reference.
  *
- * @param   {number} [digits=6] - Precision of returned grid reference (6 digits = metres).
+ * @param   {number} [digits=10] - Precision of returned grid reference (10 digits = metres).
  * @returns {string} This grid reference in standard format.
  */
 OsGridRef.prototype.toString = function(digits) {
-    digits = (digits === undefined) ? 10 : digits;
+    digits = (digits === undefined) ? 10 : Number(digits);
+
     var e = this.easting;
     var n = this.northing;
     if (isNaN(e) || isNaN(n)) throw new Error('Invalid grid reference');

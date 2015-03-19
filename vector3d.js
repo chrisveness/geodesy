@@ -44,6 +44,8 @@ function Vector3d(x, y, z) {
  * @returns {Vector3d} Vector representing sum of this and v.
  */
 Vector3d.prototype.plus = function(v) {
+    if (!(v instanceof Vector3d)) throw new TypeError('v is not Vector3d object');
+
     return new Vector3d(this.x + v.x, this.y + v.y, this.z + v.z);
 };
 
@@ -55,6 +57,8 @@ Vector3d.prototype.plus = function(v) {
  * @returns {Vector3d} Vector representing difference between this and v.
  */
 Vector3d.prototype.minus = function(v) {
+    if (!(v instanceof Vector3d)) throw new TypeError('v is not Vector3d object');
+
     return new Vector3d(this.x - v.x, this.y - v.y, this.z - v.z);
 };
 
@@ -67,6 +71,7 @@ Vector3d.prototype.minus = function(v) {
  */
 Vector3d.prototype.times = function(x) {
     x = Number(x);
+
     return new Vector3d(this.x * x, this.y * x, this.z * x);
 };
 
@@ -79,6 +84,7 @@ Vector3d.prototype.times = function(x) {
  */
 Vector3d.prototype.dividedBy = function(x) {
     x = Number(x);
+
     return new Vector3d(this.x / x, this.y / x, this.z / x);
 };
 
@@ -90,6 +96,8 @@ Vector3d.prototype.dividedBy = function(x) {
  * @returns {number} Dot product of ‘this’ and v.
  */
 Vector3d.prototype.dot = function(v) {
+    if (!(v instanceof Vector3d)) throw new TypeError('v is not Vector3d object');
+
     return this.x*v.x + this.y*v.y + this.z*v.z;
 };
 
@@ -101,6 +109,8 @@ Vector3d.prototype.dot = function(v) {
  * @returns {Vector3d} Cross product of ‘this’ and v.
  */
 Vector3d.prototype.cross = function(v) {
+    if (!(v instanceof Vector3d)) throw new TypeError('v is not Vector3d object');
+
     var x = this.y*v.z - this.z*v.y;
     var y = this.z*v.x - this.x*v.z;
     var z = this.x*v.y - this.y*v.x;
@@ -157,10 +167,13 @@ Vector3d.prototype.unit = function() {
  * @returns {number} Angle (in radians) between this vector and supplied vector.
  */
 Vector3d.prototype.angleTo = function(v, vSign) {
+    if (!(v instanceof Vector3d)) throw new TypeError('v is not Vector3d object');
+
     var sinθ = this.cross(v).length();
     var cosθ = this.dot(v);
 
     if (vSign !== undefined) {
+        if (!(vSign instanceof Vector3d)) throw new TypeError('vSign is not Vector3d object');
         // use vSign as reference to get sign of sinθ
         sinθ = this.cross(v).dot(vSign)<0 ? -sinθ : sinθ;
     }
@@ -177,6 +190,8 @@ Vector3d.prototype.angleTo = function(v, vSign) {
  * @returns {Vector3d} The rotated point.
  */
 Vector3d.prototype.rotateAround = function(axis, theta) {
+    if (!(axis instanceof Vector3d)) throw new TypeError('axis is not Vector3d object');
+
     // en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
     // en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Quaternion-derived_rotation_matrix
     var p1 = this.unit();
@@ -210,9 +225,7 @@ Vector3d.prototype.rotateAround = function(axis, theta) {
  * @returns {string} Vector represented as [x,y,z].
  */
 Vector3d.prototype.toString = function(precision) {
-    if (precision === undefined) precision = 3;
-
-    var p = Number(precision);
+    var p = (precision === undefined) ? 3 : Number(precision);
 
     var str = '[' + this.x.toFixed(p) + ',' + this.y.toFixed(p) + ',' + this.z.toFixed(p) + ']';
 

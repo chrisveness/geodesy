@@ -162,7 +162,8 @@ Mgrs.prototype.toUtm = function() {
  *  - easting
  *  - northing.
  *
- * @returns {Mgrs}
+ * @param  {string} mgrsGridRef - String representation of MGRS grid reference.
+ * @returns {Mgrs} Mgrs grid reference object.
  *
  * @example
  *   var mgrsRef = Mgrs.parse('31U DQ 48251 11932');
@@ -216,8 +217,7 @@ Mgrs.parse = function(mgrsGridRef) {
  *   var mgrsStr = Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString(); // mgrsStr: '31U DQ 48251 11932'
  */
 Mgrs.prototype.toString = function(digits) {
-    if (digits === undefined) digits = 10; // default if not supplied
-    digits = Number(digits);
+    digits = (digits === undefined) ? 10 : Number(digits);
 
     var zone = this.zone.pad(2); // ensure leading zero
     var band = this.band;
