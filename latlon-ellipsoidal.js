@@ -60,6 +60,9 @@ LatLon.ellipsoid = {
 /**
  * Datums; with associated *ellipsoid* and Helmert *transform* parameters to convert from WGS 84
  * into given datum.
+ *
+ * More are available from earth-info.nga.mil/GandG/coordsys/datums/NATO_DT.pdf,
+ * www.fieldenmaps.info/cconv/web/cconv_params.js
  */
 LatLon.datum = {
     WGS84: {
@@ -91,7 +94,7 @@ LatLon.datum = {
         transform: { tx: -482.530,  ty:  130.596,   tz: -564.557,  // m
                      rx:   -1.042,  ry:   -0.214,   rz:   -0.631,  // sec
                       s:   -8.150 }                                // ppm
-    },
+    }, // note: many sources have opposite sign to rotations - to be checked!
     TokyoJapan: { // www.geocachingtoolbox.com?page=datumEllipsoidDetails
         ellipsoid: LatLon.ellipsoid.Bessel1841,
         transform: { tx:  148,      ty: -507,       tz: -685,      // m
