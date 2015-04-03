@@ -126,6 +126,13 @@ test('os-gridref', function(assert) {
     assert.equal(gridref2.easting.toFixed(3), '651409.903', 'C2 E round-trip');
     assert.equal(gridref2.northing.toFixed(3), '313177.270', 'C2 N round-trip');
 
+    assert.equal(OsGridRef.parse('SU00').toString(), 'SU 00000 00000', 'parse 100km origin');
+    assert.equal(OsGridRef.parse('SU 0 0').toString(), 'SU 00000 00000', 'parse 100km origin');
+    assert.equal(OsGridRef.parse('SU387148').toString(), 'SU 38700 14800', 'parse no whitespace');
+    assert.equal(OsGridRef.parse('SU 387 148').toString(), 'SU 38700 14800', 'parse 6-digit');
+    assert.equal(OsGridRef.parse('SU 38700 14800').toString(), 'SU 38700 14800', 'parse 10-digit');
+    assert.equal(OsGridRef.parse('438700,114800').toString(), 'SU 38700 14800', 'parse numeric');
+
     // DG round-trip
 
     var dgGridRef = OsGridRef.parse('TQ 44359 80653');

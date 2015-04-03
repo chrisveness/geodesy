@@ -170,11 +170,16 @@ OsGridRef.osGridToLatLon = function(gridref, datum) {
 
 
 /**
- * Converts standard grid reference (eg 'SU387148') to fully numeric ref (eg [438700,114800]).
+ * Parses grid reference to OsGridRef object.
+ *
+ * Accepts standard grid references (eg 'SU 387 148'), with or without whitespace separators, from
+ * two-digit references up to 10-digit references (1m × 1m square), or fully numeric comma-separated
+ * references in metres (eg '438700,114800').
  *
  * @param   {string}    gridref - Standard format OS grid reference.
  * @returns {OsGridRef} Numeric version of grid reference in metres from false origin (SW corner of
  *   supplied grid square).
+ * @throws Error on Invalid grid reference.
  *
  * @example
  *   var grid = OsGridRef.parse('TG 51409 13177'); // grid: { easting: 651409, northing: 313177 }
@@ -182,9 +187,13 @@ OsGridRef.osGridToLatLon = function(gridref, datum) {
 OsGridRef.parse = function(gridref) {
     gridref = String(gridref).trim();
 
-    // check for fully numeric gridref format
+    // check for fully numeric comma-separated gridref format
     var match = gridref.match(/^(\d+),\s*(\d+)$/);
     if (match) return new OsGridRef(match[1], match[2]);
+
+    // validate format
+    match = gridref.match(/^[A-Z]{2}\s*[0-9]+\s*[0-9]+$/i);
+    if (!match) throw new Error('Invalid grid reference');
 
     // get numeric values of letter references, mapping A->0, B->1, C->2, etc:
     var l1 = gridref.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0);
@@ -194,16 +203,25 @@ OsGridRef.parse = function(gridref) {
     if (l2 > 7) l2--;
 
     // convert grid letters into 100km-square indexes from false origin (grid square SV):
-    var e = ((l1-2)%5)*5 + (l2%5);
-    var n = (19-Math.floor(l1/5)*5) - Math.floor(l2/5);
-    if (e<0 || e>6 || n<0 || n>12) return new OsGridRef(NaN, NaN);
+    var e100km = ((l1-2)%5)*5 + (l2%5);
+    var n100km = (19-Math.floor(l1/5)*5) - Math.floor(l2/5);
 
-    // skip grid letters to get numeric part of ref, stripping any spaces:
-    gridref = gridref.slice(2).replace(/ /g, '');
+    // skip grid letters to get numeric (easting/northing) part of ref
+    var en = gridref.slice(2).trim().split(/\s+/);
+    // if e/n not whitespace separated, split half way
+    if (en.length == 1) en = [ en[0].slice(0, en[0].length/2), en[0].slice(en[0].length/2) ];
 
-    // append numeric part of references to grid index:
-    e += gridref.slice(0, gridref.length/2);
-    n += gridref.slice(gridref.length/2);
+    // validation
+    if (e100km<0 || e100km>6 || n100km<0 || n100km>12) throw new Error('Invalid grid reference');
+    if (en.length != 2) throw new Error('Invalid grid reference');
+    if (en[0].length != en[1].length) throw new Error('Invalid grid reference');
+
+    // standardise to 10-digit refs (metres)
+    en[0] = (en[0]+'00000').slice(0, 5);
+    en[1] = (en[1]+'00000').slice(0, 5);
+
+    var e = e100km + en[0];
+    var n = n100km + en[1];
 
     return new OsGridRef(e, n);
 };
@@ -217,6 +235,7 @@ OsGridRef.parse = function(gridref) {
  */
 OsGridRef.prototype.toString = function(digits) {
     digits = (digits === undefined) ? 10 : Number(digits);
+    if (isNaN(digits)) throw new Error('Invalid precision');
 
     var e = this.easting;
     var n = this.northing;
