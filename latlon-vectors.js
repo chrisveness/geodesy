@@ -81,6 +81,8 @@ Vector3d.prototype.toLatLonS = function() {
 /**
  * Great circle obtained by heading on given bearing from ‘this’ point.
  *
+ * Direction of vector is such that initial bearing vector b = c × p.
+ *
  * @private
  * @param   {number}   bearing - Compass bearing in degrees.
  * @returns {Vector3d} Normalised vector representing great circle.
@@ -227,19 +229,72 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
     if (!(path1start instanceof LatLon)) throw new TypeError('path1start is not LatLon object');
     if (!(path2start instanceof LatLon)) throw new TypeError('path2start is not LatLon object');
 
-    var c1, c2;
+    // if c1 & c2 are great circles through start and end points (or defined by start point + bearing),
+    // then candidate intersections are simply c1 × c2 & c2 × c1; most of the work is deciding correct
+    // intersection point to select! if bearing is given, that determines which intersection, if both
+    // paths are defined by start/end points, take closer intersection
+
+    var p1 = path1start.toVector();
+    var p2 = path2start.toVector();
+
+    var c1, c2, path1def, path2def;
+    // c1 & c2 are vectors defining great circles through start & end points; p × c gives initial bearing vector
+
     if (path1brngEnd instanceof LatLon) { // path 1 defined by endpoint
-        c1 = path1start.toVector().cross(Number(path1brngEnd).toVector());
-    } else {                               // path 1 defined by initial bearing
+        c1 = p1.cross(path1brngEnd.toVector());
+        path1def = 'endpoint';
+    } else {                              // path 1 defined by initial bearing
         c1 = path1start.greatCircle(path1brngEnd);
+        path1def = 'bearing';
     }
     if (path2brngEnd instanceof LatLon) { // path 2 defined by endpoint
-        c2 = path2start.toVector().cross(path2brngEnd.toVector());
-    } else {                               // path 2 defined by initial bearing
+        c2 = p2.cross(path2brngEnd.toVector());
+        path2def = 'endpoint';
+    } else {                              // path 2 defined by initial bearing
         c2 = path2start.greatCircle(Number(path2brngEnd));
+        path2def = 'bearing';
     }
 
-    var intersection = c1.cross(c2);
+    // there are two (antipodal) candidate intersection points; we have to choose which to return
+    var i1 = c1.cross(c2);
+    var i2 = c2.cross(c1);
+    var intersection;
+
+    // am I making heavy weather of this? is there a simpler way to do it?
+
+    // selection of intersection point depends on how paths are defined (bearings or endpoints)
+    switch (path1def+'+'+path2def) {
+        case 'bearing+bearing':
+            // if c×p⋅i1 is +ve, the initial bearing is towards i1, otherwise towards antipodal i2
+            var dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
+            var dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
+
+            switch (dir1+dir2) {
+                case  2: // dir1, dir2 both +ve, 1 & 2 both pointing to i1
+                    intersection = i1;
+                    break;
+                case -2: // dir1, dir2 both -ve, 1 & 2 both pointing to i2
+                    intersection = i2;
+                    break;
+                case  0: // dir1, dir2 opposite; intersection is at further-away intersection point
+                    // take opposite intersection from mid-point of p1 & p2 [is this always true?]
+                    intersection = p1.plus(p2).dot(i1) > 0 ? i2 : i1;
+                    break;
+            }
+            break;
+        case 'bearing+endpoint': // use bearing c1 × p1
+            var dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
+            intersection = dir1>0 ? i1 : i2;
+            break;
+        case 'endpoint+bearing': // use bearing c2 × p2
+            var dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
+            intersection = dir2>0 ? i1 : i2;
+            break;
+        case 'endpoint+endpoint': // select nearest intersection to mid-point of all points
+            var mid = p1.plus(p2).plus(path1brngEnd.toVector()).plus(path2brngEnd.toVector());
+            intersection = mid.dot(i1)>0 ? i1 : i2;
+            break;
+    }
 
     return intersection.toLatLonS();
 };

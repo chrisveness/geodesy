@@ -166,9 +166,32 @@ test('latlon-vectors', function(assert) {
     assert.equal(LatLon(48.857, 2.351).bearingTo(LatLon(52.205, 0.119)).toFixed(1), '337.9', 'bearing (reverse)');
     assert.equal(LatLon(52.205, 0.119).midpointTo(LatLon(48.857, 2.351)).toString('d'), '50.5363°N, 001.2746°E', 'midpoint');
     assert.equal(LatLon(51.4778, -0.0015).destinationPoint(7794, 300.7).toString('d'), '51.5135°N, 000.0983°W', 'destination');
+
+    var N = 0, E = 90, S = 180, W = 270;
+    assert.equal(LatLon.intersection(LatLon(0, 1), N, LatLon(1, 0), E).toString('d'), '00.9998°N, 001.0000°E', 'intersection toward 1,1 N,E nearest');
+    assert.equal(LatLon.intersection(LatLon(1, 0), E, LatLon(0, 1), N).toString('d'), '00.9998°N, 001.0000°E', 'intersection toward 1,1 E,N nearest');
+    assert.equal(LatLon.intersection(LatLon(2, 1), N, LatLon(1, 0), E).toString('d'), '00.9998°S, 179.0000°W', 'intersection toward 1,1 N,E antipodal');
+    assert.equal(LatLon.intersection(LatLon(0, 1), N, LatLon(1, 0), W).toString('d'), '00.9998°S, 179.0000°W', 'intersection toward/away 1,1 N,W antipodal');
+    assert.equal(LatLon.intersection(LatLon(1, 0), W, LatLon(0, 1), N).toString('d'), '00.9998°S, 179.0000°W', 'intersection toward/away 1,1 W,N antipodal');
+    assert.equal(LatLon.intersection(LatLon(0, 1), S, LatLon(1, 0), E).toString('d'), '00.9998°S, 179.0000°W', 'intersection toward/away 1,1 S,E antipodal');
+    assert.equal(LatLon.intersection(LatLon(1, 0), E, LatLon(0, 1), S).toString('d'), '00.9998°S, 179.0000°W', 'intersection toward/away 1,1 E,S antipodal');
+    assert.equal(LatLon.intersection(LatLon(0, 1), S, LatLon(1, 0), W).toString('d'), '00.9998°S, 179.0000°W', 'intersection away 1,1 S,W antipodal');
+    assert.equal(LatLon.intersection(LatLon(1, 0), W, LatLon(0, 1), S).toString('d'), '00.9998°S, 179.0000°W', 'intersection away 1,1 W,S antipodal');
+
+    assert.equal(LatLon.intersection(LatLon(0, 1), N, LatLon(1, 90), E).toString('d'), '00.0175°S, 179.0000°W', 'intersection 1E/90E N,E antipodal');
+    assert.equal(LatLon.intersection(LatLon(0, 1), N, LatLon(1, 92), E).toString('d'), '00.0175°N, 179.0000°W', 'intersection 1E/90E N,E nearest');
+
+    assert.equal(LatLon.intersection(LatLon(1, 0), LatLon(1, 3), LatLon(2, 2), S).toString('d'), '01.0003°N, 002.0000°E', 'intersection brng+end 1a');
+    assert.equal(LatLon.intersection(LatLon(2, 2), S, LatLon(1, 0), LatLon(1, 3)).toString('d'), '01.0003°N, 002.0000°E', 'intersection brng+end 1b');
+    assert.equal(LatLon.intersection(LatLon(1, 0), LatLon(1, 3), LatLon(2, 2), N).toString('d'), '01.0003°S, 178.0000°W', 'intersection brng+end 2a');
+    assert.equal(LatLon.intersection(LatLon(2, 2), N, LatLon(1, 0), LatLon(1, 3)).toString('d'), '01.0003°S, 178.0000°W', 'intersection brng+end 2b');
+
+    assert.equal(LatLon.intersection(LatLon(1, 1), LatLon(2, 2), LatLon(1, 4), LatLon(2, 3)).toString('d'), '02.4994°N, 002.5000°E', 'intersection end+end');
+
     var stn = LatLon(51.8853, 0.2545);
     var cdg = LatLon(49.0034, 2.5735);
-    assert.equal(LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d'), '50.9078°N, 004.5084°E', 'intersection');
+    assert.equal(LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d'), '50.9078°N, 004.5084°E', 'intersection stn-cdg-bxl');
+
     assert.equal(LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 90).toPrecision(4), '-1.112e+6', 'cross-track b');
     assert.equal(LatLon(10, 1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4), '-1.112e+6', 'cross-track p');
     assert.equal(LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 270).toPrecision(4), '1.112e+6', 'cross-track -');
