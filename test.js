@@ -312,6 +312,11 @@ test('utm', function(assert) {
     assert.equal(Mgrs.parse('23K PQ 83466 60687').toUtm().toString(), '23 S 683466 7460687', 'MGRS->UTM rio christ');
     assert.equal(Mgrs.parse('32V KN 97508 00645').toUtm().toString(), '32 N 297508 6700645', 'MGRS->UTM bergen');
 
+    // varying resolution
+    assert.equal(Mgrs.parse('12S TC 52 86').toUtm().toString(), '12 N 252000 3786000', 'MGRS 4-digit');
+    assert.equal(Mgrs.parse('12S TC 52000 86000').toUtm().toString(), '12 N 252000 3786000', 'MGRS 10-digit');
+    assert.equal(Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3), '12 N 252000.123 3786000.123', 'MGRS 10-digit+decimals');
+
     /* http://www.ibm.com/developerworks/library/j-coordconvert/
      ( 0.0000    0.0000  )     "31 N 166021 0"
      ( 0.1300   -0.2324  )     "30 N 808084 14385"

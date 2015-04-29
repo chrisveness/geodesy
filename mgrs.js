@@ -197,6 +197,10 @@ Mgrs.parse = function(mgrsGridRef) {
 
     var e = mgrsGridRef[2], n = mgrsGridRef[3];
 
+    // standardise to 10-digit refs - ie metres) (but only if < 10-digit refs, to allow decimals)
+    e = e.length>=5 ?  e : (e+'00000').slice(0, 5);
+    n = n.length>=5 ?  n : (n+'00000').slice(0, 5);
+
     return new Mgrs(zone, band, e100k, n100k, e, n);
 };
 
