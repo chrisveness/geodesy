@@ -237,7 +237,7 @@ test('dms', function(assert) {
         '45 45 45.36 ',
         '45° 45′ 45.36″',
         '45º 45\' 45.36"',
-        '45° 45’ 45.36”'
+        '45° 45’ 45.36”',
     ];
     for (var v in variations) assert.equal(Dms.parseDMS(variations[v]),      45.76260, 'parse dms variations '+variations[v]);
     for (var v in variations) assert.equal(Dms.parseDMS('-'+variations[v]), -45.76260, 'parse dms variations '+'-'+variations[v]);

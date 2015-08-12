@@ -228,6 +228,8 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
 LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
     if (!(path1start instanceof LatLon)) throw new TypeError('path1start is not LatLon object');
     if (!(path2start instanceof LatLon)) throw new TypeError('path2start is not LatLon object');
+    if (!(path1brngEnd instanceof LatLon) && isNaN(path1brngEnd)) throw new TypeError('path1brngEnd is not LatLon object or bearing');
+    if (!(path2brngEnd instanceof LatLon) && isNaN(path2brngEnd)) throw new TypeError('path2brngEnd is not LatLon object or bearing');
 
     // if c1 & c2 are great circles through start and end points (or defined by start point + bearing),
     // then candidate intersections are simply c1 × c2 & c2 × c1; most of the work is deciding correct
@@ -244,7 +246,7 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
         c1 = p1.cross(path1brngEnd.toVector());
         path1def = 'endpoint';
     } else {                              // path 1 defined by initial bearing
-        c1 = path1start.greatCircle(path1brngEnd);
+        c1 = path1start.greatCircle(Number(path1brngEnd));
         path1def = 'bearing';
     }
     if (path2brngEnd instanceof LatLon) { // path 2 defined by endpoint

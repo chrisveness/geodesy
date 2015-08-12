@@ -54,7 +54,7 @@ LatLon.ellipsoid = {
     Airy1830:     { a: 6377563.396, b: 6356256.909,   f: 1/299.3249646   },
     AiryModified: { a: 6377340.189, b: 6356034.448,   f: 1/299.3249646   },
     Intl1924:     { a: 6378388,     b: 6356911.946,   f: 1/297           },
-    Bessel1841:   { a: 6377397.155, b: 6356078.963,   f: 1/299.152815351 }
+    Bessel1841:   { a: 6377397.155, b: 6356078.963,   f: 1/299.152815351 },
 };
 
 /**
@@ -65,6 +65,7 @@ LatLon.ellipsoid = {
  * www.fieldenmaps.info/cconv/web/cconv_params.js
  */
 LatLon.datum = {
+    /* eslint key-spacing: 0, comma-dangle: 0 */
     WGS84: {
         ellipsoid: LatLon.ellipsoid.WGS84,
         transform: { tx:    0.0,    ty:    0.0,     tz:    0.0,    // m

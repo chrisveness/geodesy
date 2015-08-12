@@ -240,7 +240,7 @@ Utm.prototype.toLatLonE = function() {
         var τiʹ = τi * Math.sqrt(1+σi*σi) - σi * Math.sqrt(1+τi*τi);
         var δτi = (τʹ - τiʹ)/Math.sqrt(1+τiʹ*τiʹ)
             * (1 + (1-e*e)*τi*τi) / ((1-e*e)*Math.sqrt(1+τi*τi));
-         τi += δτi;
+        τi += δτi;
     } while (Math.abs(δτi) > 1e-12); // using IEEE 754 δτi -> 0 after 2-3 iterations
     // note relatively large convergence test as δτi toggles on ±1.12e-16 for eg 31 N 400000 5000000
     var τ = τi;

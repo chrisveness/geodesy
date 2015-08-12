@@ -121,7 +121,7 @@ Dms.toDMS = function(deg, format, dp) {
             if (m<10) m = '0' + m;
             if (s<10) s = '0' + s;
             dms = d + '°' + m + '′' + s + '″';
-        break;
+            break;
     }
 
     return dms;

@@ -170,7 +170,7 @@ LatLon.prototype.direct = function(distance, initialBearing) {
 
     return {
         point:        new LatLon(φ2.toDegrees(), λ2.toDegrees(), this.datum),
-        finalBearing: α2.toDegrees()
+        finalBearing: α2.toDegrees(),
     };
 };
 
