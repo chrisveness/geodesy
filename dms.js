@@ -75,9 +75,10 @@ Dms.parseDMS = function(dmsStr) {
  * @param   {number} deg - Degrees to be formatted as specified.
  * @param   {string} [format=dms] - Return value as 'd', 'dm', 'dms' for deg, deg+min, deg+min+sec.
  * @param   {number} [dp=0|2|4] - Number of decimal places to use – default 0 for dms, 2 for dm, 4 for d.
+ * @param   {string} character used for spacing segments - defaults to empty string
  * @returns {string} Degrees formatted as deg/min/secs according to specified format.
  */
-Dms.toDMS = function(deg, format, dp) {
+Dms.toDMS = function(deg, format, dp, spaceChar) {
     if (isNaN(deg)) return null;  // give up here if we can't make a number from deg
 
     // default values
@@ -94,6 +95,7 @@ Dms.toDMS = function(deg, format, dp) {
     deg = Math.abs(deg);  // (unsigned result ready for appending compass dir'n)
 
     var dms, d, m, s;
+    spaceChar = spaceChar || "";
     switch (format) {
         default: // invalid format spec!
         case 'd': case 'deg':
@@ -109,7 +111,7 @@ Dms.toDMS = function(deg, format, dp) {
             if (d<100) d = '0' + d;         // pad with leading zeros
             if (d<10) d = '0' + d;
             if (m<10) m = '0' + m;
-            dms = d + '°' + m + '′';
+            dms = d + '°' + spaceChar + m + '′';
             break;
         case 'dms': case 'deg+min+sec':
             var sec = (deg*3600).toFixed(dp); // convert degrees to seconds & round
@@ -120,7 +122,7 @@ Dms.toDMS = function(deg, format, dp) {
             if (d<10) d = '0' + d;
             if (m<10) m = '0' + m;
             if (s<10) s = '0' + s;
-            dms = d + '°' + m + '′' + s + '″';
+            dms = d + '°' + spaceChar + m + '′' + spaceChar + s + '″';
         break;
     }
 
@@ -134,11 +136,13 @@ Dms.toDMS = function(deg, format, dp) {
  * @param   {number} deg - Degrees to be formatted as specified.
  * @param   {string} [format=dms] - Return value as 'd', 'dm', 'dms' for deg, deg+min, deg+min+sec.
  * @param   {number} [dp=0|2|4] - Number of decimal places to use – default 0 for dms, 2 for dm, 4 for d.
+ * @param   {bool}   true - adds space between segments - default false
  * @returns {string} Degrees formatted as deg/min/secs according to specified format.
  */
-Dms.toLat = function(deg, format, dp) {
-    var lat = Dms.toDMS(deg, format, dp);
-    return lat===null ? '–' : lat.slice(1) + (deg<0 ? 'S' : 'N');  // knock off initial '0' for lat!
+Dms.toLat = function(deg, format, dp, spaced) {
+    var spaceChar = spaced ? " " : "";
+    var lat = Dms.toDMS(deg, format, dp, spaceChar);
+    return lat===null ? '–' : lat.slice(1) + spaceChar + (deg<0 ? 'S' : 'N');  // knock off initial '0' for lat!
 };
 
 
@@ -148,11 +152,13 @@ Dms.toLat = function(deg, format, dp) {
  * @param   {number} deg - Degrees to be formatted as specified.
  * @param   {string} [format=dms] - Return value as 'd', 'dm', 'dms' for deg, deg+min, deg+min+sec.
  * @param   {number} [dp=0|2|4] - Number of decimal places to use – default 0 for dms, 2 for dm, 4 for d.
+ * @param   {bool}   true - adds space between segments - default false
  * @returns {string} Degrees formatted as deg/min/secs according to specified format.
  */
-Dms.toLon = function(deg, format, dp) {
-    var lon = Dms.toDMS(deg, format, dp);
-    return lon===null ? '–' : lon + (deg<0 ? 'W' : 'E');
+Dms.toLon = function(deg, format, dp, spaced) {
+    var spaceChar = spaced ? " " : "";
+    var lon = Dms.toDMS(deg, format, dp, spaceChar);
+    return lon===null ? '–' : lon + spaceChar + (deg<0 ? 'W' : 'E');
 };
 
 
