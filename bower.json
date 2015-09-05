@@ -1,0 +1,53 @@
+{
+  "author": "Chris Veness",
+  "name": "geodesy",
+  "version": "1.0.2",
+  "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisveness/geodesy",
+  },
+  "main": [
+    "dms.js",
+    "latlon-ellipsoidal.js",
+    "latlon-spherical.js",
+    "latlon-vectors.js",
+    "latlon-vincenty.js",
+    "mgrs.js",
+    "npm.js",
+    "osgridref.js",
+    "test.js",
+    "utm.js",
+    "vector3d.js"
+  ],
+  "dependencies": {
+  },
+  "authors": [
+    "Chris Veness"
+  ],
+  "description": "Libraries of geodesy functions",
+  "keywords": [
+    "geodesy",
+    "latitude",
+    "longitude",
+    "distance",
+    "bearing",
+    "haversine",
+    "vincenty",
+    "rhumb",
+    "ellipsoid",
+    "datum",
+    "wgs84",
+    "utm",
+    "mgrs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
+
