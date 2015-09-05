@@ -5,7 +5,7 @@
   "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
   "repository": {
     "type": "git",
-    "url": "git://github.com/chrisveness/geodesy",
+    "url": "git://github.com/chrisveness/geodesy"
   },
   "main": [
     "dms.js",
