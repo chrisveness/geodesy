@@ -130,9 +130,8 @@ LatLon.prototype.midpointTo = function(point) {
     var φ3 = Math.atan2(Math.sin(φ1)+Math.sin(φ2),
              Math.sqrt( (Math.cos(φ1)+Bx)*(Math.cos(φ1)+Bx) + By*By) );
     var λ3 = λ1 + Math.atan2(By, Math.cos(φ1) + Bx);
-    λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
-    return new LatLon(φ3.toDegrees(), λ3.toDegrees());
+    return new LatLon(φ3.toDegrees(), (λ3.toDegrees()+540)%360-180); // normalise to −180…+180°
 };
 
 
@@ -164,9 +163,8 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
                         Math.cos(φ1)*Math.sin(δ)*Math.cos(θ) );
     var λ2 = λ1 + Math.atan2(Math.sin(θ)*Math.sin(δ)*Math.cos(φ1),
                              Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2));
-    λ2 = (λ2+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
-    return new LatLon(φ2.toDegrees(), λ2.toDegrees());
+    return new LatLon(φ2.toDegrees(), (λ2.toDegrees()+540)%360-180); // normalise to −180…+180°
 };
 
 
@@ -234,9 +232,8 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     var Δλ13 = Math.atan2( Math.sin(θ13)*Math.sin(δ13)*Math.cos(φ1),
                            Math.cos(δ13)-Math.sin(φ1)*Math.sin(φ3) );
     var λ3 = λ1 + Δλ13;
-    λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
 
-    return new LatLon(φ3.toDegrees(), λ3.toDegrees());
+    return new LatLon(φ3.toDegrees(), (λ3.toDegrees()+540)%360-180); // normalise to −180…+180°
 };
 
 
@@ -354,8 +351,8 @@ LatLon.prototype.rhumbDestinationPoint = function(distance, bearing, radius) {
     var θ = Number(bearing).toRadians();
 
     var Δφ = δ * Math.cos(θ);
-
     var φ2 = φ1 + Δφ;
+
     // check for some daft bugger going past the pole, normalise latitude if so
     if (Math.abs(φ2) > Math.PI/2) φ2 = φ2>0 ? Math.PI-φ2 : -Math.PI-φ2;
 
@@ -363,12 +360,9 @@ LatLon.prototype.rhumbDestinationPoint = function(distance, bearing, radius) {
     var q = Math.abs(Δψ) > 10e-12 ? Δφ / Δψ : Math.cos(φ1); // E-W course becomes ill-conditioned with 0/0
 
     var Δλ = δ*Math.sin(θ)/q;
-
     var λ2 = λ1 + Δλ;
 
-    λ2 = (λ2 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
-
-    return new LatLon(φ2.toDegrees(), λ2.toDegrees());
+    return new LatLon(φ2.toDegrees(), (λ2.toDegrees()+540)%360-180); // normalise to −180…+180°
 };
 
 
@@ -400,9 +394,7 @@ LatLon.prototype.rhumbMidpointTo = function(point) {
 
     if (!isFinite(λ3)) λ3 = (λ1+λ2)/2; // parallel of latitude
 
-    λ3 = (λ3 + 3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180°
-
-    return new LatLon(φ3.toDegrees(), λ3.toDegrees());
+    return new LatLon(φ3.toDegrees(), (λ3.toDegrees()+540)%360-180); // normalise to −180…+180°
 };
 
 
