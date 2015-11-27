@@ -265,6 +265,63 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathEnd, radius) {
 };
 
 
+/**
+ * Returns maximum latitude reached when travelling on a great circle on given bearing from this
+ * point ('Clairaut's formula'). Negate the result for the minimum latitude (in the Southern
+ * hemisphere).
+ *
+ * The maximum latitude is independent of longitude; it will be the same for all points on a given
+ * latitude.
+ *
+ * @param {number} bearing - Initial bearing.
+ * @param {number} latitude - Starting latitude.
+ */
+LatLon.prototype.maxLatitude = function(bearing) {
+    var θ = Number(bearing).toRadians();
+
+    var φ = this.lat.toRadians();
+
+    var φMax = Math.acos(Math.abs(Math.sin(θ)*Math.cos(φ)));
+
+    return φMax.toDegrees();
+};
+
+
+/**
+ * Returns the pair of meridians at which a great circle defined by two points crosses the given
+ * latitude. If the great circle doesn't reach the given latitude, null is returned.
+ *
+ * @param {LatLon} point1 - First point defining great circle.
+ * @param {LatLon} point2 - Second point defining great circle.
+ * @param {number} latitude - Latitude crossings are to be determined for.
+ * @returns { { lon1, lon2 } } | null
+ */
+LatLon.crossingParallels = function(point1, point2, latitude) {
+    var φ = Number(latitude).toRadians();
+
+    var φ1 = point1.lat.toRadians();
+    var λ1 = point1.lon.toRadians();
+    var φ2 = point2.lat.toRadians();
+    var λ2 = point2.lon.toRadians();
+
+    var Δλ = λ2 - λ1;
+
+    var x = Math.sin(φ1) * Math.cos(φ2) * Math.cos(φ) * Math.sin(Δλ);
+    var y = Math.sin(φ1) * Math.cos(φ2) * Math.cos(φ) * Math.cos(Δλ) - Math.cos(φ1) * Math.sin(φ2) * Math.cos(φ);
+    var z = Math.cos(φ1) * Math.cos(φ2) * Math.sin(φ) * Math.sin(Δλ);
+
+    if (z*z > x*x + y*y) return null; // great circle doesn't reach latitude
+
+    var λm = Math.atan2(-y, x);                  // longitude at max latitude
+    var Δλi = Math.acos(z / Math.sqrt(x*x+y*y)); // Δλ from λm to intersection points
+
+    var λi1 = λ1 + λm - Δλi;
+    var λi2 = λ1 + λm + Δλi;
+
+    return { lon1: (λi1.toDegrees()+540)%360-180, lon2: (λi2.toDegrees()+540)%360-180 }; // normalise to −180…+180°
+};
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /**

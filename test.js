@@ -30,12 +30,20 @@ test('direct', function(assert) {
     assert.end();
 });
 
-test('intersection', function(assert) {
+test('intersection etc', function(assert) {
     var LatLon = require('./npm.js').LatLonSpherical;
 
     var stn = new LatLon(51.8853, 0.2545);
     var cdg = new LatLon(49.0034, 2.5735);
-    assert.equal(LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d'), '50.9078°N, 004.5084°E', 'dest’n');
+    assert.equal(LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d'), '50.9078°N, 004.5084°E', 'intersec’n');
+
+    assert.equal(LatLon(0,0).maxLatitude( 0), 90, 'Clairaut 0°');
+    assert.equal(LatLon(0,0).maxLatitude( 1), 89, 'Clairaut 1°');
+    assert.equal(LatLon(0,0).maxLatitude(90),  0, 'Clairaut 90°');
+
+    var lonInt = LatLon.crossingParallels(LatLon(0,0), LatLon(60,30), 30);
+    assert.equal(LatLon(30, lonInt.lon1).toString(), '30°00′00″N, 009°35′39″E');
+    assert.equal(LatLon(30, lonInt.lon2).toString(), '30°00′00″N, 170°24′21″E');
     assert.end();
 });
 
