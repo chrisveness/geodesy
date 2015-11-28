@@ -260,16 +260,16 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
     // there are two (antipodal) candidate intersection points; we have to choose which to return
     var i1 = c1.cross(c2);
     var i2 = c2.cross(c1);
-    var intersection;
 
     // am I making heavy weather of this? is there a simpler way to do it?
 
     // selection of intersection point depends on how paths are defined (bearings or endpoints)
+    var intersection=null, dir1=null, dir2=null;
     switch (path1def+'+'+path2def) {
         case 'bearing+bearing':
             // if c×p⋅i1 is +ve, the initial bearing is towards i1, otherwise towards antipodal i2
-            var dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
-            var dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
+            dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
+            dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
 
             switch (dir1+dir2) {
                 case  2: // dir1, dir2 both +ve, 1 & 2 both pointing to i1
@@ -285,11 +285,11 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
             }
             break;
         case 'bearing+endpoint': // use bearing c1 × p1
-            var dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
+            dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
             intersection = dir1>0 ? i1 : i2;
             break;
         case 'endpoint+bearing': // use bearing c2 × p2
-            var dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
+            dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
             intersection = dir2>0 ? i1 : i2;
             break;
         case 'endpoint+endpoint': // select nearest intersection to mid-point of all points
