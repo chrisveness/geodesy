@@ -1,0 +1,56 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/*  Geodesy Test Harness - os-gridref                                 (c) Chris Veness 2014-2015  */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+'use strict';
+
+var chai     = require('chai');  // BDD/TDD assertion library
+
+var LatLon   = require('../npm.js').LatLonVectors;
+var Vector3d = require('../npm.js').Vector3d;
+
+chai.should();
+var test = it; // just an alias
+
+describe('latlon-vectors', function() {
+    test('ll to v',           function() { LatLon(45, 45).toVector().toString().should.equal('[0.500,0.500,0.707]'); });
+    test('v to ll',           function() { Vector3d(0.500, 0.500, 0.707107).toLatLonS().toString('d').should.equal('45.0000°N, 045.0000°E'); });
+    test('great circle',      function() { LatLon(53.3206, -1.7297).greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'); });
+    test('distance',          function() { LatLon(52.205, 0.119).distanceTo(LatLon(48.857, 2.351)).toPrecision(4).should.equal('4.043e+5'); });
+    test('bearing',           function() { LatLon(52.205, 0.119).bearingTo(LatLon(48.857, 2.351)).toFixed(1).should.equal('156.2'); });
+    test('bearing (reverse)', function() { LatLon(48.857, 2.351).bearingTo(LatLon(52.205, 0.119)).toFixed(1).should.equal('337.9'); });
+    test('midpoint',          function() { LatLon(52.205, 0.119).midpointTo(LatLon(48.857, 2.351)).toString('d').should.equal('50.5363°N, 001.2746°E'); });
+    test('destination',       function() { LatLon(51.4778, -0.0015).destinationPoint(7794, 300.7).toString('d').should.equal('51.5135°N, 000.0983°W'); });
+
+    var N = 0, E = 90, S = 180, W = 270;
+    test('intersection toward 1,1 N,E nearest',        function() { LatLon.intersection(LatLon(0, 1), N, LatLon(1, 0), E).toString('d').should.equal('00.9998°N, 001.0000°E'); });
+    test('intersection toward 1,1 E,N nearest',        function() { LatLon.intersection(LatLon(1, 0), E, LatLon(0, 1), N).toString('d').should.equal('00.9998°N, 001.0000°E'); });
+    test('intersection toward 1,1 N,E antipodal',      function() { LatLon.intersection(LatLon(2, 1), N, LatLon(1, 0), E).toString('d').should.equal('00.9998°S, 179.0000°W'); });
+    test('intersection toward/away 1,1 N,W antipodal', function() { LatLon.intersection(LatLon(0, 1), N, LatLon(1, 0), W).toString('d').should.equal('00.9998°S, 179.0000°W'); });
+    test('intersection toward/away 1,1 W,N antipodal', function() { LatLon.intersection(LatLon(1, 0), W, LatLon(0, 1), N).toString('d').should.equal('00.9998°S, 179.0000°W'); });
+    test('intersection toward/away 1,1 S,E antipodal', function() { LatLon.intersection(LatLon(0, 1), S, LatLon(1, 0), E).toString('d').should.equal('00.9998°S, 179.0000°W'); });
+    test('intersection toward/away 1,1 E,S antipodal', function() { LatLon.intersection(LatLon(1, 0), E, LatLon(0, 1), S).toString('d').should.equal('00.9998°S, 179.0000°W'); });
+    test('intersection away 1,1 S,W antipodal',        function() { LatLon.intersection(LatLon(0, 1), S, LatLon(1, 0), W).toString('d').should.equal('00.9998°S, 179.0000°W'); });
+    test('intersection away 1,1 W,S antipodal',        function() { LatLon.intersection(LatLon(1, 0), W, LatLon(0, 1), S).toString('d').should.equal('00.9998°S, 179.0000°W'); });
+
+    test('intersection 1E/90E N,E antipodal',          function() { LatLon.intersection(LatLon(0, 1), N, LatLon(1, 90), E).toString('d').should.equal('00.0175°S, 179.0000°W'); });
+    test('intersection 1E/90E N,E nearest',            function() { LatLon.intersection(LatLon(0, 1), N, LatLon(1, 92), E).toString('d').should.equal('00.0175°N, 179.0000°W'); });
+
+    test('intersection brng+end 1a',                   function() { LatLon.intersection(LatLon(1, 0), LatLon(1, 3), LatLon(2, 2), S).toString('d').should.equal('01.0003°N, 002.0000°E'); });
+    test('intersection brng+end 1b',                   function() { LatLon.intersection(LatLon(2, 2), S, LatLon(1, 0), LatLon(1, 3)).toString('d').should.equal('01.0003°N, 002.0000°E'); });
+    test('intersection brng+end 2a',                   function() { LatLon.intersection(LatLon(1, 0), LatLon(1, 3), LatLon(2, 2), N).toString('d').should.equal('01.0003°S, 178.0000°W'); });
+    test('intersection brng+end 2b',                   function() { LatLon.intersection(LatLon(2, 2), N, LatLon(1, 0), LatLon(1, 3)).toString('d').should.equal('01.0003°S, 178.0000°W'); });
+
+    test('intersection end+end',                       function() { LatLon.intersection(LatLon(1, 1), LatLon(2, 2), LatLon(1, 4), LatLon(2, 3)).toString('d').should.equal('02.4994°N, 002.5000°E'); });
+
+    var stn = LatLon(51.8853, 0.2545), cdg = LatLon(49.0034, 2.5735);
+    test('intersection stn-cdg-bxl',                   function() { LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d').should.equal('50.9078°N, 004.5084°E'); });
+
+    test('cross-track b', function() { LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+6'); });
+    test('cross-track p', function() { LatLon(10, 1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'); });
+    test('cross-track -', function() { LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+6'); });
+    var bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
+    test('enclosed in',   function() { LatLon(45.1, 1.1).enclosedBy(bounds).should.be.true; });
+    test('enclosed out',  function() { LatLon(46.1, 1.1).enclosedBy(bounds).should.be.false; });
+    test('equals',        function() { LatLon(52.205, 0.119).equals(LatLon(52.205, 0.119)).should.be.true; });
+});
