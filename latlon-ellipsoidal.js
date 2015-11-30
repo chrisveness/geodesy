@@ -204,7 +204,7 @@ Vector3d.prototype.toLatLonE = function(datum) {
 
     // height above ellipsoid (Bowring eqn 7) [not currently used]
     var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
-    var ν = a*Math.sqrt(1-e2*sinφ*sinφ); // length of the normal terminated by the minor axis
+    var ν = a/Math.sqrt(1-e2*sinφ*sinφ); // length of the normal terminated by the minor axis
     var h = p*cosφ + z*sinφ - (a*a/ν);
 
     var point = new LatLon(φ.toDegrees(), λ.toDegrees(), datum);
