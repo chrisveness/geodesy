@@ -113,7 +113,7 @@ LatLon.prototype.greatCircle = function(bearing) {
  *
  * @example
  *   var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
- *   var d = p1.distanceTo(p2); // Number(d.toPrecision(4)): 404300
+ *   var d = p1.distanceTo(p2); // d.toPrecision(4): 404300
  */
 LatLon.prototype.distanceTo = function(point, radius) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -314,10 +314,10 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
  *   var pCurrent = new LatLon(53.2611, -0.7972);
  *
  *   var p1 = new LatLon(53.3206, -1.7297), brng = 96.0;
- *   var d = pCurrent.crossTrackDistanceTo(p1, brng);// Number(d.toPrecision(4)): -305.7
+ *   var d = pCurrent.crossTrackDistanceTo(p1, brng);// d.toPrecision(4): -305.7
  *
  *   var p1 = new LatLon(53.3206, -1.7297), p2 = new LatLon(53.1887, 0.1334);
- *   var d = pCurrent.crossTrackDistanceTo(p1, p2);  // Number(d.toPrecision(4)): -307.5
+ *   var d = pCurrent.crossTrackDistanceTo(p1, p2);  // d.toPrecision(4): -307.5
  */
 LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius) {
     if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
@@ -340,6 +340,56 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius)
     var d = α * radius;
 
     return d;
+};
+
+
+/**
+ * Returns closest point on great circle segment between point1 & point2 to ‘this’ point.
+ *
+ * If this point is ‘within’ the extent of the segment, the point is on the segment between point1 &
+ * point2; otherwise, it is the closer of the endpoints defining the segment.
+ *
+ * @param   {LatLon} point1 - Start point of great circle segment.
+ * @param   {LatLon} point2 - End point of great circle segment.
+ * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
+ * @returns {number} point on segment.
+ *
+ * @example
+ *   var p1 = new LatLon(51.0, 1.0), p2 = new LatLon(51.0, 2.0);
+ *
+ *   var p0 = new LatLon(51.0, 1.9);
+ *   var p = p0.nearestPointOnSegment(p1, p2); // p.toString(): 51.0004°N, 001.9000°E
+ *   var d = p.distanceTo(p);                  // d.toPrecision(4): 42.71
+ *
+ *   var p0 = new LatLon(51.0, 2.1);
+ *   var p = p0.nearestPointOnSegment(p1, p2); // p.toString(): 51.0000°N, 002.0000°E
+ */
+LatLon.prototype.nearestPointOnSegment = function(point1, point2, radius) {
+    var v0 = this.toVector(), v1 = point1.toVector(), v2 = point2.toVector();
+
+    // dot product p10⋅p12 tells us if p0 is on p2 side of p1, similarly for p20⋅p21
+    var p10 = v0.minus(v1), p12 = v2.minus(v1);
+    var p20 = v0.minus(v2), p21 = v1.minus(v2);
+
+    var extent1 = p10.dot(p12);
+    var extent2 = p20.dot(p21);
+
+    var withinExtent = extent1>=0 && extent2>=0;
+
+    if (withinExtent) {
+        // closer to segment than to its endpoints, find closest point on segment
+        var c1 = v1.cross(v2); // v1×v2 = vector representing great circle through p1, p2
+        var c2 = v0.cross(c1); // v0×c1 = vector representing great circle through p0 normal to c1
+        var v = c1.cross(c2);  // c2×c1 = nearest point on c1 to v0
+        var p = v.toLatLonS();
+    } else {
+        // beyond segment extent, take closer endpoint
+        var d1 = this.distanceTo(point1, radius);
+        var d2 = this.distanceTo(point2, radius);
+        var p = d1<d2 ? point1 : point2;
+    }
+
+    return p;
 };
 
 
