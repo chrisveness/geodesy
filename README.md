@@ -259,9 +259,9 @@ Survey formulae).
     * `new OsGridRef(easting, northing)`
         - Create new OS grid reference
 * *Methods*
-    * `latlon.toOsGridRef()`
+    * `OsGridRef.latLonToOsGrid(point)`
         - Convert UTM coordinate to MGRS grid reference
-    * `osGridRef.toLatLon()`
+    * `OsGridRef.osGridToLatLon(gridref, datum)`
         - Convert OS grid reference to latitude/longitude
     * `OsGridRef.parse(gridref)`
         - Parse string representation of OS grid reference
