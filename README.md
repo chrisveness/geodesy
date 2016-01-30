@@ -303,24 +303,45 @@ Usage
 -----
 
 While originally intended as illustrative code fragments, these functions can be used ‘as-is’,
-either client-side in-browser or with Node.js. I have no experience of using browserify.
+either client-side in-browser or with Node.js.
 
-Usage in browser using `<script>` tags, eg for geodesic distance:
+### Usage in browser
 
-    <meta charset="utf-8">
+The scripts can be used in the browser simply by including them within `<script>` tags. This involves
+an appreciation of dependencies, the order of loading is significant. I believe browserify, bower, 
+etc can use npm and/or github directly, but I have no experience of using front-end package managers.
+
+eg for various calculations on a spherical model earth:
+
+    <!doctype html><title>spherical</title><meta charset="utf-8">
+    <script src="js/geodesy/latlon-spherical.js"></script>
+    <script src="js/geodesy/dms.js"></script>
+    <script>
+        var p1 = new LatLon(50.06632, -5.71475);
+        var p2 = new LatLon(58.64402, -3.07009);
+        var d = p1.distanceTo(p2);
+        console.assert(d.toFixed(3) == '968874.704');
+        var mid = p1.midpointTo(p2);
+        console.assert(mid.toString() == '54°21′44″N, 004°31′51″W');
+    </script>
+
+eg for geodesic distance using Vincenty’s algorithm:
+
+    <!doctype html><title>vincenty</title><meta charset="utf-8">
     <script src="js/geodesy/vector3d.js"></script>
     <script src="js/geodesy/latlon-ellipsoidal.js"></script>
     <script src="js/geodesy/latlon-vincenty.js"></script>
     <script src="js/geodesy/dms.js"></script>
     <script>
-        var p1 = new LatLon(50.06632, -5.71475), p2 = new LatLon(58.64402, -3.07009);
+        var p1 = new LatLon(50.06632, -5.71475);
+        var p2 = new LatLon(58.64402, -3.07009);
         var d = p1.distanceTo(p2);
-        console.log(d.toFixed(3)); // => 969954.166
+        console.assert(d.toFixed(3) == '969954.166');
     </script>
 
-Usage in browser using `<script>` tags, eg for UTM conversions:
+eg for UTM conversions:
 
-    <meta charset="utf-8">
+    <!doctype html><title>utm</title><meta charset="utf-8">
     <script src="js/geodesy/vector3d.js"></script>
     <script src="js/geodesy/latlon-ellipsoidal.js"></script>
     <script src="js/geodesy/utm.js"></script>
@@ -328,27 +349,70 @@ Usage in browser using `<script>` tags, eg for UTM conversions:
     <script>
         var utm = Utm.parse('48 N 377298.745 1483034.794');
         var latlon = utm.toLatLonE();
-        console.log(latlon.toString('dms', 2)); // => '13°24′45.00″N, 103°52′00.00″E'
+        console.assert(latlon.toString('dms', 2) == '13°24′45.00″N, 103°52′00.00″E');
     </script>
+
+eg for OS grid references:
+
+    <!doctype html><title>osgridref</title><meta charset="utf-8">
+    <script src="js/geodesy/vector3d.js"></script>
+    <script src="js/geodesy/latlon-ellipsoidal.js"></script>
+    <script src="js/geodesy/osgridref.js"></script>
+    <script src="js/geodesy/dms.js"></script>
+    <script>
+        var gridref = new OsGridRef(651409.903, 313177.270);
+    
+        var pWgs84 = OsGridRef.osGridToLatLon(gridref);
+        console.assert(pWgs84.toString('dms', 4) == '52°39′28.7230″N, 001°42′57.7870″E');
+    
+        var pOsgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
+        console.assert(pOsgb.toString('dms', 4) == '52°39′27.2531″N, 001°43′04.5177″E');
+    </script>
+
+### Usage in Node.js
 
 I’ve also made a packaged-up npm package available:
 
     npm install geodesy
 
-Usage with npm using `require`, eg for geodesic distance:
+eg for various calculations on a spherical model earth:
+
+    var LatLon = require('geodesy').LatLonSpherical;
+
+    var p1 = new LatLon(50.06632, -5.71475);
+    var p2 = new LatLon(58.64402, -3.07009);
+    var d = p1.distanceTo(p2);
+    console.assert(d.toFixed(3) == '968874.704');
+    var mid = p1.midpointTo(p2);
+    console.assert(mid.toString() == '54°21′44″N, 004°31′51″W');
+
+eg for geodesic distance:
 
     var LatLon = require('geodesy').LatLonEllipsoidal;
 
-    var p1 = new LatLon(50.06632, -5.71475), p2 = new LatLon(58.64402, -3.07009);
+    var p1 = new LatLon(50.06632, -5.71475);
+    var p2 = new LatLon(58.64402, -3.07009);
     var d = p1.distanceTo(p2);
-    console.log(d.toFixed(3)); // => 969954.114
+    console.assert(d.toFixed(3) == '969954.166');
 
-Usage with npm using `require`, eg for UTM conversions:
+eg for UTM conversions:
 
     var LatLon = require('geodesy').LatLonEllipsoidal;
     var Utm    = require('geodesy').Utm;
     var Dms    = require('geodesy').Dms;
 
     var utm = Utm.parse('48 N 377298.745 1483034.794');
-    var latlon = utm.toLatlon();
-    console.log(latlon.toString('dms', 2)); // => '13°24′45.00″N, 103°52′00.00″E'
+    var latlon = utm.toLatLonE();
+    console.assert(latlon.toString('dms', 2) == '13°24′45.00″N, 103°52′00.00″E');
+
+eg for OS grid references:
+
+    var OsGridRef = require('geodesy').OsGridRef;
+
+    var gridref = new OsGridRef(651409.903, 313177.270);
+    
+    var pWgs84 = OsGridRef.osGridToLatLon(gridref);
+    console.assert(pWgs84.toString('dms', 4) == '52°39′28.7230″N, 001°42′57.7870″E');
+
+    var pOsgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
+    console.assert(pOsgb.toString('dms', 4) == '52°39′27.2531″N, 001°43′04.5177″E');

@@ -1,0 +1,11 @@
+<!doctype html><title>vincenty</title><meta charset="utf-8">
+<script src="../../../js/geodesy/vector3d.js"></script>
+<script src="../../../js/geodesy/latlon-ellipsoidal.js"></script>
+<script src="../../../js/geodesy/latlon-vincenty.js"></script>
+<script src="../../../js/geodesy/dms.js"></script>
+<script>
+    var p1 = new LatLon(50.06632, -5.71475);
+    var p2 = new LatLon(58.64402, -3.07009);
+    var d = p1.distanceTo(p2);
+    console.assert(d.toFixed(3) == '969954.166');
+</script>

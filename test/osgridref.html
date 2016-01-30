@@ -1,0 +1,14 @@
+<!doctype html><title>osgridref</title><meta charset="utf-8">
+<script src="../../../js/geodesy/vector3d.js"></script>
+<script src="../../../js/geodesy/latlon-ellipsoidal.js"></script>
+<script src="../../../js/geodesy/osgridref.js"></script>
+<script src="../../../js/geodesy/dms.js"></script>
+<script>
+    var gridref = new OsGridRef(651409.903, 313177.270);
+
+    var pWgs84 = OsGridRef.osGridToLatLon(gridref);
+    console.assert(pWgs84.toString('dms', 4) == '52°39′28.7230″N, 001°42′57.7870″E');
+
+    var pOsgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
+    console.assert(pOsgb.toString('dms', 4) == '52°39′27.2531″N, 001°43′04.5177″E');
+</script>

@@ -1,0 +1,11 @@
+<!doctype html><title>spherical</title><meta charset="utf-8">
+<script src="../../../js/geodesy/latlon-spherical.js"></script>
+<script src="../../../js/geodesy/dms.js"></script>
+<script>
+    var p1 = new LatLon(50.06632, -5.71475);
+    var p2 = new LatLon(58.64402, -3.07009);
+    var d = p1.distanceTo(p2);
+    console.assert(d.toFixed(3) == '968874.704');
+    var mid = p1.midpointTo(p2);
+    console.assert(mid.toString() == '54°21′44″N, 004°31′51″W');
+</script>

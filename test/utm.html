@@ -1,0 +1,10 @@
+<!doctype html><title>utm</title><meta charset="utf-8">
+<script src="../../../js/geodesy/vector3d.js"></script>
+<script src="../../../js/geodesy/latlon-ellipsoidal.js"></script>
+<script src="../../../js/geodesy/utm.js"></script>
+<script src="../../../js/geodesy/dms.js"></script>
+<script>
+    var utm = Utm.parse('48 N 377298.745 1483034.794');
+    var latlon = utm.toLatLonE();
+    console.assert(latlon.toString('dms', 2) == '13°24′45.00″N, 103°52′00.00″E');
+</script>
