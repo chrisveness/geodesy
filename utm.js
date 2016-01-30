@@ -1,24 +1,27 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  UTM / WGS 84 Conversion Functions                   (c) Chris Veness 2014-2015 / MIT Licence  */
-/*                                                                                                */
-/* Convert between Universal Transverse Mercator coordinates and WGS 84 latitude/longitude points */
-/*                                                                                                */
-/* Based on Karney 2011 ‘Transverse Mercator with an accuracy of a few nanometers’, building on   */
-/* Krüger 1912 ‘Konforme Abbildung des Erdellipsoids in der Ebene’.                               */
+/* UTM / WGS-84 Conversion Functions                                  (c) Chris Veness 2014-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/latlong-utm-mgrs.html                                           */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-utm.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-
 'use strict';
-if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
+if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // ≡ import LatLon from 'latlon-ellipsoidal.js'
+
+
+/**
+ * Convert between Universal Transverse Mercator coordinates and WGS 84 latitude/longitude points.
+ *
+ * Method based on Karney 2011 ‘Transverse Mercator with an accuracy of a few nanometers’,
+ * building on Krüger 1912 ‘Konforme Abbildung des Erdellipsoids in der Ebene’.
+ *
+ * @module   utm
+ * @requires latlon-ellipsoidal
+ */
 
 
 /**
  * Creates a Utm coordinate object.
- *
- * @classdesc Convert UTM coordinates to/from WGS 84 latitude/longitude points.
- *
- *   Method based on Karney 2011 ‘Transverse Mercator with an accuracy of a few nanometers’,
- *   building on Krüger 1912 ‘Konforme Abbildung des Erdellipsoids in der Ebene’.
  *
  * @constructor
  * @param  {number} zone - UTM 6° longitudinal zone (1..60 covering 180°W..180°E).
@@ -45,7 +48,7 @@ function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
 
     if (!(1<=zone && zone<=60)) throw new Error('Invalid UTM zone '+zone);
     if (!hemisphere.match(/[NS]/i)) throw new Error('Invalid UTM hemisphere '+hemisphere);
-    // range-check easting/northing (with 40km overlap between zones) - this this worthwhile?
+    // range-check easting/northing (with 40km overlap between zones) - is this worthwhile?
     //if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM easting '+ easting);
     //if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM northing '+ northing);
 
@@ -69,7 +72,7 @@ function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
  * @throws  {Error} If point not valid, if point outside latitude range.
  *
  * @example
- *   var latlong = new LatLon(48.8582, 2.2945, LatLon.datum.WGS84);
+ *   var latlong = new LatLon(48.8582, 2.2945);
  *   var utmCoord = latlong.toUtm(); // utmCoord.toString(): '31 N 448252 5411933'
  */
 LatLon.prototype.toUtm = function() {
@@ -121,13 +124,13 @@ LatLon.prototype.toUtm = function() {
 
     var A = a/(1+n) * (1 + 1/4*n2 + 1/64*n4 + 1/256*n6); // 2πA is the circumference of a meridian
 
-    var α = [ 0, // note α is one-based array (6th order Krüger expressions)
-        1/2*n - 2/3*n2 + 5/16*n3 + 41/180*n4 - 127/288*n5 + 7891/37800*n6,
-        13/48*n2 - 3/5*n3 + 557/1440*n4 + 281/630*n5 - 1983433/1935360*n6,
-        61/240*n3 - 103/140*n4 + 15061/26880*n5 + 167603/181440*n6,
-        49561/161280*n4 - 179/168*n5 + 6601661/7257600*n6,
-        34729/80640*n5 - 3418889/1995840*n6,
-        212378941/319334400*n6 ];
+    var α = [ null, // note α is one-based array (6th order Krüger expressions)
+        1/2*n - 2/3*n2 + 5/16*n3 +   41/180*n4 -     127/288*n5 +      7891/37800*n6,
+              13/48*n2 -  3/5*n3 + 557/1440*n4 +     281/630*n5 - 1983433/1935360*n6,
+                       61/240*n3 -  103/140*n4 + 15061/26880*n5 +   167603/181440*n6,
+                               49561/161280*n4 -     179/168*n5 + 6601661/7257600*n6,
+                                                 34729/80640*n5 - 3418889/1995840*n6,
+                                                              212378941/319334400*n6 ];
 
     var ξ = ξʹ;
     for (var j=1; j<=6; j++) ξ += α[j] * Math.sin(2*j*ξʹ) * Math.cosh(2*j*ηʹ);
@@ -215,13 +218,13 @@ Utm.prototype.toLatLonE = function() {
     var η = x / (k0*A);
     var ξ = y / (k0*A);
 
-    var β = [ 0, // note β is one-based array (6th order Krüger expressions)
-        1/2*n - 2/3*n2 + 37/96*n3 - 1/360*n4 - 81/512*n5 + 96199/604800*n6,
-        1/48*n2 + 1/15*n3 - 437/1440*n4 + 46/105*n5 - 1118711/3870720*n6,
-        17/480*n3 - 37/840*n4 - 209/4480*n5 + 5569/90720*n6,
-        4397/161280*n4 - 11/504*n5 - 830251/7257600*n6,
-        4583/161280*n5 - 108847/3991680*n6,
-        20648693/638668800*n6 ];
+    var β = [ null, // note β is one-based array (6th order Krüger expressions)
+        1/2*n - 2/3*n2 + 37/96*n3 -    1/360*n4 -   81/512*n5 +    96199/604800*n6,
+               1/48*n2 +  1/15*n3 - 437/1440*n4 +   46/105*n5 - 1118711/3870720*n6,
+                        17/480*n3 -   37/840*n4 - 209/4480*n5 +      5569/90720*n6,
+                                 4397/161280*n4 -   11/504*n5 -  830251/7257600*n6,
+                                               4583/161280*n5 -  108847/3991680*n6,
+                                                             20648693/638668800*n6 ];
 
     var ξʹ = ξ;
     for (var j=1; j<=6; j++) ξʹ -= β[j] * Math.sin(2*j*ξ) * Math.cosh(2*j*η);
@@ -345,7 +348,6 @@ Utm.prototype.toString = function(digits) {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-
 /** Polyfill Math.sinh for old browsers / IE */
 if (Math.sinh === undefined) {
     Math.sinh = function(x) {
@@ -381,7 +383,6 @@ if (Math.atanh === undefined) {
     };
 }
 
-
 /** Polyfill String.trim for old browsers
  *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
 if (String.prototype.trim === undefined) {
@@ -389,7 +390,6 @@ if (String.prototype.trim === undefined) {
         return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     };
 }
-
 
 /** Extend Number object with method to pad with leading zeros to make it w chars wide
  *  (q.v. stackoverflow.com/questions/2998784 */
@@ -401,7 +401,5 @@ if (Number.prototype.pad === undefined) {
     };
 }
 
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Utm; // CommonJS (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return Utm; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = Utm; // ≡ export default Utm

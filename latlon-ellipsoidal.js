@@ -1,29 +1,31 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy tools for an ellipsoidal earth model         (c) Chris Veness 2005-2015 / MIT Licence  */
-/*                                                                                                */
-/* Includes methods for converting lat/lon coordinates between different coordinate systems.      */
-/*   - www.movable-type.co.uk/scripts/latlong-convert-coords.html                                 */
-/*                                                                                                */
-/*  Usage: to eg convert WGS 84 coordinate to OSGB coordinate:                                    */
-/*   - var wgs84 = new LatLon(latWGS84, lonWGS84, LatLon.datum.WGS84);                            */
-/*   - var osgb = wgs84.convertDatum(LatLon.datum.OSGB36);                                        */
-/*   - var latOSGB = osgb.lat, lonOSGB = osgb.lon;                                                */
-/*                                                                                                */
-/*  q.v. Ordnance Survey 'A guide to coordinate systems in Great Britain' Section 6               */
-/*   - www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf           */
-/*                                                                                                */
+/* Geodesy tools for an ellipsoidal earth model                       (c) Chris Veness 2005-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/latlong-convert-coords.html                                     */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-ellipsoidal.html                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node)
-if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js'); // CommonJS (Node)
+if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // ≡ import Vector3d from 'vector3d.js'
+if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js');           // ≡ import Dms from 'dms.js'
+
+
+/**
+ * Library of geodesy functions for operations on an ellipsoidal earth model.
+ *
+ * Includes ellipsoid parameters and datums for different coordinate systems, and methods for
+ * converting between them and to cartesian coordinates.
+ *
+ * q.v. Ordnance Survey ‘A guide to coordinate systems in Great Britain’ Section 6
+ * www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf.
+ *
+ * @module   latlon-ellipsoidal
+ * @requires dms
+ */
 
 
 /**
  * Creates lat/lon (polar) point with latitude & longitude values, on a specified datum.
- *
- * @classdesc Library of geodesy functions for operations on an ellipsoidal earth model.
- * @requires Dms from 'dms.js'
  *
  * @constructor
  * @param {number}       lat - Geodetic latitude in degrees.
@@ -58,8 +60,8 @@ LatLon.ellipsoid = {
 };
 
 /**
- * Datums; with associated *ellipsoid* and Helmert *transform* parameters to convert from WGS 84
- * into given datum.
+ * Datums; with associated ellipsoid, and Helmert transform parameters to convert from WGS 84 into
+ * given datum.
  *
  * More are available from earth-info.nga.mil/GandG/coordsys/datums/NATO_DT.pdf,
  * www.fieldenmaps.info/cconv/web/cconv_params.js
@@ -84,7 +86,7 @@ LatLon.datum = {
                      rx:   -0.1502, ry:   -0.2470,  rz:   -0.8421, // sec
                       s:   20.4894 }                               // ppm
     },
-    ED50: { // og.decc.gov.uk/en/olgs/cms/pons_and_cop/pons/pon4/pon4.aspx
+    ED50: { // www.gov.uk/guidance/oil-and-gas-petroleum-operations-notices#pon-4
         ellipsoid: LatLon.ellipsoid.Intl1924,
         transform: { tx:   89.5,    ty:   93.8,     tz:  123.1,    // m
                      rx:    0.0,    ry:    0.0,     rz:    0.156,  // sec
@@ -101,7 +103,7 @@ LatLon.datum = {
         transform: { tx:  148,      ty: -507,       tz: -685,      // m
                      rx:    0,      ry:    0,       rz:    0,      // sec
                       s:    0 }                                    // ppm
-    }
+    },
 };
 
 
@@ -113,7 +115,7 @@ LatLon.datum = {
  *
  * @example
  *     var pWGS84 = new LatLon(51.4778, -0.0016, LatLon.datum.WGS84);
- *     var pOSGB = pWGS84.convertDatum(LatLon.datum.OSGB36); // pOSGB.toString(): 51.4773°N, 000.0000°E
+ *     var pOSGB = pWGS84.convertDatum(LatLon.datum.OSGB36); // 51.4773°N, 000.0000°E
  */
 LatLon.prototype.convertDatum = function(toDatum) {
     var oldLatLon = this;
@@ -138,9 +140,9 @@ LatLon.prototype.convertDatum = function(toDatum) {
         transform = toDatum.transform;
     }
 
-    var cartesian = oldLatLon.toCartesian();         // convert polar to cartesian...
-    cartesian = cartesian.applyTransform(transform); // ...apply transform...
-    var newLatLon = cartesian.toLatLonE(toDatum);    // ...and convert cartesian to polar
+    var oldCartesian = oldLatLon.toCartesian();                // convert polar to cartesian...
+    var newCartesian = oldCartesian.applyTransform(transform); // ...apply transform...
+    var newLatLon = newCartesian.toLatLonE(toDatum);           // ...and convert cartesian to polar
 
     return newLatLon;
 };
@@ -155,17 +157,17 @@ LatLon.prototype.convertDatum = function(toDatum) {
 LatLon.prototype.toCartesian = function() {
     var φ = this.lat.toRadians(), λ = this.lon.toRadians();
     var h = 0; // height above ellipsoid - not currently used
-    var a = this.datum.ellipsoid.a, b = this.datum.ellipsoid.b;
+    var a = this.datum.ellipsoid.a, f = this.datum.ellipsoid.f;
 
     var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
     var sinλ = Math.sin(λ), cosλ = Math.cos(λ);
 
-    var eSq = (a*a - b*b) / (a*a);
-    var ν = a / Math.sqrt(1 - eSq*sinφ*sinφ);
+    var eSq = 2*f - f*f;                      // 1st eccentricity squared ≡ (a²-b²)/a²
+    var ν = a / Math.sqrt(1 - eSq*sinφ*sinφ); // radius of curvature in prime vertical
 
     var x = (ν+h) * cosφ * cosλ;
     var y = (ν+h) * cosφ * sinλ;
-    var z = ((1-eSq)*ν + h) * sinφ;
+    var z = (ν*(1-eSq)+h) * sinφ;
 
     var point = new Vector3d(x, y, z);
 
@@ -177,16 +179,16 @@ LatLon.prototype.toCartesian = function() {
  * Converts ‘this’ (geocentric) cartesian (x/y/z) point to (ellipsoidal geodetic) latitude/longitude
  * coordinates on specified datum.
  *
- * Uses Bowring’s (1985) formulation for μm precision.
+ * Uses Bowring’s (1985) formulation for μm precision in concise form.
  *
  * @param {LatLon.datum.transform} datum - Datum to use when converting point.
  */
 Vector3d.prototype.toLatLonE = function(datum) {
     var x = this.x, y = this.y, z = this.z;
-    var a = datum.ellipsoid.a, b = datum.ellipsoid.b;
+    var a = datum.ellipsoid.a, b = datum.ellipsoid.b, f = datum.ellipsoid.f;
 
-    var e2 = (a*a-b*b) / (a*a); // 1st eccentricity squared
-    var ε2 = (a*a-b*b) / (b*b); // 2nd eccentricity squared
+    var e2 = 2*f - f*f;   // 1st eccentricity squared ≡ (a²-b²)/a²
+    var ε2 = e2 / (1-e2); // 2nd eccentricity squared ≡ (a²-b²)/b²
     var p = Math.sqrt(x*x + y*y); // distance from minor axis
     var R = Math.sqrt(p*p + z*z); // polar radius
 
@@ -195,9 +197,8 @@ Vector3d.prototype.toLatLonE = function(datum) {
     var sinβ = tanβ / Math.sqrt(1+tanβ*tanβ);
     var cosβ = sinβ / tanβ;
 
-    // geodetic latitude (Bowring eqn 18)
-    var φ = Math.atan2(z + ε2*b*sinβ*sinβ*sinβ,
-                       p - e2*a*cosβ*cosβ*cosβ);
+    // geodetic latitude (Bowring eqn 18: tanφ = z+ε²bsin³β / p−e²cos³β)
+    var φ = isNaN(cosβ) ? 0 : Math.atan2(z + ε2*b*sinβ*sinβ*sinβ, p - e2*a*cosβ*cosβ*cosβ);
 
     // longitude
     var λ = Math.atan2(y, x);
@@ -264,7 +265,4 @@ if (Number.prototype.toDegrees === undefined) {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = LatLon; // CommonJS (Node)
-if (typeof module != 'undefined' && module.exports) module.exports.Vector3d = Vector3d; // CommonJs (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return LatLon; }); // AMD
-if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD??
+if (typeof module != 'undefined' && module.exports) module.exports = LatLon, module.exports.Vector3d = Vector3d; // ≡ export { LatLon as default, Vector3d }

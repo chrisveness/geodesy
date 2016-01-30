@@ -1,23 +1,26 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy representation conversion functions                       (c) Chris Veness 2002-2015  */
-/*   - www.movable-type.co.uk/scripts/latlong.html                                   MIT Licence  */
-/*                                                                                                */
-/*  Sample usage:                                                                                 */
-/*    var lat = Dms.parseDMS('51° 28′ 40.12″ N');                                                 */
-/*    var lon = Dms.parseDMS('000° 00′ 05.31″ W');                                                */
-/*    var p1 = new LatLon(lat, lon);                                                              */
+/* Geodesy representation conversion functions                        (c) Chris Veness 2002-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/latlong.html                                                    */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-dms.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
 
 
 /**
- * Tools for converting between numeric degrees and degrees / minutes / seconds.
+ * Latitude/longitude points may be represented as decimal degrees, or subdivided into sexagesimal
+ * minutes and seconds.
  *
- * @namespace
+ * @module dms
+ */
+
+
+/**
+ * Functions for parsing and representing degrees / minutes / seconds.
+ * @class Dms
  */
 var Dms = {};
-
 
 // note Unicode Degree = U+00B0. Prime = U+2032, Double prime = U+2033
 
@@ -31,6 +34,11 @@ var Dms = {};
  *
  * @param   {string|number} dmsStr - Degrees or deg/min/sec in variety of formats.
  * @returns {number} Degrees as decimal number.
+ *
+ * @example
+ *     var lat = Dms.parseDMS('51° 28′ 40.12″ N');
+ *     var lon = Dms.parseDMS('000° 00′ 05.31″ W');
+ *     var p1 = new LatLon(lat, lon); // 51.4778°N, 000.0015°W
  */
 Dms.parseDMS = function(dmsStr) {
     // check for signed decimal degrees without NSEW, if so return it directly
@@ -175,7 +183,7 @@ Dms.toBrng = function(deg, format, dp) {
  * Returns compass point (to given precision) for supplied bearing.
  *
  * @param   {number} bearing - Bearing in degrees from north.
- * @param   {number} [precision=3] - Precision (cardinal / intercardinal / secondary-intercardinal).
+ * @param   {number} [precision=3] - Precision (1:cardinal / 2:intercardinal / 3:secondary-intercardinal).
  * @returns {string} Compass point for supplied bearing.
  *
  * @example
@@ -242,7 +250,6 @@ Dms.compassPoint = function(bearing, precision) {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-
 /** Polyfill String.trim for old browsers
  *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
 if (String.prototype.trim === undefined) {
@@ -251,7 +258,5 @@ if (String.prototype.trim === undefined) {
     };
 }
 
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Dms; // CommonJS (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return Dms; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = Dms; // ≡ export default Dms

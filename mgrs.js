@@ -1,43 +1,47 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  MGRS / UTM Conversion Functions                     (c) Chris Veness 2014-2015 / MIT Licence  */
-/*                                                                                                */
-/* Convert between Universal Transverse Mercator (UTM) coordinates and Military Grid Reference    */
-/* System (MGRS/NATO) grid references                                                             */
+/*  MGRS / UTM Conversion Functions                                   (c) Chris Veness 2014-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/latlong-utm-mgrs.html                                           */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-mgrs.html                                   */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var Utm = require('./utm.js'); // CommonJS (Node)
-if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
+if (typeof module!='undefined' && module.exports) var Utm = require('./utm.js');                   // ≡ import Utm from 'utm.js'
+if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // ≡ import LatLon from 'latlon-ellipsoidal.js'
 
+
+/**
+ * Convert between Universal Transverse Mercator (UTM) coordinates and Military Grid Reference
+ * System (MGRS/NATO) grid references.
+ *
+ * @module   mgrs
+ * @requires utm
+ * @requires latlon-ellipsoidal
+ */
 
 /* qv www.fgdc.gov/standards/projects/FGDC-standards-projects/usng/fgdc_std_011_2001_usng.pdf p10 */
 
 
-/**
+/*
  * Latitude bands C..X 8° each, covering 80°S to 84°N
- * @private
  */
 Mgrs.latBands = 'CDEFGHJKLMNPQRSTUVWXX'; // X is repeated for 80-84°N
 
 
-/**
+/*
  * 100km grid square column (‘e’) letters repeat every third zone
- * @private
  */
 Mgrs.e100kLetters = [ 'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ' ];
 
 
-/**
+/*
  * 100km grid square row (‘n’) letters repeat every other zone
- * @private
  */
 Mgrs.n100kLetters = ['ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE'];
 
 
 /**
  * Creates an Mgrs grid reference object.
- *
- * @classdesc Convert MGRS grid references to/from UTM coordinates.
  *
  * @constructor
  * @param  {number} zone - 6° longitudinal zone (1..60 covering 180°W..180°E).
@@ -80,7 +84,7 @@ function Mgrs(zone, band, e100k, n100k, easting, northing, datum) {
  *
  * @example
  *   var utmCoord = new Utm(31, 'N', 448251, 5411932);
- *   var mgrsRef = utmCoord.toMgrs(); // mgrsRef.toString() = '31U DQ 48251 11932'
+ *   var mgrsRef = utmCoord.toMgrs(); // 31U DQ 48251 11932
  */
 Utm.prototype.toMgrs = function() {
     if (isNaN(this.zone + this.easting + this.northing)) throw new Error('Invalid UTM coordinate');
@@ -119,8 +123,8 @@ Utm.prototype.toMgrs = function() {
  * @returns {Utm}
  *
  * @example
- *   var mgrsRef = Mgrs(31, 'U', 'D', 'Q', 448251, 11932);
- *   var utmCoord = mgrsRef.toUtm(); // utmCoord.toString() = '31 N 448251 5411932'
+ *   var mgrsRef = new Mgrs(31, 'U', 'D', 'Q', 448251, 11932);
+ *   var utmCoord = mgrsRef.toUtm(); // 31 N 448251 5411932
  */
 Mgrs.prototype.toUtm = function() {
     var zone = this.zone;
@@ -218,7 +222,7 @@ Mgrs.parse = function(mgrsGridRef) {
  * @returns {string} This grid reference in standard format.
  *
  * @example
- *   var mgrsStr = Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString(); // mgrsStr: '31U DQ 48251 11932'
+ *   var mgrsStr = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString(); // '31U DQ 48251 11932'
  */
 Mgrs.prototype.toString = function(digits) {
     digits = (digits === undefined) ? 10 : Number(digits);
@@ -242,5 +246,4 @@ Mgrs.prototype.toString = function(digits) {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Mgrs; // CommonJS (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return Mgrs; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = Mgrs; // ≡ export default Mgrs

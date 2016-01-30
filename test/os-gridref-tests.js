@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy Test Harness - os-gridref                                 (c) Chris Veness 2014-2015  */
+/*  Geodesy Test Harness - os-gridref                                 (c) Chris Veness 2014-2016  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
@@ -18,14 +18,14 @@ describe('os-gridref', function() {
 
     // OS Guide to coordinate systems in Great Britain C.1, C.2; Caister water tower
 
-    osgb = LatLon(Dms.parseDMS('52°39′27.2531″N'), Dms.parseDMS('1°43′4.5177″E'), LatLon.datum.OSGB36);
+    osgb = new LatLon(Dms.parseDMS('52°39′27.2531″N'), Dms.parseDMS('1°43′4.5177″E'), LatLon.datum.OSGB36);
     gridref = OsGridRef.latLonToOsGrid(osgb);
     test('C1 E',                         function() { gridref.easting.toFixed(3).should.equal('651409.903'); });
     test('C1 N',                         function() { gridref.northing.toFixed(3).should.equal('313177.270'); });
     var osgb2 = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
     test('C1 round-trip',                function() { osgb2.toString('dms', 4).should.equal('52°39′27.2531″N, 001°43′04.5177″E'); });
 
-    gridref = OsGridRef(651409.903, 313177.270);
+    gridref = new OsGridRef(651409.903, 313177.270);
     osgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
     test('C2',                           function() { osgb.toString('dms', 4).should.equal('52°39′27.2531″N, 001°43′04.5177″E'); });
     var gridref2 = OsGridRef.latLonToOsGrid(osgb);

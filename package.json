@@ -25,7 +25,6 @@
         "env": {
             "browser": true,
             "node": true,
-            "amd": true,
             "mocha": true
         },
         "extends": "eslint:recommended",

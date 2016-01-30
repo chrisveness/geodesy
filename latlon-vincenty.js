@@ -1,31 +1,41 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2015  */
+/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2016  */
 /*                                                                                   MIT Licence  */
-/*                                                                                                */
-/* from: T Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with application */
-/*       of nested equations", Survey Review, vol XXIII no 176, 1975                              */
-/*       http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                             */
+/* www.movable-type.co.uk/scripts/latlong-vincenty.html                                           */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-vincenty.html                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
+if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // ≡ import LatLon from 'latlon-ellipsoidal.js'
 
 
 /**
- * Direct and inverse solutions of geodesics on the ellipsoid using Vincenty formulae
+ * Direct and inverse solutions of geodesics on the ellipsoid using Vincenty formulae.
+ *
+ * From: T Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with application of
+ *       nested equations", Survey Review, vol XXIII no 176, 1975.
+ *       www.ngs.noaa.gov/PUBS_LIB/inverse.pdf.
+ *
+ * @module  latlon-vincenty
+ * @extends latlon-ellipsoidal
  */
+/** @class LatLon */
 
 
 /**
  * Returns the distance between ‘this’ point and destination point along a geodesic, using Vincenty
  * inverse solution.
  *
+ * Note: the datum used is of ‘this’ point; distance is on the surface of the ellipsoid (height is
+ * ignored).
+ *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns (Number} Distance in metres between points or NaN if failed to converge.
  *
  * @example
- *   var p1 = new LatLon(50.06632, -5.71475), p2 = new LatLon(58.64402, -3.07009);
- *   var d = p1.distanceTo(p2); // d: 969954.166
+ *   var p1 = new LatLon(50.06632, -5.71475);
+ *   var p2 = new LatLon(58.64402, -3.07009);
+ *   var d = p1.distanceTo(p2); // 969,954.166 m
  */
 LatLon.prototype.distanceTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -42,12 +52,15 @@ LatLon.prototype.distanceTo = function(point) {
  * Returns the initial bearing (forward azimuth) to travel along a geodesic from ‘this’ point to the
  * specified point, using Vincenty inverse solution.
  *
+ * Note: the datum used is of ‘this’ point.
+ *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {number}  initial Bearing in degrees from north (0°..360°) or NaN if failed to converge.
  *
  * @example
- *   var p1 = new LatLon(50.06632, -5.71475), p2 = new LatLon(58.64402, -3.07009);
- *   var b1 = p1.initialBearingTo(p2); // b1.toFixed(4): 9.1419
+ *   var p1 = new LatLon(50.06632, -5.71475);
+ *   var p2 = new LatLon(58.64402, -3.07009);
+ *   var b1 = p1.initialBearingTo(p2); // 9.1419°
  */
 LatLon.prototype.initialBearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -64,12 +77,15 @@ LatLon.prototype.initialBearingTo = function(point) {
  * Returns the final bearing (reverse azimuth) having travelled along a geodesic from ‘this’ point
  * to the specified point, using Vincenty inverse solution.
  *
+ * Note: the datum used is of ‘this’ point.
+ *
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {number}  Initial bearing in degrees from north (0°..360°) or NaN if failed to converge.
  *
  * @example
- *   var p1 = new LatLon(50.06632, -5.71475), p2 = new LatLon(58.64402, -3.07009);
- *   var b2 = p1.finalBearingTo(p2); // b2.toFixed(4): 11.2972
+ *   var p1 = new LatLon(50.06632, -5.71475);
+ *   var p2 = new LatLon(58.64402, -3.07009);
+ *   var b2 = p1.finalBearingTo(p2); // 11.2972°
  */
 LatLon.prototype.finalBearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -86,13 +102,16 @@ LatLon.prototype.finalBearingTo = function(point) {
  * Returns the destination point having travelled the given distance along a geodesic given by
  * initial bearing from ‘this’ point, using Vincenty direct solution.
  *
+ * Note: the datum used is of ‘this’ point; distance is on the surface of the ellipsoid (height is
+ * ignored).
+ *
  * @param   {number} distance - Distance travelled along the geodesic in metres.
  * @param   {number} initialBearing - Initial bearing in degrees from north.
  * @returns {LatLon} Destination point.
  *
  * @example
  *   var p1 = new LatLon(-37.95103, 144.42487);
- *   var p2 = p1.destinationPoint(54972.271, 306.86816); // p2.toString(): 37.6528°S, 143.9265°E
+ *   var p2 = p1.destinationPoint(54972.271, 306.86816); // 37.6528°S, 143.9265°E
  */
 LatLon.prototype.destinationPoint = function(distance, initialBearing) {
     return this.direct(Number(distance), Number(initialBearing)).point;
@@ -103,13 +122,16 @@ LatLon.prototype.destinationPoint = function(distance, initialBearing) {
  * Returns the final bearing (reverse azimuth) having travelled along a geodesic given by initial
  * bearing for a given distance from ‘this’ point, using Vincenty direct solution.
  *
+ * Note: the datum used is of ‘this’ point; distance is on the surface of the ellipsoid (height is
+ * ignored).
+ *
  * @param   {number} distance - Distance travelled along the geodesic in metres.
  * @param   {LatLon} initialBearing - Initial bearing in degrees from north.
  * @returns {number} Final bearing in degrees from north (0°..360°).
  *
  * @example
  *   var p1 = new LatLon(-37.95103, 144.42487);
- *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // b2.toFixed(4): 307.1736
+ *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // 307.1736°
  */
 LatLon.prototype.finalBearingOn = function(distance, initialBearing) {
     return this.direct(Number(distance), Number(initialBearing)).finalBearing;
@@ -163,10 +185,10 @@ LatLon.prototype.direct = function(distance, initialBearing) {
     var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
     var L = λ - (1-C) * f * sinα *
         (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
-    var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI;  // normalise to -180...+180
+    var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI;  // normalise to -180..+180
 
     var α2 = Math.atan2(sinα, -x);
-    α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0...360
+    α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0..360
 
     return {
         point:        new LatLon(φ2.toDegrees(), λ2.toDegrees(), this.datum),
@@ -180,7 +202,7 @@ LatLon.prototype.direct = function(distance, initialBearing) {
  *
  * @private
  * @param   {LatLon} point - Latitude/longitude of destination point.
- * @returns {Object} Object including istance, initialBearing, finalBearing.
+ * @returns {Object} Object including distance, initialBearing, finalBearing.
  * @throws  {Error}  If formula failed to converge.
  */
 LatLon.prototype.inverse = function(point) {
@@ -226,8 +248,8 @@ LatLon.prototype.inverse = function(point) {
     var α1 = Math.atan2(cosU2*sinλ,  cosU1*sinU2-sinU1*cosU2*cosλ);
     var α2 = Math.atan2(cosU1*sinλ, -sinU1*cosU2+cosU1*sinU2*cosλ);
 
-    α1 = (α1 + 2*Math.PI) % (2*Math.PI); // normalise to 0...360
-    α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0...360
+    α1 = (α1 + 2*Math.PI) % (2*Math.PI); // normalise to 0..360
+    α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0..360
 
     s = Number(s.toFixed(3)); // round to 1mm precision
     return { distance: s, initialBearing: α1.toDegrees(), finalBearing: α2.toDegrees() };
@@ -247,5 +269,4 @@ if (Number.prototype.toDegrees === undefined) {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = LatLon; // CommonJS (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return LatLon; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = LatLon; // ≡ export default LatLon

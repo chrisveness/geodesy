@@ -1,17 +1,27 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Vector handling functions                           (c) Chris Veness 2011-2015 / MIT Licence  */
-/*                                                                                                */
-/*  These are generic 3-d vector manipulation routines.                                           */
-/*                                                                                                */
-/*  In a geodesy context, these may be used to represent:                                         */
-/*   - n-vector representing a normal to point on Earth's surface                                 */
-/*   - earth-centered, earth fixed vector (= n-vector for spherical model)                        */
-/*   - great circle normal to vector                                                              */
-/*   - motion vector on Earth's surface                                                           */
-/*   - etc                                                                                        */
+/* Vector handling functions                                          (c) Chris Veness 2011-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-vector3d.html                               */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
+
+
+/**
+ * Library of 3-d vector manipulation routines.
+ *
+ * In a geodesy context, these vectors may be used to represent:
+ *  - n-vector representing a normal to point on Earth's surface
+ *  - earth-centered, earth fixed vector (≡ Gade’s ‘p-vector’)
+ *  - great circle normal to vector (on spherical earth model)
+ *  - motion vector on Earth's surface
+ *  - etc
+ *
+ * Functions return vectors as return results, so that operations can be chained.
+ * @example var v = v1.cross(v2).dot(v3) // ≡ v1×v2⋅v3
+ *
+ * @module vector3d
+ */
 
 
 /**
@@ -19,8 +29,6 @@
  *
  * The vector may be normalised, or use x/y/z values for eg height relative to the sphere or
  * ellipsoid, distance from earth centre, etc.
- *
- * @classdesc Tools for manipulating 3-d vectors, to support various latitude/longitude functions.
  *
  * @constructor
  * @param {number} x - X component of vector.
@@ -234,5 +242,4 @@ Vector3d.prototype.toString = function(precision) {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Vector3d; // CommonJS (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = Vector3d; // ≡ export default Vector3d

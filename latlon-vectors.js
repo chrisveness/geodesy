@@ -1,25 +1,32 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Vector-based geodetic (latitude/longitude) functions              (c) Chris Veness 2011-2015  */
+/*  Vector-based spherical geodetic (latitude/longitude) functions    (c) Chris Veness 2011-2016  */
 /*                                                                                   MIT Licence  */
-/*  These functions work with                                                                     */
-/*   a) geodesic (polar) latitude/longitude points on the earth's surface (in degrees)            */
-/*   b) 3D vectors used as n-vectors representing points on the surface of the earth's surface,   */
-/*      or vectors normal to the plane of a great circle                                          */
+/* www.movable-type.co.uk/scripts/latlong-vectors.html                                            */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-nvector-spherical.html               */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // CommonJS (Node)
-if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js'); // CommonJS (Node)
+if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // ≡ import Vector3d from 'vector3d.js'
+if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js');           // ≡ import Dms from 'dms.js'
+
+
+/**
+ * Tools for working with points and paths on (a spherical model of) the earth’s surface using a
+ * vector-based approach using ‘n-vectors’ (rather than the more common spherical trigonometry;
+ * a vector-based approach makes many calculations much simpler, and easier to follow, compared
+ * with trigonometric equivalents).
+ *
+ * Note on a spherical model earth, an n-vector is equivalent to a normalised version of an (ECEF)
+ * cartesian coordinate.
+ *
+ * @module   latlon-vectors
+ * @requires vector3d
+ * @requires dms
+ */
 
 
 /**
  * Creates a LatLon point on spherical model earth.
- *
- * @classdesc Tools for working with points and paths on (a spherical model of) the earth’s surface
- *     using a vector-based approach using ‘n-vectors’ (rather than the more common spherical
- *     trigonometry; a vector-based approach makes most calculations much simpler, and easier to
- *     follow, compared with trigonometric equivalents).
- * @requires Dms from 'dms.js'
  *
  * @constructor
  * @param {number} lat - Latitude in degrees.
@@ -40,12 +47,11 @@ function LatLon(lat, lon) {
 /**
  * Converts ‘this’ lat/lon point to Vector3d n-vector (normal to earth's surface).
  *
- * @private
  * @returns {Vector3d} Normalised n-vector representing lat/lon point.
  *
  * @example
  *   var p = new LatLon(45, 45);
- *   var v = p.toVector(); // v.toString(): [0.500,0.500,0.707]
+ *   var v = p.toVector(); // [0.5000,0.5000,0.7071]
  */
 LatLon.prototype.toVector = function() {
     var φ = this.lat.toRadians();
@@ -63,12 +69,11 @@ LatLon.prototype.toVector = function() {
 /**
  * Converts ‘this’ (geocentric) cartesian vector to (spherical) latitude/longitude point.
  *
- * @private
  * @returns  {LatLon} Latitude/longitude point vector points to.
  *
  * @example
  *   var v = new Vector3d(0.500, 0.500, 0.707);
- *   var p = v.toLatLonS(); // p.toString(): 45.0°N, 45.0°E
+ *   var p = v.toLatLonS(); // 45.0°N, 45.0°E
  */
 Vector3d.prototype.toLatLonS = function() {
     var φ = Math.atan2(this.z, Math.sqrt(this.x*this.x + this.y*this.y));
@@ -79,17 +84,16 @@ Vector3d.prototype.toLatLonS = function() {
 
 
 /**
- * Great circle obtained by heading on given bearing from ‘this’ point.
+ * N-vector normal to great circle obtained by heading on given bearing from ‘this’ point.
  *
  * Direction of vector is such that initial bearing vector b = c × p.
  *
- * @private
  * @param   {number}   bearing - Compass bearing in degrees.
  * @returns {Vector3d} Normalised vector representing great circle.
  *
  * @example
  *   var p1 = new LatLon(53.3206, -1.7297);
- *   var gc = p1.greatCircle(96.0); // gc.toString(): [-0.794,0.129,0.594]
+ *   var gc = p1.greatCircle(96.0); // [-0.794,0.129,0.594]
  */
 LatLon.prototype.greatCircle = function(bearing) {
     var φ = this.lat.toRadians();
@@ -112,8 +116,9 @@ LatLon.prototype.greatCircle = function(bearing) {
  * @returns {number} Distance between this point and destination point, in same units as radius.
  *
  * @example
- *   var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
- *   var d = p1.distanceTo(p2); // d.toPrecision(4): 404300
+ *   var p1 = new LatLon(52.205, 0.119);
+ *   var p2 = new LatLon(48.857, 2.351);
+ *   var d = p1.distanceTo(p2); // 404.3 km
  */
 LatLon.prototype.distanceTo = function(point, radius) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -136,8 +141,9 @@ LatLon.prototype.distanceTo = function(point, radius) {
  * @returns {number} Initial bearing in degrees from North (0°..360°).
  *
  * @example
- *   var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
- *   var b1 = p1.bearingTo(p2); // b1.toFixed(1): 156.2
+ *   var p1 = new LatLon(52.205, 0.119);
+ *   var p2 = new LatLon(48.857, 2.351);
+ *   var b1 = p1.bearingTo(p2); // 156.2°
  */
 LatLon.prototype.bearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -164,8 +170,9 @@ LatLon.prototype.bearingTo = function(point) {
  * @returns {LatLon} Midpoint between this point and destination point.
  *
  * @example
- *   var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(48.857, 2.351);
- *   var pMid = p1.midpointTo(p2); // pMid.toString(): 50.5363°N, 001.2746°E
+ *   var p1 = new LatLon(52.205, 0.119);
+ *   var p2 = new LatLon(48.857, 2.351);
+ *   var pMid = p1.midpointTo(p2); // 50.5363°N, 001.2746°E
  */
 LatLon.prototype.midpointTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -190,7 +197,7 @@ LatLon.prototype.midpointTo = function(point) {
  *
  * @example
  *   var p1 = new LatLon(51.4778, -0.0015);
- *   var p2 = p1.destinationPoint(7794, 300.7); // p2.toString(): 51.5135°N, 000.0983°W
+ *   var p2 = p1.destinationPoint(7794, 300.7); // 51.5135°N, 000.0983°W
  */
 LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
     radius = (radius === undefined) ? 6371e3 : Number(radius);
@@ -223,7 +230,7 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
  * @example
  *   var p1 = LatLon(51.8853, 0.2545), brng1 = 108.55;
  *   var p2 = LatLon(49.0034, 2.5735), brng2 =  32.44;
- *   var pInt = LatLon.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9076°N, 004.5086°E
+ *   var pInt = LatLon.intersection(p1, brng1, p2, brng2); // 50.9076°N, 004.5086°E
  */
 LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEnd) {
     if (!(path1start instanceof LatLon)) throw new TypeError('path1start is not LatLon object');
@@ -314,10 +321,10 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
  *   var pCurrent = new LatLon(53.2611, -0.7972);
  *
  *   var p1 = new LatLon(53.3206, -1.7297), brng = 96.0;
- *   var d = pCurrent.crossTrackDistanceTo(p1, brng);// d.toPrecision(4): -305.7
+ *   var d = pCurrent.crossTrackDistanceTo(p1, brng);// -305.7 m
  *
  *   var p1 = new LatLon(53.3206, -1.7297), p2 = new LatLon(53.1887, 0.1334);
- *   var d = pCurrent.crossTrackDistanceTo(p1, p2);  // d.toPrecision(4): -307.5
+ *   var d = pCurrent.crossTrackDistanceTo(p1, p2);  // -307.5 m
  */
 LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius) {
     if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
@@ -358,11 +365,11 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius)
  *   var p1 = new LatLon(51.0, 1.0), p2 = new LatLon(51.0, 2.0);
  *
  *   var p0 = new LatLon(51.0, 1.9);
- *   var p = p0.nearestPointOnSegment(p1, p2); // p.toString(): 51.0004°N, 001.9000°E
- *   var d = p.distanceTo(p);                  // d.toPrecision(4): 42.71
+ *   var p = p0.nearestPointOnSegment(p1, p2); // 51.0004°N, 001.9000°E
+ *   var d = p.distanceTo(p);                  // 42.71 m
  *
  *   var p0 = new LatLon(51.0, 2.1);
- *   var p = p0.nearestPointOnSegment(p1, p2); // p.toString(): 51.0000°N, 002.0000°E
+ *   var p = p0.nearestPointOnSegment(p1, p2); // 51.0000°N, 002.0000°E
  */
 LatLon.prototype.nearestPointOnSegment = function(point1, point2, radius) {
     var v0 = this.toVector(), v1 = point1.toVector(), v2 = point2.toVector();
@@ -376,17 +383,18 @@ LatLon.prototype.nearestPointOnSegment = function(point1, point2, radius) {
 
     var withinExtent = extent1>=0 && extent2>=0;
 
+    var p = null;
     if (withinExtent) {
         // closer to segment than to its endpoints, find closest point on segment
         var c1 = v1.cross(v2); // v1×v2 = vector representing great circle through p1, p2
         var c2 = v0.cross(c1); // v0×c1 = vector representing great circle through p0 normal to c1
         var v = c1.cross(c2);  // c2×c1 = nearest point on c1 to v0
-        var p = v.toLatLonS();
+        p = v.toLatLonS();
     } else {
         // beyond segment extent, take closer endpoint
         var d1 = this.distanceTo(point1, radius);
         var d2 = this.distanceTo(point2, radius);
-        var p = d1<d2 ? point1 : point2;
+        p = d1<d2 ? point1 : point2;
     }
 
     return p;
@@ -403,7 +411,7 @@ LatLon.prototype.nearestPointOnSegment = function(point1, point2, radius) {
  * @example
  *   var bounds = [ new LatLon(45,1), new LatLon(45,2), new LatLon(46,2), new LatLon(46,1) ];
  *   var p = new LatLon(45,1, 1.1);
- *   var inside = p.enclosedBy(bounds); // inside: true;
+ *   var inside = p.enclosedBy(bounds); // true;
  */
 LatLon.prototype.enclosedBy = function(points) {
     var v = this.toVector(); // vector to 'this' point
@@ -461,13 +469,13 @@ LatLon.meanOf = function(points) {
 /**
  * Checks if another point is equal to ‘this’ point.
  *
- * @private
  * @param   {LatLon} point - Point to be compared against this point.
  * @returns {bool}    True if points are identical.
  *
  * @example
- *   var p1 = new LatLon(52.205, 0.119), p2 = new LatLon(52.205, 0.119);
- *   var equal = p1.equals(p2); // equal: true
+ *   var p1 = new LatLon(52.205, 0.119);
+ *   var p2 = new LatLon(52.205, 0.119);
+ *   var equal = p1.equals(p2); // true
  */
 LatLon.prototype.equals = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
@@ -487,8 +495,6 @@ LatLon.prototype.equals = function(point) {
  * @returns {string} Comma-separated formatted latitude/longitude.
  */
 LatLon.prototype.toString = function(format, dp) {
-    if (format === undefined) format = 'dms';
-
     return Dms.toLat(this.lat, format, dp) + ', ' + Dms.toLon(this.lon, format, dp);
 };
 
@@ -515,7 +521,4 @@ if (Math.sign === undefined) {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = LatLon; // CommonJS (Node)
-if (typeof module != 'undefined' && module.exports) module.exports.Vector3d = Vector3d; // CommonJS (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return LatLon; }); // AMD
-if (typeof define == 'function' && define.amd) define([], function() { return Vector3d; }); // AMD??
+if (typeof module != 'undefined' && module.exports) module.exports = LatLon, module.exports.Vector3d = Vector3d; // ≡ export { LatLon as default, Vector3d }

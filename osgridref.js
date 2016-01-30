@@ -1,25 +1,33 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Ordnance Survey Grid Reference functions            (c) Chris Veness 2005-2015 / MIT Licence  */
-/*                                                                                                */
-/*   - www.movable-type.co.uk/scripts/latlong-gridref.html                                        */
-/*   - www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf           */
-/*                                                                                                */
-/*  Converted 2015 to work with WGS84 by default, OSGB36 as option                                */
-/*   - www.ordnancesurvey.co.uk/blog/2014/12/confirmation-on-changes-to-latitude-and-longitude    */
-/*                                                                                                */
-/*  Formulation implemented here due to Thomas, Redfearn, etc is as published by OS, but is       */
-/*  inferior to Krüger as used by e.g. Karney 2011.                                               */
+/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/latlong-gridref.html                                            */
+/* www.movable-type.co.uk/scripts/geodesy/docs/module-osgridref.html                              */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // CommonJS (Node)
+if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon-ellipsoidal.js'); // ≡ import LatLon from 'latlon-ellipsoidal.js'
+
+
+/**
+ * Convert OS grid references to/from OSGB latitude/longitude points.
+ *
+ * Formulation implemented here due to Thomas, Redfearn, etc is as published by OS, but is inferior
+ * to Krüger as used by e.g. Karney 2011.
+ *
+ * www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf.
+ *
+ * @module   osgridref
+ * @requires latlon-ellipsoidal
+ */
+/*
+ * Converted 2015 to work with WGS84 by default, OSGB36 as option;
+ * www.ordnancesurvey.co.uk/blog/2014/12/confirmation-on-changes-to-latitude-and-longitude
+ */
 
 
 /**
  * Creates an OsGridRef object.
- *
- * @classdesc Convert OS grid references to/from OSGB latitude/longitude points.
- * @requires  LatLon from 'latlon-ellipsoidal.js'
  *
  * @constructor
  * @param {number} easting - Easting in metres from OS false origin.
@@ -39,6 +47,9 @@ function OsGridRef(easting, northing) {
 
 /**
  * Converts latitude/longitude to Ordnance Survey grid reference easting/northing coordinate.
+ *
+ * Note formulation implemented here due to Thomas, Redfearn, etc is as published by OS, but is
+ * inferior to Krüger as used by e.g. Karney 2011.
  *
  * @param   {LatLon}    point - latitude/longitude.
  * @returns {OsGridRef} OS Grid Reference easting/northing.
@@ -104,16 +115,20 @@ OsGridRef.latLonToOsGrid = function(point) {
 
 /**
  * Converts Ordnance Survey grid reference easting/northing coordinate to latitude/longitude
+ * (SW corner of grid square).
+ *
+ * Note formulation implemented here due to Thomas, Redfearn, etc is as published by OS, but is
+ * inferior to Krüger as used by e.g. Karney 2011.
  *
  * @param   {OsGridRef}    gridref - Grid ref E/N to be converted to lat/long (SW corner of grid square).
  * @param   {LatLon.datum} [datum=WGS84] - Datum to convert grid reference into.
  * @returns {LatLon}       Latitude/longitude of supplied grid reference.
  *
  * @example
- *   var grid = new OsGridRef(651409, 313177);
- *   var p = OsGridRef.osGridToLatLon(grid); // p.toString(): 52°39′29″N, 001°42′58″E
+ *   var gridref = new OsGridRef(651409.903, 313177.270);
+ *   var pWgs84 = OsGridRef.osGridToLatLon(gridref);                     // 52°39′28.723″N, 001°42′57.787″E
  *   // to obtain (historical) OSGB36 latitude/longitude point:
- *   var p = OsGridRef.osGridToLatLon(grid, LatLon.datum.OSGB36); // 52°39′27″N, 001°43′04″E
+ *   var pOsgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36); // 52°39′27.253″N, 001°43′04.518″E
  */
 OsGridRef.osGridToLatLon = function(gridref, datum) {
     if (!(gridref instanceof OsGridRef)) throw new TypeError('gridref is not OsGridRef object');
@@ -124,7 +139,7 @@ OsGridRef.osGridToLatLon = function(gridref, datum) {
 
     var a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
     var F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
-    var φ0 = 49*Math.PI/180, λ0 = -2*Math.PI/180;      // NatGrid true origin
+    var φ0 = (49).toRadians(), λ0 = (-2).toRadians();  // NatGrid true origin is 49°N,2°W
     var N0 = -100000, E0 = 400000;                     // northing & easting of true origin, metres
     var e2 = 1 - (b*b)/(a*a);                          // eccentricity squared
     var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;         // n, n², n³
@@ -270,7 +285,6 @@ OsGridRef.prototype.toString = function(digits) {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-
 /** Polyfill String.trim for old browsers
  *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
 if (String.prototype.trim === undefined) {
@@ -278,7 +292,6 @@ if (String.prototype.trim === undefined) {
         return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     };
 }
-
 
 /** Extend Number object with method to pad with leading zeros to make it w chars wide
  *  (q.v. stackoverflow.com/questions/2998784 */
@@ -290,7 +303,5 @@ if (Number.prototype.pad === undefined) {
     };
 }
 
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = OsGridRef; // CommonJS (Node)
-if (typeof define == 'function' && define.amd) define([], function() { return OsGridRef; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = OsGridRef; // ≡ export default OsGridRef
