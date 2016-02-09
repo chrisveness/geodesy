@@ -358,7 +358,6 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius)
  *
  * @param   {LatLon} point1 - Start point of great circle segment.
  * @param   {LatLon} point2 - End point of great circle segment.
- * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
  * @returns {number} point on segment.
  *
  * @example
@@ -371,7 +370,7 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius)
  *   var p0 = new LatLon(51.0, 2.1);
  *   var p = p0.nearestPointOnSegment(p1, p2); // 51.0000°N, 002.0000°E
  */
-LatLon.prototype.nearestPointOnSegment = function(point1, point2, radius) {
+LatLon.prototype.nearestPointOnSegment = function(point1, point2) {
     var v0 = this.toVector(), v1 = point1.toVector(), v2 = point2.toVector();
 
     // dot product p10⋅p12 tells us if p0 is on p2 side of p1, similarly for p20⋅p21
@@ -392,8 +391,8 @@ LatLon.prototype.nearestPointOnSegment = function(point1, point2, radius) {
         p = v.toLatLonS();
     } else {
         // beyond segment extent, take closer endpoint
-        var d1 = this.distanceTo(point1, radius);
-        var d2 = this.distanceTo(point2, radius);
+        var d1 = this.distanceTo(point1);
+        var d2 = this.distanceTo(point2);
         p = d1<d2 ? point1 : point2;
     }
 
