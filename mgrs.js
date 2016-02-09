@@ -73,6 +73,7 @@ function Mgrs(zone, band, e100k, n100k, easting, northing, datum) {
     this.n100k = n100k;
     this.easting = Number(easting);
     this.northing = Number(northing);
+    this.datum = datum;
 }
 
 
@@ -153,7 +154,7 @@ Mgrs.prototype.toUtm = function() {
     var n2M = 0; // northing of 2,000km block
     while (n2M + n100kNum + northing < nBand) n2M += 2000000;
 
-    return new Utm(zone, hemisphere, e100kNum+easting, n2M+n100kNum+northing);
+    return new Utm(zone, hemisphere, e100kNum+easting, n2M+n100kNum+northing, this.datum);
 };
 
 
