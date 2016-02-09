@@ -75,6 +75,19 @@ Dms.parseDMS = function(dmsStr) {
 
 
 /**
+ * Separator character to be used to separate degrees, minutes, seconds, and cardinal directions.
+ *
+ * Set to '\u202f' (narrow no-break space) for improved formatting.
+ *
+ * @example
+ *   var p = new LatLon(51.2, 0.33);  // 51°12′00.0″N, 000°19′48.0″E
+ *   Dms.separator = '\u202f';        // narrow no-break space
+ *   var pʹ = new LatLon(51.2, 0.33); // 51° 12′ 00.0″ N, 000° 19′ 48.0″ E
+ */
+Dms.separator = '';
+
+
+/**
  * Converts decimal degrees to deg/min/sec format
  *  - degree, prime, double-prime symbols are added, but sign is discarded, though no compass
  *    direction is added.
@@ -117,7 +130,7 @@ Dms.toDMS = function(deg, format, dp) {
             if (d<100) d = '0' + d;         // pad with leading zeros
             if (d<10) d = '0' + d;
             if (m<10) m = '0' + m;
-            dms = d + '°' + m + '′';
+            dms = d + '°'+Dms.separator + m + '′';
             break;
         case 'dms': case 'deg+min+sec':
             var sec = (deg*3600).toFixed(dp); // convert degrees to seconds & round
@@ -128,7 +141,7 @@ Dms.toDMS = function(deg, format, dp) {
             if (d<10) d = '0' + d;
             if (m<10) m = '0' + m;
             if (s<10) s = '0' + s;
-            dms = d + '°' + m + '′' + s + '″';
+            dms = d + '°'+Dms.separator + m + '′'+Dms.separator + s + '″';
             break;
     }
 
@@ -146,7 +159,7 @@ Dms.toDMS = function(deg, format, dp) {
  */
 Dms.toLat = function(deg, format, dp) {
     var lat = Dms.toDMS(deg, format, dp);
-    return lat===null ? '–' : lat.slice(1) + (deg<0 ? 'S' : 'N');  // knock off initial '0' for lat!
+    return lat===null ? '–' : lat.slice(1)+Dms.separator + (deg<0 ? 'S' : 'N');  // knock off initial '0' for lat!
 };
 
 
@@ -160,7 +173,7 @@ Dms.toLat = function(deg, format, dp) {
  */
 Dms.toLon = function(deg, format, dp) {
     var lon = Dms.toDMS(deg, format, dp);
-    return lon===null ? '–' : lon + (deg<0 ? 'W' : 'E');
+    return lon===null ? '–' : lon+Dms.separator + (deg<0 ? 'W' : 'E');
 };
 
 
