@@ -215,12 +215,12 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     if (δ12 == 0) return null;
 
     // initial/final bearings between points
-    var θ1 = Math.acos( ( Math.sin(φ2) - Math.sin(φ1)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ1) ) );
-    if (isNaN(θ1)) θ1 = 0; // protect against rounding
-    var θ2 = Math.acos( ( Math.sin(φ1) - Math.sin(φ2)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ2) ) );
+    var θa = Math.acos( ( Math.sin(φ2) - Math.sin(φ1)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ1) ) );
+    if (isNaN(θa)) θa = 0; // protect against rounding
+    var θb = Math.acos( ( Math.sin(φ1) - Math.sin(φ2)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ2) ) );
 
-    var θ12 = Math.sin(λ2-λ1)>0 ? θ1 : 2*Math.PI-θ1;
-    var θ21 = Math.sin(λ2-λ1)>0 ? 2*Math.PI-θ2 : θ2;
+    var θ12 = Math.sin(λ2-λ1)>0 ? θa : 2*Math.PI-θa;
+    var θ21 = Math.sin(λ2-λ1)>0 ? 2*Math.PI-θb : θb;
 
     var α1 = (θ13 - θ12 + Math.PI) % (2*Math.PI) - Math.PI; // angle 2-1-3
     var α2 = (θ21 - θ23 + Math.PI) % (2*Math.PI) - Math.PI; // angle 1-2-3
