@@ -378,24 +378,15 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius)
  *   var p = p0.nearestPointOnSegment(p1, p2); // 51.0000°N, 002.0000°E
  */
 LatLon.prototype.nearestPointOnSegment = function(point1, point2) {
-    var v0 = this.toVector(), v1 = point1.toVector(), v2 = point2.toVector();
-
-    // dot product p10⋅p12 tells us if p0 is on p2 side of p1, similarly for p20⋅p21
-    var p10 = v0.minus(v1), p12 = v2.minus(v1);
-    var p20 = v0.minus(v2), p21 = v1.minus(v2);
-
-    var extent1 = p10.dot(p12);
-    var extent2 = p20.dot(p21);
-
-    var withinExtent = extent1>=0 && extent2>=0;
-
     var p = null;
-    if (withinExtent) {
+
+    if (this.withinExtent(point1, point2)) {
         // closer to segment than to its endpoints, find closest point on segment
-        var c1 = v1.cross(v2); // v1×v2 = vector representing great circle through p1, p2
-        var c2 = v0.cross(c1); // v0×c1 = vector representing great circle through p0 normal to c1
-        var v = c1.cross(c2);  // c2×c1 = nearest point on c1 to v0
-        p = v.toLatLonS();
+        var n0 = this.toVector(), n1 = point1.toVector(), n2 = point2.toVector();
+        var c1 = n1.cross(n2); // n1×n2 = vector representing great circle through p1, p2
+        var c2 = n0.cross(c1); // n0×c1 = vector representing great circle through p0 normal to c1
+        var n = c1.cross(c2);  // c2×c1 = nearest point on c1 to n0
+        p = n.toLatLonS();
     } else {
         // beyond segment extent, take closer endpoint
         var d1 = this.distanceTo(point1);
@@ -404,6 +395,33 @@ LatLon.prototype.nearestPointOnSegment = function(point1, point2) {
     }
 
     return p;
+};
+
+
+/**
+ * Returns whether this point is on a line segment joining point 1 & point 2.
+ *
+ * If this point is not on the great circle defined by point1 & point 2, returns whether this point
+ * is within area bound by perpendiculars to the great circle at each point.
+ *
+ * @param   {LatLon} point1 - First point defining segment.
+ * @param   {LatLon} point2 - Second point defining segment.
+ * @returns {boolean} Whether this point is within extent of segment.
+ */
+LatLon.prototype.withinExtent = function(point1, point2) {
+    var n0 = this.toVector(), n1 = point1.toVector(), n2 = point2.toVector(); // n-vectors
+
+    // get vectors representing p0->p1, p0->p2, p1->p2, p2->p1
+    var δ10 = n0.minus(n1), δ12 = n2.minus(n1);
+    var δ20 = n0.minus(n2), δ21 = n1.minus(n2);
+
+    // dot product δ10⋅δ12 tells us if p0 is on p2 side of p1, similarly for δ20⋅δ21
+    var extent1 = δ10.dot(δ12);
+    var extent2 = δ20.dot(δ21);
+
+    var withinExtent = extent1>=0 && extent2>=0;
+
+    return withinExtent;
 };
 
 
