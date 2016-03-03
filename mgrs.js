@@ -99,16 +99,16 @@ Utm.prototype.toMgrs = function() {
     var band = Mgrs.latBands.charAt(Math.floor(latlong.lat/8+10)); // latitude band
 
     // columns in zone 1 are A-H, zone 2 J-R, zone 3 S-Z, then repeating every 3rd zone
-    var col = Math.floor(this.easting / 100000);
+    var col = Math.floor(this.easting / 100e3);
     var e100k = Mgrs.e100kLetters[(zone-1)%3].charAt(col-1); // TODO: why col-1?
 
     // rows in even zones are A-V, in odd zones are F-E
-    var row = Math.floor(this.northing / 100000) % 20;
+    var row = Math.floor(this.northing / 100e3) % 20;
     var n100k = Mgrs.n100kLetters[(zone-1)%2].charAt(row);
 
     // truncate easting/northing to within 100km grid square
-    var easting = this.easting % 100000;
-    var northing = this.northing % 100000;
+    var easting = this.easting % 100e3;
+    var northing = this.northing % 100e3;
 
     // round to nm precision
     easting = Number(easting.toFixed(6));
@@ -139,11 +139,11 @@ Mgrs.prototype.toUtm = function() {
 
     // get easting specified by e100k
     var col = Mgrs.e100kLetters[(zone-1)%3].indexOf(e100k) + 1; // TODO: why +1?
-    var e100kNum = col * 100000; // e100k in metres
+    var e100kNum = col * 100e3; // e100k in metres
 
     // get northing specified by n100k
     var row = Mgrs.n100kLetters[(zone-1)%2].indexOf(n100k);
-    var n100kNum = row * 100000; // n100k in metres
+    var n100kNum = row * 100e3; // n100k in metres
 
     // get latitude of (bottom of) band
     var latBand = (Mgrs.latBands.indexOf(band)-10)*8;
@@ -152,7 +152,7 @@ Mgrs.prototype.toUtm = function() {
     // into required band
     var nBand = new LatLon(latBand, 0).toUtm().northing; // northing of bottom of band
     var n2M = 0; // northing of 2,000km block
-    while (n2M + n100kNum + northing < nBand) n2M += 2000000;
+    while (n2M + n100kNum + northing < nBand) n2M += 2000e3;
 
     return new Utm(zone, hemisphere, e100kNum+easting, n2M+n100kNum+northing, this.datum);
 };
