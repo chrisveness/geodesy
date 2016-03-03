@@ -202,19 +202,26 @@ LatLon.prototype.midpointTo = function(point) {
 LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
     radius = (radius === undefined) ? 6371e3 : Number(radius);
 
+    var n1 = this.toVector();
     var δ = Number(distance) / radius; // angular distance in radians
+    var θ = Number(bearing).toRadians();
 
-    // get great circle obtained by starting from 'this' point on given bearing
-    var c = this.greatCircle(Number(bearing));
+    var N = new Vector3d(0, 0, 1); // north pole
 
-    var p1 = this.toVector();
+    var de = N.cross(n1).unit();   // east direction vector @ n1
+    var dn = n1.cross(de);         // north direction vector @ n1
 
-    var x = p1.times(Math.cos(δ));          // component of p2 parallel to p1
-    var y = c.cross(p1).times(Math.sin(δ)); // component of p2 perpendicular to p1
+    var deSinθ = de.times(Math.sin(θ));
+    var dnCosθ = dn.times(Math.cos(θ));
 
-    var p2 = x.plus(y).unit();
+    var d = dnCosθ.plus(deSinθ);   // direction vector @ n1 (≡ C×n1; C = great circle)
 
-    return p2.toLatLonS();
+    var x = n1.times(Math.cos(δ)); // component of n2 parallel to n1
+    var y = d.times(Math.sin(δ));  // component of n2 perpendicular to n1
+
+    var n2 = x.plus(y);
+
+    return n2.toLatLonS();
 };
 
 
