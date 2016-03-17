@@ -426,47 +426,33 @@ LatLon.prototype.withinExtent = function(point1, point2) {
 
 
 /**
- * Tests whether ‘this’ point is enclosed by the (convex) polygon defined by a set of points.
+ * Tests whether ‘this’ point is enclosed by the polygon defined by a set of points.
+ *
+ * Based on Jordan curve theorem, from W Randolph Franklin: www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html.
+ * A vector from a point inside the polygon will intersect the polygon a odd number of times, a vector
+ * from a point outside the polygon will intersect the polygon an even number of times; care is required
+ * in handling degenerate cases at vertices. See also erich.realtimerendering.com/ptinpoly.
  *
  * @param   {LatLon[]} points - Ordered array of points defining vertices of polygon.
- * @returns {bool}     Whether this point is enclosed by region.
- * @throws  {Error}    If polygon is not convex.
+ * @returns {bool}     Whether this point is enclosed by polygon.
  *
  * @example
  *   var bounds = [ new LatLon(45,1), new LatLon(45,2), new LatLon(46,2), new LatLon(46,1) ];
  *   var p = new LatLon(45,1, 1.1);
- *   var inside = p.enclosedBy(bounds); // true;
+ *   var inside = p.enclosedBy(bounds); // true
  */
 LatLon.prototype.enclosedBy = function(points) {
-    var v = this.toVector(); // vector to 'this' point
+    var nVertices = points.length;
+    var enclosed = false;
 
-    // if fully closed polygon, pop last point off array
-    if (points[0].equals(points[points.length-1])) points.pop();
-
-    // get great-circle vector for each segment
-    var c = [];
-    for (var n=0; n<points.length; n++) {
-        var p1 = points[n].toVector();
-        var p2 = points[n+1==points.length ? 0 : n+1].toVector();
-        c[n] = p1.cross(p2); // great circle for segment n
+    for (var i=0, j=nVertices-1; i<nVertices; j=i++) {
+        var pi = points[i], pj = points[j];
+        if ( ((pi.lat>this.lat) != (pj.lat>this.lat))
+            && (this.lon < (pj.lon-pi.lon) * (this.lat-pi.lat) / (pj.lat-pi.lat) + pi.lon) ) {
+            enclosed = !enclosed;
+        }
     }
-
-    // is 'this' point on same side of each segment? (left/right depending on (anti-)clockwise)
-    var toLeft0 = c[0].angleTo(v) <= Math.PI/2; // 'this' point to left of first segment?
-    for (var n=1; n<points.length; n++) {
-        var toLeftN = c[n].angleTo(v) <= Math.PI/2; // 'this' point to left of segment n?
-        if (toLeft0 != toLeftN) return false;
-    }
-
-    // is polygon convex? (otherwise above test is not reliable)
-    for (var n=0; n<points.length; n++) {
-        var c1 = c[n];
-        var c2 = c[n+1==points.length ? 0 : n+1];
-        var α = c1.angleTo(c2, v); // angle between great-circle vectors, signed by direction of v
-        if (α < 0) throw new Error('Polygon is not convex');
-    }
-
-    return true;
+    return enclosed;
 };
 
 
