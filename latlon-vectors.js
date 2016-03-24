@@ -380,7 +380,7 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius)
 LatLon.prototype.nearestPointOnSegment = function(point1, point2) {
     var p = null;
 
-    if (this.withinExtent(point1, point2)) {
+    if (this.isBetween(point1, point2)) {
         // closer to segment than to its endpoints, find closest point on segment
         var n0 = this.toVector(), n1 = point1.toVector(), n2 = point2.toVector();
         var c1 = n1.cross(n2); // n1×n2 = vector representing great circle through p1, p2
@@ -399,7 +399,7 @@ LatLon.prototype.nearestPointOnSegment = function(point1, point2) {
 
 
 /**
- * Returns whether this point is on a line segment joining point 1 & point 2.
+ * Returns whether this point is between point 1 & point 2.
  *
  * If this point is not on the great circle defined by point1 & point 2, returns whether this point
  * is within area bound by perpendiculars to the great circle at each point.
@@ -408,7 +408,7 @@ LatLon.prototype.nearestPointOnSegment = function(point1, point2) {
  * @param   {LatLon} point2 - Second point defining segment.
  * @returns {boolean} Whether this point is within extent of segment.
  */
-LatLon.prototype.withinExtent = function(point1, point2) {
+LatLon.prototype.isBetween = function(point1, point2) {
     var n0 = this.toVector(), n1 = point1.toVector(), n2 = point2.toVector(); // n-vectors
 
     // get vectors representing p0->p1, p0->p2, p1->p2, p2->p1
@@ -419,9 +419,9 @@ LatLon.prototype.withinExtent = function(point1, point2) {
     var extent1 = δ10.dot(δ12);
     var extent2 = δ20.dot(δ21);
 
-    var withinExtent = extent1>=0 && extent2>=0;
+    var isBetween = extent1>=0 && extent2>=0;
 
-    return withinExtent;
+    return isBetween;
 };
 
 
