@@ -62,16 +62,20 @@ All calculations are done using simple spherical trigonometric formulae.
         - Destination point travelling given distance on given bearing
     * `LatLon.intersection(point1, bearing1, point2, bearing2)`
         - Intersection point of two paths defined by point and bearing
+    * `LatLon.crossTrackDistanceTo(pathStart, pathEnd, radius)`
+        - Distance to great circle defined by pathStart and pathEnd
+    * `LatLon.maxLatitude(bearing)`
+        - Maximum latitude reached travelling on given (initial) bearing
+    * `LatLon.crossingParallels(point1, point2, latitude)`
+        - Meridians at which great circle defined by point1 & point2 cross given latitude
     * `latlon.rhumbDistanceTo(point[, radius])`
         - Distance to point along rhumb line
     * `latlon.rhumbBearingTo(point)`
         - (Initial) bearing to point along rhumb line
     * `latlon.rhumbDestinationPoint(distance, bearing[, radius])`
         - Destination point travelling distance on bearing
-    * `latlon.toCartesian()`
-        - Convert point to cartesian Vector3d point
-    * `vector3d.toLatLonS()`
-        - Convert cartesian (Vector3d) point to (spherical) latitude/longitude
+    * `latlon.rhumbMidpointTo(point)`
+        - Midpoint on rhumb line to 2nd point
     * `latlon.toString([format[, decimals]])`
         - String representation of point, in deg/deg-min/deg-min-sec format to given decimal places
 
@@ -145,8 +149,8 @@ to a spherical earth model only.
 * *Methods*
     * `latlon.toVector()`
         - Convert (spherical/geodetic) latitude/longitude point to vector
-    * `vector3d.toLatLon()`
-        - Convert cartesian (Vector3d) point to (spherical/geodetic) latitude/longitude point
+    * `vector3d.toLatLonS()`
+        - Convert cartesian (Vector3d) coordinate to (spherical) latitude/longitude point
     * `latlon.greatCircle(bearing)`
         - Return vector representing great circle obtained by heading on given bearing from latlon point
     * `latlon.distanceTo(point[, radius])`
@@ -161,6 +165,16 @@ to a spherical earth model only.
         - Intersection of two paths defined by start+bearing or start+end
     * `latlon.crossTrackDistanceTo(pathStart, pathBrngEnd[, radius])`
         - Distance to great circle defined by start-point and end-point/bearing
+    * `latlon.nearestPointOnSegment(point1, point2)`
+        - Closest point on segment between two other points
+    * `latlon.isBetween(point1, point2)`
+        - Whether point is between two other points
+    * `latlon.enclosedBy(points)`
+        - Whether point is enclosed by polygon
+    * `latlon.meanOf(points)`
+        - Geographic mean of set of points
+    * `latlon.equals(point)`
+        - Whether points are equal
     * `latlon.toString([format[, decimals]])`
         - String representation of point, in d/dm/dms format to given decimal places
 
