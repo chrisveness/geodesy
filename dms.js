@@ -6,6 +6,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
+/* eslint no-irregular-whitespace: [2, { skipComments: true }] */
 
 
 /**
