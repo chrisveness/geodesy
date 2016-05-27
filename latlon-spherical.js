@@ -151,6 +151,47 @@ LatLon.prototype.midpointTo = function(point) {
 
 
 /**
+ * Returns the point at given fraction between ‘this’ point and specified point.
+ *
+ * @param   {LatLon} point - Latitude/longitude of destination point.
+ * @param   {number} fraction - Fraction between the two points (0 = this point, 1 = specified point).
+ * @returns {LatLon} Intermediate point between this point and destination point.
+ *
+ * @example
+ *   let p1 = new LatLon(52.205, 0.119);
+ *   let p2 = new LatLon(48.857, 2.351);
+ *   let pMid = p1.intermediatePointTo(p2, 0.25); // 51.3721°N, 000.7073°E
+ */
+LatLon.prototype.intermediatePointTo = function(point, fraction) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
+    var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
+    var φ2 = point.lat.toRadians(), λ2 = point.lon.toRadians();
+    var sinφ1 = Math.sin(φ1), cosφ1 = Math.cos(φ1), sinλ1 = Math.sin(λ1), cosλ1 = Math.cos(λ1);
+    var sinφ2 = Math.sin(φ2), cosφ2 = Math.cos(φ2), sinλ2 = Math.sin(λ2), cosλ2 = Math.cos(λ2);
+
+    // distance between points
+    var Δφ = φ2 - φ1;
+    var Δλ = λ2 - λ1;
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2)
+        + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var δ = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    var A = Math.sin((1-fraction)*δ) / Math.sin(δ);
+    var B = Math.sin(fraction*δ) / Math.sin(δ);
+
+    var x = A * cosφ1 * cosλ1 + B * cosφ2 * cosλ2;
+    var y = A * cosφ1 * sinλ1 + B * cosφ2 * sinλ2;
+    var z = A * sinφ1 + B * sinφ2;
+
+    var φ3 = Math.atan2(z, Math.sqrt(x*x + y*y));
+    var λ3 = Math.atan2(y, x);
+
+    return new LatLon(φ3.toDegrees(), (λ3.toDegrees()+540)%360-180); // normalise lon to −180..+180°
+};
+
+
+/**
  * Returns the destination point from ‘this’ point having travelled the given distance on the
  * given initial bearing (bearing normally varies around path followed).
  *

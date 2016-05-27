@@ -25,6 +25,7 @@ describe('latlon-spherical', function() {
         test('initial bearing',  function() { cambg.bearingTo(paris).toFixed(1).should.equal('156.2'); });
         test('final bearing',    function() { cambg.finalBearingTo(paris).toFixed(1).should.equal('157.9'); });
         test('midpoint',         function() { cambg.midpointTo(paris).toString('d').should.equal('50.5363°N, 001.2746°E'); });
+        test('int.point',        function() { cambg.intermediatePointTo(paris, 0.25).toString('d').should.equal('51.3721°N, 000.7073°E'); });
 
         var bradwell = new LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
         test('dest’n',           function() { bradwell.destinationPoint(dist, brng).toString('d').should.equal('51.5135°N, 000.0983°W'); });
