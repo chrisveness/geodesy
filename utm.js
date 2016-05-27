@@ -391,15 +391,5 @@ if (String.prototype.trim === undefined) {
     };
 }
 
-/** Extend Number object with method to pad with leading zeros to make it w chars wide
- *  (q.v. stackoverflow.com/questions/2998784 */
-if (Number.prototype.pad === undefined) {
-    Number.prototype.pad = function(w) {
-        var n = this.toString();
-        while (n.length < w) n = '0' + n;
-        return n;
-    };
-}
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = Utm; // ≡ export default Utm
