@@ -293,7 +293,7 @@ More information at www.movable-type.co.uk/scripts/latlong-gridref.html.
 Conversions between decimal degrees and (sexagesimal) degrees-minutes-seconds (and compass points).
 
 * *Methods*
-    * `Dms.parse(dmsStr)`
+    * `Dms.parseDMS(dmsStr)`
         - Parse string representing degrees/minutes/seconds into numeric degrees
     * `Dms.toDms(degrees[, format[, decimals]])`
         - Convert decimal degrees to deg/min/sec format
