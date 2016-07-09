@@ -225,7 +225,7 @@ Generic 3-d vector functions, not tied to geodesy applications.
 *utm.js*: Universal Transverse Mercator / Latitude-Longitude conversions
 ------------------------------------------------------------------------
 
-Conversions between UTM coordinates and latitude-longitude points using Kearney’s calculations
+Conversions between UTM coordinates and latitude-longitude points using Karney’s calculations
 (accurate to 5nm).
 
 * *Constructor*
