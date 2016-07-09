@@ -14,6 +14,7 @@ chai.should();
 var test = it; // just an alias
 
 describe('utm/mgrs', function() {
+    // http://geographiclib.sourceforge.net/cgi-bin/GeoConvert
     // http://www.rcn.montana.edu/resources/converter.aspx
 
     // latitude/longitude -> UTM
@@ -59,25 +60,34 @@ describe('utm/mgrs', function() {
     test('MGRS->UTM white house',      function() { Mgrs.parse('18S UJ 23394 07395').toUtm().toString().should.equal('18 N 323394 4307395'); });
     test('MGRS->UTM rio christ',       function() { Mgrs.parse('23K PQ 83466 60687').toUtm().toString().should.equal('23 S 683466 7460687'); });
     test('MGRS->UTM bergen',           function() { Mgrs.parse('32V KN 97508 00645').toUtm().toString().should.equal('32 N 297508 6700645'); });
-    test('MGRS->UTM 01PET0000068935',  function() { Mgrs.parse('01P ET 00000 68935').toUtm().toString().should.equal('1 N 500000 1768935'); });
-    test('MGRS->UTM 01QET0000068935',  function() { Mgrs.parse('01Q ET 00000 68935').toUtm().toString().should.equal('1 N 500000 1768935'); });
+    // forgiving parsing of 100km squares spanning bands
+    test('MGRS->UTM 01P ≡ UTM 01Q',    function() { Mgrs.parse('01P ET 00000 68935').toUtm().toString().should.equal('01 N 500000 1768935'); });
+    test('MGRS->UTM 01Q ≡ UTM 01P',    function() { Mgrs.parse('01Q ET 00000 68935').toUtm().toString().should.equal('01 N 500000 1768935'); });
+
+    // https://www.ibm.com/developerworks/library/j-coordconvert/#listing7 (note UTM/MGRS confusion; UTM is rounded, MGRS is truncated; UPS not included)
+    test('IBM #01 UTM->LL',            function() { Utm.parse('31 N 166021 0').toLatLonE().toString('d').should.equal('00.0000°N, 000.0000°W'); });
+    test('IBM #02 UTM->LL',            function() { Utm.parse('30 N 808084 14385').toLatLonE().toString('d').should.equal('00.1300°N, 000.2324°W'); });
+    test('IBM #03 UTM->LL',            function() { Utm.parse('34 S 683473 4942631').toLatLonE().toString('d').should.equal('45.6456°S, 023.3545°E'); });
+    test('IBM #04 UTM->LL',            function() { Utm.parse('25 S 404859 8588690').toLatLonE().toString('d').should.equal('12.7650°S, 033.8765°W'); });
+    test('IBM #09 UTM->LL',            function() { Utm.parse('08 N 453580 2594272').toLatLonE().toString('d').should.equal('23.4578°N, 135.4545°W'); });
+    test('IBM #10 UTM->LL',            function() { Utm.parse('57 N 450793 8586116').toLatLonE().toString('d').should.equal('77.3450°N, 156.9876°E'); });
+    test('IBM #01 LL->UTM',            function() { new LatLon(  0.0000,    0.0000).toUtm().toString().should.equal('31 N 166021 0'); });
+    test('IBM #01 LL->MGRS',           function() { new LatLon(  0.0000,    0.0000).toUtm().toMgrs().toString().should.equal('31N AA 66021 00000'); });
+    test('IBM #02 LL->UTM',            function() { new LatLon(  0.1300,   -0.2324).toUtm().toString().should.equal('30 N 808084 14386'); });
+    test('IBM #02 LL->MGRS',           function() { new LatLon(  0.1300,   -0.2324).toUtm().toMgrs().toString().should.equal('30N ZF 08084 14385'); });
+    test('IBM #03 LL->UTM',            function() { new LatLon(-45.6456,   23.3545).toUtm().toString().should.equal('34 S 683474 4942631'); });
+    test('IBM #03 LL->MGRS',           function() { new LatLon(-45.6456,   23.3545).toUtm().toMgrs().toString().should.equal('34G FQ 83473 42631'); });
+    test('IBM #04 LL->UTM',            function() { new LatLon(-12.7650,  -33.8765).toUtm().toString().should.equal('25 S 404859 8588691'); });
+    test('IBM #04 LL->MGRS',           function() { new LatLon(-12.7650,  -33.8765).toUtm().toMgrs().toString().should.equal('25L DF 04859 88691'); });
+    test('IBM #09 LL->UTM',            function() { new LatLon( 23.4578, -135.4545).toUtm().toString().should.equal('08 N 453580 2594273'); });
+    test('IBM #09 LL->MGRS',           function() { new LatLon( 23.4578, -135.4545).toUtm().toMgrs().toString().should.equal('08Q ML 53580 94272'); });
+    test('IBM #10 LL->UTM',            function() { new LatLon( 77.3450,  156.9876).toUtm().toString().should.equal('57 N 450794 8586116'); });
+    test('IBM #10 LL->MGRS',           function() { new LatLon( 77.3450,  156.9876).toUtm().toMgrs().toString().should.equal('57X VF 50793 86116'); });
 
     // varying resolution
-    test('MGRS 4-digit',               function() { Mgrs.parse('12S TC 52 86').toUtm().toString().should.equal('12 N 252000 3786000'); });
-    test('MGRS 10-digit',              function() { Mgrs.parse('12S TC 52000 86000').toUtm().toString().should.equal('12 N 252000 3786000'); });
+    test('MGRS 4-digit -> UTM',        function() { Mgrs.parse('12S TC 52 86').toUtm().toString().should.equal('12 N 252000 3786000'); });
+    test('MGRS 10-digit -> UTM',       function() { Mgrs.parse('12S TC 52000 86000').toUtm().toString().should.equal('12 N 252000 3786000'); });
     test('MGRS 10-digit+decimals',     function() { Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3).should.equal('12 N 252000.123 3786000.123'); });
-
-    /* http://www.ibm.com/developerworks/library/j-coordconvert/
-     ( 0.0000    0.0000  )     "31 N 166021 0"
-     ( 0.1300   -0.2324  )     "30 N 808084 14385"
-     (-45.6456   23.3545 )     "34 G 683473 4942631"
-     (-12.7650  -33.8765 )     "25 L 404859 8588690"
-     (-80.5434  -170.6540)     "02 C 506346 1057742"
-     ( 90.0000   177.0000)     "60 Z 500000 9997964"
-     (-90.0000  -177.0000)     "01 A 500000 2035"
-     ( 90.0000    3.0000 )     "31 Z 500000 9997964"
-     ( 23.4578  -135.4545)     "08 Q 453580 2594272"
-     ( 77.3450   156.9876)     "57 X 450793 8586116"
-     (-89.3454  -48.9306 )     "22 A 502639 75072"
-     */
+    test('MGRS truncate',              function() { Mgrs.parse('12S TC 52999.999 86999.999').toString(6).should.equal('12S TC 529 869'); });
+    test('MGRS-UTM round',             function() { Mgrs.parse('12S TC 52999.999 86999.999').toUtm().toString().should.equal('12 N 253000 3787000'); });
 });
