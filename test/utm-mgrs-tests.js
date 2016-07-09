@@ -59,11 +59,13 @@ describe('utm/mgrs', function() {
     test('MGRS->UTM white house',      function() { Mgrs.parse('18S UJ 23394 07395').toUtm().toString().should.equal('18 N 323394 4307395'); });
     test('MGRS->UTM rio christ',       function() { Mgrs.parse('23K PQ 83466 60687').toUtm().toString().should.equal('23 S 683466 7460687'); });
     test('MGRS->UTM bergen',           function() { Mgrs.parse('32V KN 97508 00645').toUtm().toString().should.equal('32 N 297508 6700645'); });
+    test('MGRS->UTM 01PET0000068935',  function() { Mgrs.parse('01P ET 00000 68935').toUtm().toString().should.equal('1 N 500000 1768935'); });
+    test('MGRS->UTM 01QET0000068935',  function() { Mgrs.parse('01Q ET 00000 68935').toUtm().toString().should.equal('1 N 500000 1768935'); });
 
     // varying resolution
-    test('MGRS 4-digit',         function() { Mgrs.parse('12S TC 52 86').toUtm().toString().should.equal('12 N 252000 3786000'); });
-    test('MGRS 10-digit',         function() { Mgrs.parse('12S TC 52000 86000').toUtm().toString().should.equal('12 N 252000 3786000'); });
-    test('MGRS 10-digit+decimals',         function() { Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3).should.equal('12 N 252000.123 3786000.123'); });
+    test('MGRS 4-digit',               function() { Mgrs.parse('12S TC 52 86').toUtm().toString().should.equal('12 N 252000 3786000'); });
+    test('MGRS 10-digit',              function() { Mgrs.parse('12S TC 52000 86000').toUtm().toString().should.equal('12 N 252000 3786000'); });
+    test('MGRS 10-digit+decimals',     function() { Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3).should.equal('12 N 252000.123 3786000.123'); });
 
     /* http://www.ibm.com/developerworks/library/j-coordconvert/
      ( 0.0000    0.0000  )     "31 N 166021 0"
