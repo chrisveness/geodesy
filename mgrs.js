@@ -51,7 +51,7 @@ Mgrs.n100kLetters = ['ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE'];
  * @param  {number} easting - Easting in metres within 100km grid square.
  * @param  {number} northing - Northing in metres within 100km grid square.
  * @param  {LatLon.datum} [datum=WGS84] - Datum UTM coordinate is based on.
- * @throws {Error} Invalid MGRS grid reference
+ * @throws {Error}  Invalid MGRS grid reference.
  *
  * @example
  *   var mgrsRef = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932); // 31U DQ 48251 11932
@@ -62,10 +62,11 @@ function Mgrs(zone, band, e100k, n100k, easting, northing, datum) {
 
     if (datum === undefined) datum = LatLon.datum.WGS84; // default if not supplied
 
-    if (!(1<=zone && zone<=60)) throw new Error('Invalid MGRS grid reference');
-    if (band.length != 1) throw new Error('Invalid MGRS grid reference');
-    if (Mgrs.latBands.indexOf(band) == -1) throw new Error('Invalid MGRS grid reference');
-    if (e100k.length!=1 || n100k.length!=1) throw new Error('Invalid MGRS grid reference');
+    if (!(1<=zone && zone<=60)) throw new Error('Invalid MGRS grid reference (zone ‘'+zone+'’)');
+    if (band.length != 1) throw new Error('Invalid MGRS grid reference (band ‘'+band+'’)');
+    if (Mgrs.latBands.indexOf(band) == -1) throw new Error('Invalid MGRS grid reference (band ‘'+band+'’)');
+    if (e100k.length!=1) throw new Error('Invalid MGRS grid reference (e100k ‘'+e100k+'’)');
+    if (n100k.length!=1) throw new Error('Invalid MGRS grid reference (n100k ‘'+n100k+'’)');
 
     this.zone = Number(zone);
     this.band = band;
@@ -81,14 +82,14 @@ function Mgrs(zone, band, e100k, n100k, easting, northing, datum) {
  * Converts UTM coordinate to MGRS reference.
  *
  * @returns {Mgrs}
- * @throws  {Error} Invalid coordinate
+ * @throws  {Error} Invalid UTM coordinate.
  *
  * @example
  *   var utmCoord = new Utm(31, 'N', 448251, 5411932);
  *   var mgrsRef = utmCoord.toMgrs(); // 31U DQ 48251 11932
  */
 Utm.prototype.toMgrs = function() {
-    if (isNaN(this.zone + this.easting + this.northing)) throw new Error('Invalid UTM coordinate');
+    if (isNaN(this.zone + this.easting + this.northing)) throw new Error('Invalid UTM coordinate ‘'+this.toString()+'’');
 
     // MGRS zone is same as UTM zone
     var zone = this.zone;
@@ -124,8 +125,7 @@ Utm.prototype.toMgrs = function() {
  * @returns {Utm}
  *
  * @example
- *   var mgrsRef = new Mgrs(31, 'U', 'D', 'Q', 448251, 11932);
- *   var utmCoord = mgrsRef.toUtm(); // 31 N 448251 5411932
+ *   var utmCoord = Mgrs.parse('31U DQ 448251 11932').toUtm(); // 31 N 448251 5411932
  */
 Mgrs.prototype.toUtm = function() {
     var zone = this.zone;
@@ -169,8 +169,9 @@ Mgrs.prototype.toUtm = function() {
  *  - easting
  *  - northing.
  *
- * @param  {string} mgrsGridRef - String representation of MGRS grid reference.
- * @returns {Mgrs} Mgrs grid reference object.
+ * @param   {string} mgrsGridRef - String representation of MGRS grid reference.
+ * @returns {Mgrs}   Mgrs grid reference object.
+ * @throws  {Error}  Invalid MGRS grid reference.
  *
  * @example
  *   var mgrsRef = Mgrs.parse('31U DQ 48251 11932');
@@ -190,7 +191,7 @@ Mgrs.parse = function(mgrsGridRef) {
     // match separate elements (separated by whitespace)
     mgrsGridRef = mgrsGridRef.match(/\S+/g);
 
-    if (mgrsGridRef==null || mgrsGridRef.length!=4) throw new Error('Invalid MGRS grid reference');
+    if (mgrsGridRef==null || mgrsGridRef.length!=4) throw new Error('Invalid MGRS grid reference ‘'+mgrsGridRef+'’');
 
     // split gzd into zone/band
     var gzd = mgrsGridRef[0];
@@ -221,14 +222,18 @@ Mgrs.parse = function(mgrsGridRef) {
  * Components are separated by spaces: for a military-style unseparated string, use
  * Mgrs.toString().replace(/ /g, '');
  *
+ * Note that MGRS grid references get truncated, not rounded (unlike UTM coordinates).
+ *
  * @param   {number} [digits=10] - Precision of returned grid reference (eg 4 = km, 10 = m).
  * @returns {string} This grid reference in standard format.
+ * @throws  {Error}  Invalid precision.
  *
  * @example
  *   var mgrsStr = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString(); // '31U DQ 48251 11932'
  */
 Mgrs.prototype.toString = function(digits) {
     digits = (digits === undefined) ? 10 : Number(digits);
+    if ([2,4,6,8,10].indexOf(digits) == -1) throw new Error('Invalid precision ‘'+digits+'’');
 
     var zone = this.zone.pad(2); // ensure leading zero
     var band = this.band;

@@ -182,7 +182,7 @@ LatLon.prototype.toUtm = function() {
 /**
  * Converts UTM zone/easting/northing coordinate to latitude/longitude
  *
- * @param   {Utm}     utmCoord - UTM coordinate to be converted to latitude/longitude.
+ * @param   {Utm}    utmCoord - UTM coordinate to be converted to latitude/longitude.
  * @returns {LatLon} Latitude/longitude of supplied grid reference.
  *
  * @example
@@ -304,7 +304,7 @@ Utm.prototype.toLatLonE = function() {
  * @param   {string} utmCoord - UTM coordinate (WGS 84).
  * @param   {Datum}  [datum=WGS84] - Datum coordinate is defined in (default WGS 84).
  * @returns {Utm}
- * @throws  Error Invalid UTM coordinate
+ * @throws  {Error}  Invalid UTM coordinate.
  *
  * @example
  *   var utmCoord = Utm.parse('31 N 448251 5411932');
@@ -316,7 +316,7 @@ Utm.parse = function(utmCoord, datum) {
     // match separate elements (separated by whitespace)
     utmCoord = utmCoord.trim().match(/\S+/g);
 
-    if (utmCoord==null || utmCoord.length!=4) throw new Error('Invalid UTM coordinate');
+    if (utmCoord==null || utmCoord.length!=4) throw new Error('Invalid UTM coordinate ‘'+utmCoord+'’');
 
     var zone = utmCoord[0], hemisphere = utmCoord[1], easting = utmCoord[2], northing = utmCoord[3];
 
@@ -330,13 +330,18 @@ Utm.parse = function(utmCoord, datum) {
  * To distinguish from MGRS grid zone designators, a space is left between the zone and the
  * hemisphere.
  *
+ * Note that UTM coordinates get rounded, not truncated (unlike MGRS grid references).
+ *
  * @param   {number} [digits=0] - Number of digits to appear after the decimal point (3 ≡ mm).
  * @returns {string} A string representation of the coordinate.
+ *
+ * @example
+ *   var utm = Utm.parse('31 N 448251 5411932').toString(4);  // 31 N 448251.0000 5411932.0000
  */
 Utm.prototype.toString = function(digits) {
     digits = Number(digits||0); // default 0 if not supplied
 
-    var z = this.zone;
+    var z = this.zone<10 ? '0'+this.zone : this.zone; // leading zero
     var h = this.hemisphere;
     var e = this.easting;
     var n = this.northing;
