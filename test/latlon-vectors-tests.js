@@ -21,6 +21,7 @@ describe('latlon-vectors', function() {
     test('bearing (reverse)', function() { LatLon(48.857, 2.351).bearingTo(LatLon(52.205, 0.119)).toFixed(1).should.equal('337.9'); });
     test('midpoint',          function() { LatLon(52.205, 0.119).midpointTo(LatLon(48.857, 2.351)).toString('d').should.equal('50.5363°N, 001.2746°E'); });
     test('destination',       function() { LatLon(51.4778, -0.0015).destinationPoint(7794, 300.7).toString('d').should.equal('51.5135°N, 000.0983°W'); });
+    test('gc from vector',    function() { LatLon(53.3206, -1.7297).toVector().greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'); });
 
     var N = 0, E = 90, S = 180, W = 270;
     test('intersection toward 1,1 N,E nearest',        function() { LatLon.intersection(LatLon(0, 1), N, LatLon(1, 0), E).toString('d').should.equal('00.9998°N, 001.0000°E'); });

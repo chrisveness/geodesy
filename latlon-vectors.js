@@ -109,6 +109,33 @@ LatLon.prototype.greatCircle = function(bearing) {
 
 
 /**
+ * N-vector normal to great circle obtained by heading on given bearing from point given by ‘this’
+ * n-vector.
+ *
+ * Direction of vector is such that initial bearing vector b = c × p.
+ *
+ * @param   {number}   bearing - Compass bearing in degrees.
+ * @returns {Vector3d} Normalised vector representing great circle.
+ *
+ * @example
+ *   var n1 = new LatLon(53.3206, -1.7297).toNvector();
+ *   var gc = n1.greatCircle(96.0); // [-0.794,0.129,0.594]
+ */
+Vector3d.prototype.greatCircle = function(bearing) {
+    var θ = Number(bearing).toRadians();
+
+    var N = new Vector3d(0, 0, 1);
+    var e = N.cross(this); // easting
+    var n = this.cross(e); // northing
+    var eʹ = e.times(Math.cos(θ)/e.length());
+    var nʹ = n.times(Math.sin(θ)/n.length());
+    var c = nʹ.minus(eʹ);
+
+    return c;
+};
+
+
+/**
  * Returns the distance from ‘this’ point to the specified point.
  *
  * @param   {LatLon} point - Latitude/longitude of destination point.
