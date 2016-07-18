@@ -207,8 +207,8 @@ LatLon.prototype.intermediatePointTo = function(point, fraction) {
 LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
     radius = (radius === undefined) ? 6371e3 : Number(radius);
 
-    // φ2 = asin( sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ )
-    // λ2 = λ1 + atan2( sinθ⋅sinδ⋅cosφ1, cosδ − sinφ1⋅sinφ2 )
+    // sinφ2 = sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ
+    // tanΔλ = sinθ⋅sinδ⋅cosφ1 / cosδ−sinφ1⋅sinφ2
     // see http://williams.best.vwh.net/avform.htm#LL
 
     var δ = Number(distance) / radius; // angular distance in radians
@@ -217,9 +217,14 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
     var φ1 = this.lat.toRadians();
     var λ1 = this.lon.toRadians();
 
-    var φ2 = Math.asin(Math.sin(φ1)*Math.cos(δ) + Math.cos(φ1)*Math.sin(δ)*Math.cos(θ));
-    var x = Math.cos(δ) - Math.sin(φ1) * Math.sin(φ2);
-    var y = Math.sin(θ) * Math.sin(δ) * Math.cos(φ1);
+    var sinφ1 = Math.sin(φ1), cosφ1 = Math.cos(φ1);
+    var sinδ = Math.sin(δ), cosδ = Math.cos(δ);
+    var sinθ = Math.sin(θ), cosθ = Math.cos(θ);
+
+    var sinφ2 = sinφ1*cosδ + cosφ1*sinδ*cosθ;
+    var φ2 = Math.asin(sinφ2);
+    var y = sinθ * sinδ * cosφ1;
+    var x = cosδ - sinφ1 * sinφ2;
     var λ2 = λ1 + Math.atan2(y, x);
 
     return new LatLon(φ2.toDegrees(), (λ2.toDegrees()+540)%360-180); // normalise to −180..+180°
