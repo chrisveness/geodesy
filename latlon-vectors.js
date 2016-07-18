@@ -335,23 +335,17 @@ LatLon.intersection = function(path1start, path1brngEnd, path2start, path2brngEn
  */
 LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius) {
     if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
-    radius = (radius === undefined) ? 6371e3 : Number(radius);
+    var R = (radius === undefined) ? 6371e3 : Number(radius);
 
     var p = this.toVector();
 
-    var gc;
-    if (pathBrngEnd instanceof LatLon) {
-        // great circle defined by two points
-        gc = pathStart.toVector().cross(pathBrngEnd.toVector());
-    } else {
-        // great circle defined by point + bearing
-        gc = pathStart.greatCircle(Number(pathBrngEnd));
-    }
+    var gc = pathBrngEnd instanceof LatLon                   // (note JavaScript is not good at method overloading)
+        ? pathStart.toVector().cross(pathBrngEnd.toVector()) // great circle defined by two points
+        : pathStart.greatCircle(Number(pathBrngEnd));        // great circle defined by point + bearing
 
-    var α = gc.angleTo(p, p.cross(gc)); // (signed) angle between point & great-circle normal vector
-    α = α<0 ? -Math.PI/2 - α : Math.PI/2 - α; // (signed) angle between point & great-circle
+    var α = gc.angleTo(p) - Math.PI/2; // angle between point & great-circle
 
-    var d = α * radius;
+    var d = α * R;
 
     return d;
 };
