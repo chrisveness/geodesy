@@ -449,30 +449,43 @@ LatLon.prototype.isBetween = function(point1, point2) {
 /**
  * Tests whether ‘this’ point is enclosed by the polygon defined by a set of points.
  *
- * Based on Jordan curve theorem, from W Randolph Franklin: www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html.
- * A vector from a point inside the polygon will intersect the polygon a odd number of times, a vector
- * from a point outside the polygon will intersect the polygon an even number of times; care is required
- * in handling degenerate cases at vertices. See also erich.realtimerendering.com/ptinpoly.
- *
- * @param   {LatLon[]} points - Ordered array of points defining vertices of polygon.
+ * @param   {LatLon[]} polygon - Ordered array of points defining vertices of polygon.
  * @returns {bool}     Whether this point is enclosed by polygon.
  *
  * @example
  *   var bounds = [ new LatLon(45,1), new LatLon(45,2), new LatLon(46,2), new LatLon(46,1) ];
- *   var p = new LatLon(45,1, 1.1);
+ *   var p = new LatLon(45.1, 1.1);
  *   var inside = p.enclosedBy(bounds); // true
  */
-LatLon.prototype.enclosedBy = function(points) {
-    var nVertices = points.length;
-    var enclosed = false;
+LatLon.prototype.enclosedBy = function(polygon) {
+    // this method uses angle summation test; on a plane, angles for an enclosed point will sum
+    // to 360°, angles for an exterior point will sum to 0°. On a sphere, enclosed point angles
+    // will sum to less than 360° (due to spherical excess), exterior point angles will be small
+    // but non-zero. TODO: are any winding number optimisations applicable to spherical surface?
 
-    for (var i=0, j=nVertices-1; i<nVertices; j=i++) {
-        var pi = points[i], pj = points[j];
-        if ( ((pi.lat>this.lat) != (pj.lat>this.lat))
-            && (this.lon < (pj.lon-pi.lon) * (this.lat-pi.lat) / (pj.lat-pi.lat) + pi.lon) ) {
-            enclosed = !enclosed;
-        }
+    // close the polygon so that the last point equals the first point
+    var closed = polygon[0].equals(polygon[polygon.length-1]);
+    if (!closed) polygon.push(polygon[0]);
+
+    var nVertices = polygon.length - 1;
+
+    var p = this.toVector();
+
+    // get vectors from p to each vertex
+    var vectorToVertex = [];
+    for (var v=0; v<nVertices; v++) vectorToVertex[v] = p.minus(polygon[v].toVector());
+    vectorToVertex.push(vectorToVertex[0]);
+
+    // sum subtended angles of each edge (using vector p to determine sign)
+    var Σθ = 0;
+    for (var v=0; v<nVertices; v++) {
+        Σθ += vectorToVertex[v].angleTo(vectorToVertex[v+1], p);
     }
+
+    var enclosed = Math.abs(Σθ) > Math.PI;
+
+    if (!closed) polygon.pop(); // restore polygon to pristine condition
+
     return enclosed;
 };
 

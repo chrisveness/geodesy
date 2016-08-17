@@ -55,8 +55,20 @@ describe('latlon-vectors', function() {
     test('nearest point on segment 1d', function() { LatLon(51.0, 1.9).nearestPointOnSegment(LatLon(51.0, 1.0), LatLon(51.0, 2.0)).distanceTo(LatLon(51.0, 1.9)).toPrecision(4).should.equal('42.71'); });
     test('nearest point on segment 2',  function() { LatLon(51.0, 2.1).nearestPointOnSegment(LatLon(51.0, 1.0), LatLon(51.0, 2.0)).toString('d').should.equal('51.0000°N, 002.0000°E'); });
 
-    var bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
-    test('enclosed in',   function() { LatLon(45.1, 1.1).enclosedBy(bounds).should.be.true; });
-    test('enclosed out',  function() { LatLon(46.1, 1.1).enclosedBy(bounds).should.be.false; });
-    test('equals',        function() { LatLon(52.205, 0.119).equals(LatLon(52.205, 0.119)).should.be.true; });
+    var polyHemi = [new LatLon(0,1), new LatLon(45,0), new LatLon(89,90), new LatLon(45,180), new LatLon(0,179), new LatLon(-45,180), new LatLon(-89,90), new LatLon(-45,0)];
+    var polyGc = [new LatLon(10,0), new LatLon(10,90), new LatLon(0,45)];
+    var polyPole = [new LatLon(89,0), new LatLon(89,120), new LatLon(89,-120)];
+    var polyPoleEdge = [new LatLon(85,90), LatLon(85,0), new LatLon(85,-90)];
+    var polyConcave = [new LatLon(1,1), new LatLon(5,1), new LatLon(5,3), new LatLon(1,3), new LatLon(3,2)];
+    test('hemisphere enclosed y', function() { new LatLon(22.5,0.59).enclosedBy(polyHemi).should.be.true; });
+    test('hemisphere enclosed n', function() { new LatLon(22.5,0.58).enclosedBy(polyHemi).should.be.false; });
+    test('gc enclosed y',         function() { new LatLon(14,45).enclosedBy(polyGc).should.be.true; });
+    test('gc enclosed n',         function() { new LatLon(15,45).enclosedBy(polyGc).should.be.false; });
+    test('pole enclosed',         function() { new LatLon(90,0).enclosedBy(polyPole).should.be.true; });
+    test('polar edge enclosed',   function() { new LatLon(90,0).enclosedBy(polyPoleEdge).should.be.true; });
+    test('concave enclosed y',    function() { new LatLon(4,2).enclosedBy(polyConcave).should.be.true; });
+    test('concave enclosed n',    function() { new LatLon(2,2).enclosedBy(polyConcave).should.be.false; });
+
+    test('equals true',  function() { LatLon(52.205, 0.119).equals(LatLon(52.205, 0.119)).should.be.true; });
+    test('equals false', function() { LatLon(52.206, 0.119).equals(LatLon(52.205, 0.119)).should.be.false; });
 });
