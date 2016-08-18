@@ -5,7 +5,7 @@
     "repository": { "type": "git", "url": "https://github.com/chrisveness/geodesy" },
     "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "wgs84", "utm", "mgrs" ],
     "author": "Chris Veness",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "license": "MIT",
     "main": "npm.js",
     "bugs": "https://github.com/chrisveness/geodesy/issues",
@@ -15,11 +15,11 @@
     },
     "devDependencies": {
         "chai": "^3.5.0",
-        "eslint": "^2.4.0",
+        "eslint": "^3.3.1",
         "jsdoc": "^3.4.0",
-        "mocha": "^2.4.5",
-        "npm-check": "^4.1.4",
-        "npm-check-updates": "^2.6.1"
+        "mocha": "^3.0.2",
+        "npm-check": "^5.2.3",
+        "npm-check-updates": "^2.8.0"
     },
     "eslintConfig": {
         "env": {
@@ -29,16 +29,19 @@
         },
         "extends": "eslint:recommended",
         "rules": {
-            "comma-dangle": [ 2, "always-multiline" ],
-            "curly": [ 2, "multi-line" ],
-            "indent": [ 2, 4, { "SwitchCase": 1 } ],
-            "key-spacing": [ 1, { "align": "value" } ],
-            "no-console": 1,
-            "no-redeclare": 1,
-            "no-unused-vars": 1,
-            "object-curly-spacing": [ 2, "always" ],
-            "quotes": [ 2, "single", "avoid-escape" ],
-            "strict": [ 2, "global" ]
+            "array-bracket-spacing": [ "error", "never" ],
+            "comma-dangle": [ "error", "always-multiline" ],
+            "curly": [ "error", "multi-line" ],
+            "indent": [ "error", 4, { "SwitchCase": 1 } ],
+            "key-spacing": [ "error", { "align": "value" } ],
+            "no-console": "warn",
+            "no-redeclare": "warn",
+            "no-shadow": "warn",
+            "no-unused-vars": "warn",
+            "object-curly-spacing": [ "error", "always" ],
+            "quotes": [ "error", "single", "avoid-escape" ],
+            "semi": [ "error", "always" ],
+            "strict": [ "error", "global" ]
         }
     }
 }
