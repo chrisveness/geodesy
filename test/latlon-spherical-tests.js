@@ -12,6 +12,7 @@ chai.should();
 var test = it; // just an alias
 
 describe('latlon-spherical', function() {
+    var R = 6371e3;
 
     describe('formatting', function() {
         test('toString d',       function() { new LatLon(51.521470, -0.138833).toString('d', 6).should.equal('51.521470°N, 000.138833°W'); });
@@ -40,6 +41,23 @@ describe('latlon-spherical', function() {
         var parallels = LatLon.crossingParallels(new LatLon(0,0), new LatLon(60,30), 30);
         test('parallels 1',      function() { new LatLon(30, parallels.lon1).toString().should.equal('30°00′00″N, 009°35′39″E'); });
         test('parallels 2',      function() { new LatLon(30, parallels.lon2).toString().should.equal('30°00′00″N, 170°24′21″E'); });
+    });
+
+    describe('area', function() {
+        var polyTriangle = [new LatLon(1,1), new LatLon(2,1), new LatLon(1,2)];
+        var polySquareCw = [new LatLon(1,1), new LatLon(2,1), new LatLon(2,2), new LatLon(1,2)];
+        var polySquareCcw = [new LatLon(1,1), new LatLon(1,2), new LatLon(2,2), new LatLon(2,1)];
+        var polyQuadrant = [new LatLon(0,1e-99), new LatLon(0,180), new LatLon(90,0)];
+        var polyHemi = [new LatLon(0,1), new LatLon(45,0), new LatLon(89,90), new LatLon(45,180), new LatLon(0,179), new LatLon(-45,180), new LatLon(-89,90), new LatLon(-45,0)];
+        var polyPole = [new LatLon(89,0), new LatLon(89,120), new LatLon(89,-120)];
+        var polyConcave = [new LatLon(1,1), new LatLon(5,1), new LatLon(5,3), new LatLon(1,3), new LatLon(3,2)];
+        test('triangle area',    function() { LatLon.areaOf(polyTriangle).toFixed(0).should.equal('6181527888'); });
+        test('square cw area',   function() { LatLon.areaOf(polySquareCw).toFixed(0).should.equal('12360230987'); });
+        test('square ccw area',  function() { LatLon.areaOf(polySquareCcw).toFixed(0).should.equal('12360230987'); });
+        test('quadrant area',    function() { LatLon.areaOf(polyQuadrant).should.equal(Math.PI*R*R); });
+        test('hemisphere area',  function() { LatLon.areaOf(polyHemi).toFixed(0).should.equal('252684679676459'); });
+        test('pole area',        function() { LatLon.areaOf(polyPole).toFixed(0).should.equal('16063139192'); });
+        test('concave area',     function() { LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'); });
     });
 
     describe('rhumb lines', function() {

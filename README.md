@@ -78,6 +78,10 @@ All calculations are done using simple spherical trigonometric formulae.
         - Destination point travelling distance on bearing
     * `latlon.rhumbMidpointTo(point)`
         - Midpoint on rhumb line to 2nd point
+    * `LatLon.areaOf(polygon[, radius])`
+        - Area of polygon defined by array of vertex points
+    * `latlon.equals(point)`
+        - Equality of points
     * `latlon.toString([format[, decimals]])`
         - String representation of point, in deg/deg-min/deg-min-sec format to given decimal places
 

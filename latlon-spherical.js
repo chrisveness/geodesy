@@ -512,6 +512,96 @@ LatLon.prototype.rhumbMidpointTo = function(point) {
 };
 
 
+/* Area - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+
+/**
+ * Calculates the area of a spherical polygon where the sides of the polygon are great circle
+ * arcs joining the vertices.
+ *
+ * @param   {LatLon[]} polygon - Array of points defining vertices of the polygon
+ * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
+ * @returns {number} The area of the polygon, in the same units as radius.
+ *
+ * @example
+ *   var polygon = [new LatLon(0,0), new LatLon(1,0), new LatLon(0,1)];
+ *   var area = LatLon.areaOf(polygon); // 6.18e9 m²
+ */
+LatLon.areaOf = function(polygon, radius) {
+    // uses method due to Karney: osgeo-org.1560.x6.nabble.com/Area-of-a-spherical-polygon-td3841625.html;
+    // for each edge of the polygon, tan(E/2) = tan(Δλ/2)·(tan(φ1/2) + tan(φ2/2)) / (1 + tan(φ1/2)·tan(φ2/2))
+    // where E is the spherical excess of the trapezium obtained by extending the edge to the equator
+
+    var R = (radius === undefined) ? 6371e3 : Number(radius);
+
+    // close polygon so that last point equals first point
+    var closed = polygon[0].equals(polygon[polygon.length-1]);
+    if (!closed) polygon.push(polygon[0]);
+
+    var nVertices = polygon.length - 1;
+
+    var S = 0; // spherical excess in steradians
+    for (var v=0; v<nVertices; v++) {
+        var φ1 = polygon[v].lat.toRadians();
+        var φ2 = polygon[v+1].lat.toRadians();
+        var Δλ = (polygon[v+1].lon - polygon[v].lon).toRadians();
+        var E = 2 * Math.atan2(Math.tan(Δλ/2) * (Math.tan(φ1/2)+Math.tan(φ2/2)), 1 + Math.tan(φ1/2)*Math.tan(φ2/2));
+        S += E;
+    }
+
+    if (isPoleEnclosedBy(polygon)) S = Math.abs(S) - 2*Math.PI;
+
+    var A = Math.abs(S * R*R); // area in units of R
+
+    if (!closed) polygon.pop(); // restore polygon to pristine condition
+
+    return A;
+
+    // returns whether polygon encloses pole: sum of course deltas around pole is 0° rather than
+    // normal ±360°: blog.element84.com/determining-if-a-spherical-polygon-contains-a-pole.html
+    function isPoleEnclosedBy(polygon) {
+        // TODO: any better test than this?
+        var ΣΔ = 0;
+        var prevBrng = polygon[0].bearingTo(polygon[1]);
+        for (var v=0; v<polygon.length-1; v++) {
+            var initBrng = polygon[v].bearingTo(polygon[v+1]);
+            var finalBrng = polygon[v].finalBearingTo(polygon[v+1]);
+            ΣΔ += (initBrng - prevBrng + 540) % 360 - 180;
+            ΣΔ += (finalBrng - initBrng + 540) % 360 - 180;
+            prevBrng = finalBrng;
+        }
+        var initBrng = polygon[0].bearingTo(polygon[1]);
+        ΣΔ += (initBrng - prevBrng + 540) % 360 - 180;
+        var enclosed = Math.abs(ΣΔ) < 90; // 0°-ish
+        return enclosed;
+    }
+};
+
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+
+/**
+ * Checks if another point is equal to ‘this’ point.
+ *
+ * @param   {LatLon} point - Point to be compared against this point.
+ * @returns {bool}   True if points are identical.
+ *
+ * @example
+ *   var p1 = new LatLon(52.205, 0.119);
+ *   var p2 = new LatLon(52.205, 0.119);
+ *   var equal = p1.equals(p2); // true
+ */
+LatLon.prototype.equals = function(point) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
+    if (this.lat != point.lat) return false;
+    if (this.lon != point.lon) return false;
+
+    return true;
+};
+
+
 /**
  * Returns a string representation of ‘this’ point, formatted as degrees, degrees+minutes, or
  * degrees+minutes+seconds.
