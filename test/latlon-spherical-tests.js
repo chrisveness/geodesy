@@ -62,13 +62,13 @@ describe('latlon-spherical', function() {
     });
 
     describe('area', function() {
-        var polyTriangle = [new LatLon(1,1), new LatLon(2,1), new LatLon(1,2)];
-        var polySquareCw = [new LatLon(1,1), new LatLon(2,1), new LatLon(2,2), new LatLon(1,2)];
-        var polySquareCcw = [new LatLon(1,1), new LatLon(1,2), new LatLon(2,2), new LatLon(2,1)];
-        var polyQuadrant = [new LatLon(0,1e-99), new LatLon(0,180), new LatLon(90,0)];
-        var polyHemi = [new LatLon(0,1), new LatLon(45,0), new LatLon(89,90), new LatLon(45,180), new LatLon(0,179), new LatLon(-45,180), new LatLon(-89,90), new LatLon(-45,0)];
-        var polyPole = [new LatLon(89,0), new LatLon(89,120), new LatLon(89,-120)];
-        var polyConcave = [new LatLon(1,1), new LatLon(5,1), new LatLon(5,3), new LatLon(1,3), new LatLon(3,2)];
+        var polyTriangle = [ new LatLon(1,1), new LatLon(2,1), new LatLon(1,2) ];
+        var polySquareCw = [ new LatLon(1,1), new LatLon(2,1), new LatLon(2,2), new LatLon(1,2) ];
+        var polySquareCcw = [ new LatLon(1,1), new LatLon(1,2), new LatLon(2,2), new LatLon(2,1) ];
+        var polyQuadrant = [ new LatLon(0,1e-99), new LatLon(0,180), new LatLon(90,0) ];
+        var polyHemi = [ new LatLon(0,1), new LatLon(45,0), new LatLon(89,90), new LatLon(45,180), new LatLon(0,179), new LatLon(-45,180), new LatLon(-89,90), new LatLon(-45,0) ];
+        var polyPole = [ new LatLon(89,0), new LatLon(89,120), new LatLon(89,-120) ];
+        var polyConcave = [ new LatLon(1,1), new LatLon(5,1), new LatLon(5,3), new LatLon(1,3), new LatLon(3,2) ];
         test('triangle area',    function() { LatLon.areaOf(polyTriangle).toFixed(0).should.equal('6181527888'); });
         test('square cw area',   function() { LatLon.areaOf(polySquareCw).toFixed(0).should.equal('12360230987'); });
         test('square ccw area',  function() { LatLon.areaOf(polySquareCcw).toFixed(0).should.equal('12360230987'); });

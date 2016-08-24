@@ -37,7 +37,7 @@ Mgrs.e100kLetters = [ 'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ' ];
 /*
  * 100km grid square row (‘n’) letters repeat every other zone
  */
-Mgrs.n100kLetters = ['ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE'];
+Mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' ];
 
 
 /**
@@ -233,7 +233,7 @@ Mgrs.parse = function(mgrsGridRef) {
  */
 Mgrs.prototype.toString = function(digits) {
     digits = (digits === undefined) ? 10 : Number(digits);
-    if ([2,4,6,8,10].indexOf(digits) == -1) throw new Error('Invalid precision ‘'+digits+'’');
+    if ([ 2,4,6,8,10 ].indexOf(digits) == -1) throw new Error('Invalid precision ‘'+digits+'’');
 
     var zone = this.zone.pad(2); // ensure leading zero
     var band = this.band;

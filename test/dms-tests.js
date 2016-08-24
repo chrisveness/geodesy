@@ -46,7 +46,7 @@ describe('dms', function() {
         for (var v in variations) test('parse dms variations '+variations[v]+'S', function() { Dms.parseDMS(variations[v]+'S').should.equal(-45.76260); });
         for (var v in variations) test('parse dms variations '+variations[v]+'E', function() { Dms.parseDMS(variations[v]+'E').should.equal(45.76260); });
         for (var v in variations) test('parse dms variations '+variations[v]+'W', function() { Dms.parseDMS(variations[v]+'W').should.equal(-45.76260); });
-        test('parse dms variations '+' ws before+after ', function() { Dms.parseDMS(' 45°45′45.36″ ').should.equal(45.76260)});
+        test('parse dms variations '+' ws before+after ', function() { Dms.parseDMS(' 45°45′45.36″ ').should.equal(45.76260); });
     });
 
     describe('output variations', function() {
