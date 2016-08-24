@@ -63,48 +63,39 @@ LatLon.ellipsoid = {
  * Datums; with associated ellipsoid, and Helmert transform parameters to convert from WGS 84 into
  * given datum.
  *
- * More are available from earth-info.nga.mil/GandG/coordsys/datums/NATO_DT.pdf,
- * www.fieldenmaps.info/cconv/web/cconv_params.js
+ * Note that precision of various datums will vary, and WGS-84 (original) is not defined to be
+ * accurate to better than ±1 metre. No transformation should be assumed to be accurate to better
+ * than a meter; for many datums somewhat less.
  */
 LatLon.datum = {
-    /* eslint key-spacing: 0, comma-dangle: 0 */
-    WGS84: {
-        ellipsoid: LatLon.ellipsoid.WGS84,
-        transform: { tx:    0.0,    ty:    0.0,     tz:    0.0,    // m
-                     rx:    0.0,    ry:    0.0,     rz:    0.0,    // sec
-                      s:    0.0 }                                  // ppm
-    },
-    NAD83: { // (2009); functionally ≡ WGS84 - www.uvm.edu/giv/resources/WGS84_NAD83.pdf
-        ellipsoid: LatLon.ellipsoid.GRS80,
-        transform: { tx:    1.004,  ty:   -1.910,   tz:   -0.515,  // m
-                     rx:    0.0267, ry:    0.00034, rz:    0.011,  // sec
-                      s:   -0.0015 }                               // ppm
-    }, // note: if you *really* need to convert WGS84<->NAD83, you need more knowledge than this!
-    OSGB36: { // www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
-        ellipsoid: LatLon.ellipsoid.Airy1830,
-        transform: { tx: -446.448,  ty:  125.157,   tz: -542.060,  // m
-                     rx:   -0.1502, ry:   -0.2470,  rz:   -0.8421, // sec
-                      s:   20.4894 }                               // ppm
-    },
-    ED50: { // www.gov.uk/guidance/oil-and-gas-petroleum-operations-notices#pon-4
-        ellipsoid: LatLon.ellipsoid.Intl1924,
-        transform: { tx:   89.5,    ty:   93.8,     tz:  123.1,    // m
-                     rx:    0.0,    ry:    0.0,     rz:    0.156,  // sec
-                      s:   -1.2 }                                  // ppm
-    },
-    Irl1975: { // osi.ie/OSI/media/OSI/Content/Publications/transformations_booklet.pdf
-        ellipsoid: LatLon.ellipsoid.AiryModified,
-        transform: { tx: -482.530,  ty:  130.596,   tz: -564.557,  // m
-                     rx:   -1.042,  ry:   -0.214,   rz:   -0.631,  // sec
-                      s:   -8.150 }                                // ppm
-    }, // note: many sources have opposite sign to rotations - to be checked!
-    TokyoJapan: { // www.geocachingtoolbox.com?page=datumEllipsoidDetails
-        ellipsoid: LatLon.ellipsoid.Bessel1841,
-        transform: { tx:  148,      ty: -507,       tz: -685,      // m
-                     rx:    0,      ry:    0,       rz:    0,      // sec
-                      s:    0 }                                    // ppm
-    },
+    // transforms: t in metres, s in ppm, r in arcseconds                    tx       ty        tz       s        rx       ry       rz
+    ED50:       { ellipsoid: LatLon.ellipsoid.Intl1924,      transform: [   89.5,    93.8,    123.1,    -1.2,     0.0,     0.0,     0.156  ] },
+    Irl1975:    { ellipsoid: LatLon.ellipsoid.AiryModified,  transform: [ -482.530, 130.596, -564.557,  -8.150,  -1.042,  -0.214,  -0.631  ] },
+    NAD27:      { ellipsoid: LatLon.ellipsoid.Clarke1866,    transform: [    8,    -160,     -176,       0,       0,       0,       0      ] },
+    NAD83:      { ellipsoid: LatLon.ellipsoid.GRS80,         transform: [    1.004,  -1.910,   -0.515,  -0.0015,  0.0267,  0.00034, 0.011  ] },
+    NTF:        { ellipsoid: LatLon.ellipsoid.Clarke1880IGN, transform: [  168,      60,     -320,       0,       0,       0,       0      ] },
+    OSGB36:     { ellipsoid: LatLon.ellipsoid.Airy1830,      transform: [ -446.448, 125.157, -542.060,  20.4894, -0.1502, -0.2470, -0.8421 ] },
+    Potsdam:    { ellipsoid: LatLon.ellipsoid.Bessel1841,    transform: [ -582,    -105,     -414,      -8.3,     1.04,    0.35,   -3.08   ] },
+    TokyoJapan: { ellipsoid: LatLon.ellipsoid.Bessel1841,    transform: [  148,    -507,     -685,       0,       0,       0,       0      ] },
+    WGS72:      { ellipsoid: LatLon.ellipsoid.WGS72,         transform: [    0,       0,     -4.5,      -0.22,    0,       0,       0.554  ] },
+    WGS84:      { ellipsoid: LatLon.ellipsoid.WGS84,         transform: [    0.0,     0.0,      0.0,     0.0,     0.0,     0.0,     0.0    ] },
 };
+/* sources:
+ * - ED50:          www.gov.uk/guidance/oil-and-gas-petroleum-operations-notices#pon-4
+ * - Irl1975:       www.osi.ie/wp-content/uploads/2015/05/transformations_booklet.pdf
+ *   ... note: many sources have opposite sign to rotations - to be checked!
+ * - NAD27:         en.wikipedia.org/wiki/Helmert_transformation
+ * - NAD83: (2009); www.uvm.edu/giv/resources/WGS84_NAD83.pdf
+ *   ... note: functionally ≡ WGS84 - if you *really* need to convert WGS84<->NAD83, you need more knowledge than this!
+ * - NTF:           Nouvelle Triangulation Francaise geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf
+ * - OSGB36:        www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
+ * - Potsdam:       kartoweb.itc.nl/geometrics/Coordinate%20transformations/coordtrans.html
+ * - TokyoJapan:    www.geocachingtoolbox.com?page=datumEllipsoidDetails
+ * - WGS72:         www.icao.int/safety/pbn/documentation/eurocontrol/eurocontrol wgs 84 implementation manual.pdf
+ *
+ * more transform parameters are available from earth-info.nga.mil/GandG/coordsys/datums/NATO_DT.pdf,
+ * www.fieldenmaps.info/cconv/web/cconv_params.js
+ */
 
 
 /**
@@ -119,7 +110,7 @@ LatLon.datum = {
  */
 LatLon.prototype.convertDatum = function(toDatum) {
     var oldLatLon = this;
-    var transform;
+    var transform = null;
 
     if (oldLatLon.datum == LatLon.datum.WGS84) {
         // converting from WGS 84
@@ -127,14 +118,10 @@ LatLon.prototype.convertDatum = function(toDatum) {
     }
     if (toDatum == LatLon.datum.WGS84) {
         // converting to WGS 84; use inverse transform (don't overwrite original!)
-        transform = {};
-        for (var param in oldLatLon.datum.transform) {
-            if (oldLatLon.datum.transform.hasOwnProperty(param)) {
-                transform[param] = -oldLatLon.datum.transform[param];
-            }
-        }
+        transform = [];
+        for (var p=0; p<7; p++) transform[p] = -oldLatLon.datum.transform[p];
     }
-    if (transform === undefined) {
+    if (transform == null) {
         // neither this.datum nor toDatum are WGS84: convert this to WGS84 first
         oldLatLon = this.convertDatum(LatLon.datum.WGS84);
         transform = toDatum.transform;
@@ -217,25 +204,28 @@ Vector3d.prototype.toLatLonE = function(datum) {
  * Applies Helmert transform to ‘this’ point using transform parameters t.
  *
  * @private
- * @param {LatLon.datum.transform} t - Transform to apply to this point.
+ * @param   {number[]} t - Transform to apply to this point.
+ * @returns {Vector3} Transformed point.
  */
 Vector3d.prototype.applyTransform = function(t)   {
+    // this point
     var x1 = this.x, y1 = this.y, z1 = this.z;
 
-    var tx = t.tx, ty = t.ty, tz = t.tz;
-    var rx = (t.rx/3600).toRadians(); // normalise seconds to radians
-    var ry = (t.ry/3600).toRadians(); // normalise seconds to radians
-    var rz = (t.rz/3600).toRadians(); // normalise seconds to radians
-    var s1 = t.s/1e6 + 1;             // normalise ppm to (s+1)
+    // transform parameters
+    var tx = t[0];                    // x-shift
+    var ty = t[1];                    // y-shift
+    var tz = t[2];                    // z-shift
+    var s1 = t[3]/1e6 + 1;            // scale: normalise parts-per-million to (s+1)
+    var rx = (t[4]/3600).toRadians(); // x-rotation: normalise arcseconds to radians
+    var ry = (t[5]/3600).toRadians(); // y-rotation: normalise arcseconds to radians
+    var rz = (t[6]/3600).toRadians(); // z-rotation: normalise arcseconds to radians
 
     // apply transform
     var x2 = tx + x1*s1 - y1*rz + z1*ry;
     var y2 = ty + x1*rz + y1*s1 - z1*rx;
     var z2 = tz - x1*ry + y1*rx + z1*s1;
 
-    var point = new Vector3d(x2, y2, z2);
-
-    return point;
+    return new Vector3d(x2, y2, z2);
 };
 
 
