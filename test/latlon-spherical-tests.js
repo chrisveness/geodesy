@@ -7,12 +7,14 @@
 var chai = require('chai');  // BDD/TDD assertion library
 
 var LatLon = require('../npm.js').LatLonSpherical;
+var Dms    = require('../npm.js').Dms;
 
 chai.should();
 var test = it; // just an alias
 
 describe('latlon-spherical', function() {
     var R = 6371e3;
+    var π = Math.PI;
 
     describe('formatting', function() {
         test('toString d',       function() { new LatLon(51.521470, -0.138833).toString('d', 6).should.equal('51.521470°N, 000.138833°W'); });
@@ -28,11 +30,14 @@ describe('latlon-spherical', function() {
         test('midpoint',         function() { cambg.midpointTo(paris).toString('d').should.equal('50.5363°N, 001.2746°E'); });
         test('int.point',        function() { cambg.intermediatePointTo(paris, 0.25).toString('d').should.equal('51.3721°N, 000.7073°E'); });
 
-        var bradwell = new LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
-        test('dest’n',           function() { bradwell.destinationPoint(dist, brng).toString('d').should.equal('51.5135°N, 000.0983°W'); });
+        var greenwich = new LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
+        test('dest’n',           function() { greenwich.destinationPoint(dist, brng).toString('d').should.equal('51.5135°N, 000.0983°W'); });
 
         var stn = new LatLon(51.8853, 0.2545), cdg = new LatLon(49.0034, 2.5735);
         test('intersec’n',       function() { LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d').should.equal('50.9078°N, 004.5084°E'); });
+
+        var bradwell = new LatLon(53.3206, -1.7297);
+        test('cross-track',      function() { new LatLon(53.2611, -0.7972).crossTrackDistanceTo(bradwell, new LatLon(53.1887,  0.1334)).toPrecision(4).should.equal('-307.5'); });
 
         test('Clairaut 0°',      function() { new LatLon(0,0).maxLatitude( 0).should.equal(90); });
         test('Clairaut 1°',      function() { new LatLon(0,0).maxLatitude( 1).should.equal(89); });
@@ -41,6 +46,19 @@ describe('latlon-spherical', function() {
         var parallels = LatLon.crossingParallels(new LatLon(0,0), new LatLon(60,30), 30);
         test('parallels 1',      function() { new LatLon(30, parallels.lon1).toString().should.equal('30°00′00″N, 009°35′39″E'); });
         test('parallels 2',      function() { new LatLon(30, parallels.lon2).toString().should.equal('30°00′00″N, 170°24′21″E'); });
+
+        var lax = new LatLon(Dms.parseDMS('33° 57′N'), Dms.parseDMS('118° 24′W'));
+        var jfk = new LatLon(Dms.parseDMS('40° 38′N'), Dms.parseDMS('073° 47′W'));
+        test('EW distance nm',   function() { lax.distanceTo(jfk, 180*60/π).toPrecision(4).should.equal('2144'); });
+        test('EW bearing',       function() { lax.bearingTo(jfk).toPrecision(2).should.equal('66'); });
+        test('EW intermediate',  function() { lax.intermediatePointTo(jfk, 100/2144).toString('dm', 0).should.equal('34°37′N, 116°33′W'); });
+        var d = new LatLon(Dms.parseDMS('34:30N'), Dms.parseDMS('116:30W'));
+        test('EW cross-track',   function() { d.crossTrackDistanceTo(lax, jfk, 180*60/π).toPrecision(5).should.equal('7.4523'); });
+        test('EW along-track',   function() { d.alongTrackDistanceTo(lax, jfk, 180*60/π).toPrecision(5).should.equal('99.588'); });
+        test('EW intermediate',  function() { lax.intermediatePointTo(jfk, 0.4).toString('dm', 3).should.equal('38°40.167′N, 101°37.570′W'); });
+        var reo = new LatLon(Dms.parseDMS('42.600N'), Dms.parseDMS('117.866W'));
+        var bke = new LatLon(Dms.parseDMS('44.840N'), Dms.parseDMS('117.806W'));
+        test('EW intersection',  function() { LatLon.intersection(reo, 51, bke, 137).toString('d', 3).should.equal('43.572°N, 116.189°W'); });
     });
 
     describe('area', function() {
