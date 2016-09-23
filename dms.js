@@ -119,29 +119,25 @@ Dms.toDMS = function(deg, format, dp) {
     switch (format) {
         default: // invalid format spec!
         case 'd': case 'deg':
-            d = deg.toFixed(dp);    // round degrees
-            if (d<100) d = '0' + d; // pad with leading zeros
+            d = deg.toFixed(dp);                // round/right-pad degrees
+            if (d<100) d = '0' + d;             // left-pad with leading zeros (note may include decimals)
             if (d<10) d = '0' + d;
             dms = d + '°';
             break;
         case 'dm': case 'deg+min':
-            var min = (deg*60).toFixed(dp); // convert degrees to minutes & round
-            d = Math.floor(min / 60);       // get component deg/min
-            m = (min % 60).toFixed(dp);     // pad with trailing zeros
-            if (d<100) d = '0' + d;         // pad with leading zeros
-            if (d<10) d = '0' + d;
-            if (m<10) m = '0' + m;
+            d = Math.floor(deg);                // get component deg
+            m = ((deg*60) % 60).toFixed(dp);    // get component min & round/right-pad
+            d = ('000'+d).slice(-3);            // left-pad with leading zeros
+            if (m<10) m = '0' + m;              // left-pad with leading zeros (note may include decimals)
             dms = d + '°'+Dms.separator + m + '′';
             break;
         case 'dms': case 'deg+min+sec':
-            var sec = (deg*3600).toFixed(dp); // convert degrees to seconds & round
-            d = Math.floor(sec / 3600);       // get component deg/min/sec
-            m = Math.floor(sec/60) % 60;
-            s = (sec % 60).toFixed(dp);       // pad with trailing zeros
-            if (d<100) d = '0' + d;           // pad with leading zeros
-            if (d<10) d = '0' + d;
-            if (m<10) m = '0' + m;
-            if (s<10) s = '0' + s;
+            d = Math.floor(deg);                // get component deg
+            m = Math.floor((deg*3600)/60) % 60; // get component min
+            s = (deg*3600 % 60).toFixed(dp);    // get component sec & round/right-pad
+            d = ('000'+d).slice(-3);            // left-pad with leading zeros
+            m = ('00'+m).slice(-2);             // left-pad with leading zeros
+            if (s<10) s = '0' + s;              // left-pad with leading zeros (note may include decimals)
             dms = d + '°'+Dms.separator + m + '′'+Dms.separator + s + '″';
             break;
     }
