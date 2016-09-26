@@ -245,19 +245,29 @@ OsGridRef.parse = function(gridref) {
 /**
  * Converts ‘this’ numeric grid reference to standard OS grid reference.
  *
- * @param   {number} [digits=10] - Precision of returned grid reference (10 digits = metres).
+ * @param   {number} [digits=10] - Precision of returned grid reference (10 digits = metres);
+ *   digits=0 will return grid reference in numeric format.
  * @returns {string} This grid reference in standard format.
+ *
+ * @example
+ *   var ref = new OsGridRef(651409, 313177).toString(); // TG 51409 13177
  */
 OsGridRef.prototype.toString = function(digits) {
     digits = (digits === undefined) ? 10 : Number(digits);
-    if (isNaN(digits)) throw new Error('Invalid precision');
+    if (isNaN(digits) || digits%2!=0 || digits>16) throw new RangeError('Invalid precision ‘'+digits+'’');
 
     var e = this.easting;
     var n = this.northing;
     if (isNaN(e) || isNaN(n)) throw new Error('Invalid grid reference');
 
-    // use digits = 0 to return numeric format (in metres)
-    if (digits == 0) return e.pad(6)+','+n.pad(6);
+    // use digits = 0 to return numeric format (in metres, allowing for decimals & for northing > 1e6)
+    if (digits == 0) {
+        var eInt = Math.floor(e), eDec = e - eInt;
+        var nInt = Math.floor(n), nDec = n - nInt;
+        var ePad = ('000000'+eInt).slice(-6) + (eDec>0 ? eDec.toFixed(3).slice(1) : '');
+        var nPad = (nInt<1e6 ? ('000000'+nInt).slice(-6) : nInt) + (nDec>0 ? nDec.toFixed(3).slice(1) : '');
+        return ePad + ',' + nPad;
+    }
 
     // get the 100km-grid indices
     var e100k = Math.floor(e/100000), n100k = Math.floor(n/100000);
@@ -271,15 +281,17 @@ OsGridRef.prototype.toString = function(digits) {
     // compensate for skipped 'I' and build grid letter-pairs
     if (l1 > 7) l1++;
     if (l2 > 7) l2++;
-    var letPair = String.fromCharCode(l1+'A'.charCodeAt(0), l2+'A'.charCodeAt(0));
+    var letterPair = String.fromCharCode(l1+'A'.charCodeAt(0), l2+'A'.charCodeAt(0));
 
     // strip 100km-grid indices from easting & northing, and reduce precision
     e = Math.floor((e%100000)/Math.pow(10, 5-digits/2));
     n = Math.floor((n%100000)/Math.pow(10, 5-digits/2));
 
-    var gridRef = letPair + ' ' + e.pad(digits/2) + ' ' + n.pad(digits/2);
+    // pad eastings & northings with leading zeros (just in case, allow up to 16-digit (mm) refs)
+    e = ('00000000'+e).slice(-digits/2);
+    n = ('00000000'+n).slice(-digits/2);
 
-    return gridRef;
+    return letterPair + ' ' + e + ' ' + n;
 };
 
 
@@ -290,16 +302,6 @@ OsGridRef.prototype.toString = function(digits) {
 if (String.prototype.trim === undefined) {
     String.prototype.trim = function() {
         return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    };
-}
-
-/** Extend Number object with method to pad with leading zeros to make it w chars wide
- *  (q.v. stackoverflow.com/questions/2998784 */
-if (Number.prototype.pad === undefined) {
-    Number.prototype.pad = function(w) {
-        var n = this.toString();
-        while (n.length < w) n = '0' + n;
-        return n;
     };
 }
 

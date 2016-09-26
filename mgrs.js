@@ -235,35 +235,23 @@ Mgrs.prototype.toString = function(digits) {
     digits = (digits === undefined) ? 10 : Number(digits);
     if ([ 2,4,6,8,10 ].indexOf(digits) == -1) throw new Error('Invalid precision ‘'+digits+'’');
 
-    var zone = this.zone.pad(2); // ensure leading zero
+    var zone = ('00'+this.zone).slice(-2); // ensure leading zero
     var band = this.band;
 
     var e100k = this.e100k;
     var n100k = this.n100k;
 
-    // set required precision
-    var easting = Math.floor(this.easting/Math.pow(10, 5-digits/2));
-    var northing = Math.floor(this.northing/Math.pow(10, 5-digits/2));
+    // truncate to required precision
+    var eRounded = Math.floor(this.easting/Math.pow(10, 5-digits/2));
+    var nRounded = Math.floor(this.northing/Math.pow(10, 5-digits/2));
 
     // ensure leading zeros
-    easting = easting.pad(digits/2);
-    northing = northing.pad(digits/2);
+    var easting = ('00000'+eRounded).slice(-digits/2);
+    var northing = ('00000'+nRounded).slice(-digits/2);
 
     return zone+band + ' ' + e100k+n100k + ' '  + easting + ' ' + northing;
 };
 
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-/** Extend Number object with method to pad with leading zeros to make it w chars wide
- *  (q.v. stackoverflow.com/questions/2998784 */
-if (Number.prototype.pad === undefined) {
-    Number.prototype.pad = function(w) {
-        var n = this.toString();
-        while (n.length < w) n = '0' + n;
-        return n;
-    };
-}
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = Mgrs; // ≡ export default Mgrs
