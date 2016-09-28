@@ -223,14 +223,13 @@ LatLon.prototype.inverse = function(point) {
         sinλ = Math.sin(λ);
         cosλ = Math.cos(λ);
         sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
+        if (sinSqσ == 0) return 0;  // co-incident points
         sinσ = Math.sqrt(sinSqσ);
-        if (sinσ == 0) return 0;  // co-incident points
         cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
         σ = Math.atan2(sinσ, cosσ);
         sinα = cosU1 * cosU2 * sinλ / sinσ;
         cosSqα = 1 - sinα*sinα;
-        cos2σM = cosσ - 2*sinU1*sinU2/cosSqα;
-        if (isNaN(cos2σM)) cos2σM = 0;  // equatorial line: cosSqα=0 (§6)
+        cos2σM = (cosSqα != 0) ? (cosσ - 2*sinU1*sinU2/cosSqα) : 0; // equatorial line: cosSqα=0 (§6)
         C = f/16*cosSqα*(4+f*(4-3*cosSqα));
         λʹ = λ;
         λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
