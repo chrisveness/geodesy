@@ -54,6 +54,7 @@ describe('latlon-vectors', function() {
     test('nearest point on segment 1',  function() { LatLon(51.0, 1.9).nearestPointOnSegment(LatLon(51.0, 1.0), LatLon(51.0, 2.0)).toString('d').should.equal('51.0004°N, 001.9000°E'); });
     test('nearest point on segment 1d', function() { LatLon(51.0, 1.9).nearestPointOnSegment(LatLon(51.0, 1.0), LatLon(51.0, 2.0)).distanceTo(LatLon(51.0, 1.9)).toPrecision(4).should.equal('42.71'); });
     test('nearest point on segment 2',  function() { LatLon(51.0, 2.1).nearestPointOnSegment(LatLon(51.0, 1.0), LatLon(51.0, 2.0)).toString('d').should.equal('51.0000°N, 002.0000°E'); });
+    test('nearest point on segment JB', function() { LatLon(10, -140).nearestPointOnSegment(LatLon(0, 20), LatLon(0, 40)).toString('d').should.equal('00.0000°N, 020.0000°E'); });
 
     var polyHemi = [ new LatLon(0,1), new LatLon(45,0), new LatLon(89,90), new LatLon(45,180), new LatLon(0,179), new LatLon(-45,180), new LatLon(-89,90), new LatLon(-45,0) ];
     var polyGc = [ new LatLon(10,0), new LatLon(10,90), new LatLon(0,45) ];

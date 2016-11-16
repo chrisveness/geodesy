@@ -423,10 +423,10 @@ LatLon.prototype.nearestPointOnSegment = function(point1, point2) {
  * Returns whether this point is between point 1 & point 2.
  *
  * If this point is not on the great circle defined by point1 & point 2, returns whether this point
- * is within area bound by perpendiculars to the great circle at each point.
+ * is within area bound by perpendiculars to the great circle at each point (in the same hemisphere).
  *
- * @param   {LatLon} point1 - First point defining segment.
- * @param   {LatLon} point2 - Second point defining segment.
+ * @param   {LatLon}  point1 - First point defining segment.
+ * @param   {LatLon}  point2 - Second point defining segment.
  * @returns {boolean} Whether this point is within extent of segment.
  */
 LatLon.prototype.isBetween = function(point1, point2) {
@@ -441,8 +441,9 @@ LatLon.prototype.isBetween = function(point1, point2) {
     var extent2 = δ20.dot(δ21);
 
     var isBetween = extent1>=0 && extent2>=0;
+    var isSameHemisphere = n0.dot(n1)>=0 && n0.dot(n2)>=0;
 
-    return isBetween;
+    return isBetween && isSameHemisphere;
 };
 
 
