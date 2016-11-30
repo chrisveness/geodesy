@@ -305,15 +305,15 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
 LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathEnd, radius) {
     if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
     if (!(pathEnd instanceof LatLon)) throw new TypeError('pathEnd is not LatLon object');
-    radius = (radius === undefined) ? 6371e3 : Number(radius);
+    var R = (radius === undefined) ? 6371e3 : Number(radius);
 
-    var δ13 = pathStart.distanceTo(this, radius)/radius;
+    var δ13 = pathStart.distanceTo(this, R) / R;
     var θ13 = pathStart.bearingTo(this).toRadians();
     var θ12 = pathStart.bearingTo(pathEnd).toRadians();
 
-    var dxt = Math.asin( Math.sin(δ13) * Math.sin(θ13-θ12) ) * radius;
+    var δ = Math.asin( Math.sin(δ13) * Math.sin(θ13-θ12) );
 
-    return dxt;
+    return δ * R;
 };
 
 
@@ -572,6 +572,7 @@ LatLon.areaOf = function(polygon, radius) {
         }
         var initBrng = polygon[0].bearingTo(polygon[1]);
         ΣΔ += (initBrng - prevBrng + 540) % 360 - 180;
+        // TODO: fix (intermittant) edge crossing pole - eg (85,90), (85,0), (85,-90)
         var enclosed = Math.abs(ΣΔ) < 90; // 0°-ish
         return enclosed;
     }
