@@ -164,8 +164,9 @@ LatLon.prototype.distanceTo = function(point, radius) {
 /**
  * Returns the (initial) bearing from ‘this’ point to the specified point, in compass degrees.
  *
- * @param   {LatLon} point - Latitude/longitude of destination point.
- * @returns {number} Initial bearing in degrees from North (0°..360°).
+ * @param   {LatLon}    point - Latitude/longitude of destination point.
+ * @returns {number}    Initial bearing in degrees from North (0°..360°).
+ * @throws  {TypeError} Point is not LatLon object.
  *
  * @example
  *   var p1 = new LatLon(52.205, 0.119);
@@ -178,15 +179,14 @@ LatLon.prototype.bearingTo = function(point) {
     var p1 = this.toVector();
     var p2 = point.toVector();
 
-    var northPole = new Vector3d(0, 0, 1);
+    var N = new Vector3d(0, 0, 1); // n-vector representing north pole
 
-    var c1 = p1.cross(p2);        // great circle through p1 & p2
-    var c2 = p1.cross(northPole); // great circle through p1 & north pole
+    var c1 = p1.cross(p2); // great circle through p1 & p2
+    var c2 = p1.cross(N);  // great circle through p1 & north pole
 
-    // bearing is (signed) angle between c1 & c2
-    var bearing = c1.angleTo(c2, p1).toDegrees();
+    var θ = c1.angleTo(c2, p1); // bearing is (signed) angle between c1 & c2
 
-    return (bearing+360) % 360; // normalise to 0..360
+    return (θ.toDegrees()+360) % 360; // normalise to 0..360
 };
 
 
