@@ -176,8 +176,8 @@ LatLon.prototype.direct = function(distance, initialBearing) {
             B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
         σʹ = σ;
         σ = s / (b*A) + Δσ;
-    } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<200);
-    if (iterations>=200) throw new Error('Formula failed to converge'); // not possible?
+    } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<100);
+    if (iterations >= 100) throw new Error('Formula failed to converge'); // not possible!
 
     var x = sinU1*sinσ - cosU1*cosσ*cosα1;
     var φ2 = Math.atan2(sinU1*cosσ + cosU1*sinσ*cosα1, (1-f)*Math.sqrt(sinα*sinα + x*x));
@@ -193,6 +193,7 @@ LatLon.prototype.direct = function(distance, initialBearing) {
     return {
         point:        new LatLon(φ2.toDegrees(), λ2.toDegrees(), this.datum),
         finalBearing: α2.toDegrees(),
+        iterations:   iterations,
     };
 };
 
@@ -203,10 +204,11 @@ LatLon.prototype.direct = function(distance, initialBearing) {
  * @private
  * @param   {LatLon} point - Latitude/longitude of destination point.
  * @returns {Object} Object including distance, initialBearing, finalBearing.
- * @throws  {Error}  If formula failed to converge.
+ * @throws  {Error}  If λ > π or formula failed to converge.
  */
 LatLon.prototype.inverse = function(point) {
     var p1 = this, p2 = point;
+    if (p1.lon == -180) p1.lon = 180;
     var φ1 = p1.lat.toRadians(), λ1 = p1.lon.toRadians();
     var φ2 = p2.lat.toRadians(), λ2 = p2.lon.toRadians();
 
@@ -233,8 +235,9 @@ LatLon.prototype.inverse = function(point) {
         C = f/16*cosSqα*(4+f*(4-3*cosSqα));
         λʹ = λ;
         λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
-    } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<200);
-    if (iterations>=200) throw new Error('Formula failed to converge');
+        if (Math.abs(λ) > Math.PI) throw new Error('λ > π');
+    } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000);
+    if (iterations >= 1000) throw new Error('Formula failed to converge');
 
     var uSq = cosSqα * (a*a - b*b) / (b*b);
     var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
@@ -251,7 +254,13 @@ LatLon.prototype.inverse = function(point) {
     α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0..360
 
     s = Number(s.toFixed(3)); // round to 1mm precision
-    return { distance: s, initialBearing: α1.toDegrees(), finalBearing: α2.toDegrees() };
+
+    return {
+        distance:       s,
+        initialBearing: α1.toDegrees(),
+        finalBearing:   α2.toDegrees(),
+        iterations:     iterations,
+    };
 };
 
 
