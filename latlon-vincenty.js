@@ -41,7 +41,7 @@ LatLon.prototype.distanceTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
 
     try {
-        return this.inverse(point).distance;
+        return Number(this.inverse(point).distance.toFixed(3)); // round to 1mm precision
     } catch (e) {
         return NaN; // failed to converge
     }
@@ -66,7 +66,7 @@ LatLon.prototype.initialBearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
 
     try {
-        return this.inverse(point).initialBearing;
+        return Number(this.inverse(point).initialBearing.toFixed(9)); // round to 0.00001″ precision
     } catch (e) {
         return NaN; // failed to converge
     }
@@ -91,7 +91,7 @@ LatLon.prototype.finalBearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
 
     try {
-        return this.inverse(point).finalBearing;
+        return Number(this.inverse(point).finalBearing.toFixed(9)); // round to 0.00001″ precision
     } catch (e) {
         return NaN; // failed to converge
     }
@@ -134,7 +134,7 @@ LatLon.prototype.destinationPoint = function(distance, initialBearing) {
  *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // 307.1736°
  */
 LatLon.prototype.finalBearingOn = function(distance, initialBearing) {
-    return this.direct(Number(distance), Number(initialBearing)).finalBearing;
+    return Number(this.direct(Number(distance), Number(initialBearing)).finalBearing.toFixed(9)); // round to 0.00001″ precision
 };
 
 
@@ -252,8 +252,6 @@ LatLon.prototype.inverse = function(point) {
 
     α1 = (α1 + 2*Math.PI) % (2*Math.PI); // normalise to 0..360
     α2 = (α2 + 2*Math.PI) % (2*Math.PI); // normalise to 0..360
-
-    s = Number(s.toFixed(3)); // round to 1mm precision
 
     return {
         distance:       s,
