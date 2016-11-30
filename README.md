@@ -167,7 +167,7 @@ to a spherical earth model only.
         - Midpoint to point
     * `latlon.destinationPoint(distance, bearing[, radius])`
         - Destination point travelling distance on bearing
-    * `latlon.intersection(path1start, path1brngEnd, path2start, path2brngEnd)`
+    * `LatLon.intersection(path1start, path1brngEnd, path2start, path2brngEnd)`
         - Intersection of two paths defined by start+bearing or start+end
     * `latlon.crossTrackDistanceTo(pathStart, pathBrngEnd[, radius])`
         - Distance to great circle defined by start-point and end-point/bearing
@@ -177,7 +177,9 @@ to a spherical earth model only.
         - Whether point is between two other points
     * `latlon.enclosedBy(points)`
         - Whether point is enclosed by polygon
-    * `latlon.meanOf(points)`
+    * `LatLon.areaOf(polygon[, radius])`
+        - Area of polygon defined by array of vertex points
+    * `LatLon.meanOf(points)`
         - Geographic mean of set of points
     * `latlon.equals(point)`
         - Whether points are equal

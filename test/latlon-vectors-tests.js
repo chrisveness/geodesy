@@ -84,11 +84,22 @@ describe('latlon-vectors', function() {
     });
 
     describe('polygonal', function() {
+        var polyTriangle = [ new LatLon(1,1), new LatLon(2,1), new LatLon(1,2) ];
+        var polySquareCw = [ new LatLon(1,1), new LatLon(2,1), new LatLon(2,2), new LatLon(1,2) ];
+        var polySquareCcw = [ new LatLon(1,1), new LatLon(1,2), new LatLon(2,2), new LatLon(2,1) ];
+        var polyQuadrant = [ new LatLon(0,0), new LatLon(0,90), new LatLon(90,0) ];
         var polyHemi = [ new LatLon(0,1), new LatLon(45,0), new LatLon(89,90), new LatLon(45,180), new LatLon(0,179), new LatLon(-45,180), new LatLon(-89,90), new LatLon(-45,0) ];
         var polyGc = [ new LatLon(10,0), new LatLon(10,90), new LatLon(0,45) ];
         var polyPole = [ new LatLon(89,0), new LatLon(89,120), new LatLon(89,-120) ];
         var polyPoleEdge = [ new LatLon(85,90), LatLon(85,0), new LatLon(85,-90) ];
         var polyConcave = [ new LatLon(1,1), new LatLon(5,1), new LatLon(5,3), new LatLon(1,3), new LatLon(3,2) ];
+        test('triangle area',         function() { LatLon.areaOf(polyTriangle).toFixed(0).should.equal('6181527888'); });
+        test('square cw area',        function() { LatLon.areaOf(polySquareCw).toFixed(0).should.equal('12360230987'); });
+        test('square ccw area',       function() { LatLon.areaOf(polySquareCcw).toFixed(0).should.equal('12360230987'); });
+        test('quadrant area',         function() { LatLon.areaOf(polyQuadrant).toFixed(1).should.equal((π*R*R/2).toFixed(1)); });
+        test('hemisphere area',       function() { LatLon.areaOf(polyHemi).toFixed(0).should.equal('252198975941606'); }); // TODO: spherical gives 252684679676459 (0.2% error) - which is right?
+        test('pole area',             function() { LatLon.areaOf(polyPole).toFixed(0).should.equal('16063139192'); });
+        test('concave area',          function() { LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'); });
         test('hemisphere enclosed y', function() { new LatLon(22.5,0.59).enclosedBy(polyHemi).should.be.true; });
         test('hemisphere enclosed n', function() { new LatLon(22.5,0.58).enclosedBy(polyHemi).should.be.false; });
         test('gc enclosed y',         function() { new LatLon(14,45).enclosedBy(polyGc).should.be.true; });

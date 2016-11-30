@@ -492,6 +492,56 @@ LatLon.prototype.enclosedBy = function(polygon) {
 
 
 /**
+ * Calculates the area of a spherical polygon where the sides of the polygon are great circle
+ * arcs joining the vertices.
+ *
+ * @param   {LatLon[]} polygon - Array of points defining vertices of the polygon.
+ * @param   {number}   [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
+ * @returns {number}   The area of the polygon in the same units as radius.
+ *
+ * @example
+ *   var polygon = [ new LatLon(0,0), new LatLon(1,0), new LatLon(0,1) ];
+ *   var area = LatLon.areaOf(polygon); // 6.18e9 m²
+ */
+LatLon.areaOf = function(polygon, radius) {
+    // uses Girard’s theorem: A = [Σθᵢ − (n−2)·π]·R²
+
+    var R = (radius == undefined) ? 6371e3 : Number(radius);
+
+    // close the polygon so that the last point equals the first point
+    var closed = polygon[0].equals(polygon[polygon.length-1]);
+    if (!closed) polygon.push(polygon[0]);
+
+    var n = polygon.length - 1; // number of vertices
+
+    // get great-circle vector for each edge
+    var c = [];
+    for (var v=0; v<n; v++) {
+        var i = polygon[v].toVector();
+        var j = polygon[v+1].toVector();
+        c[v] = i.cross(j); // great circle for segment v..v+1
+    }
+    c.push(c[0]);
+
+    // sum interior angles; depending on whether polygon is cw or ccw, angle between edges is
+    // π−α or π+α, where α is angle between great-circle vectors; so sum α, then take n·π − |Σα|
+    // (cannot use Σ(π−|α|) as concave polygons would fail); use vector to 1st point as plane
+    // normal for sign of α
+    var n1 = polygon[0].toVector();
+    var Σα = 0;
+    for (var v=0; v<n; v++) Σα += c[v].angleTo(c[v+1], n1);
+    var Σθ = n*Math.PI - Math.abs(Σα);
+
+    var E = (Σθ - (n-2)*Math.PI); // spherical excess (in steradians)
+    var A = E * R*R;              // area in units of R²
+
+    if (!closed) polygon.pop(); // restore polygon to pristine condition
+
+    return A;
+};
+
+
+/**
  * Returns point representing geographic mean of supplied points.
  *
  * @param   {LatLon[]} points - Array of points to be averaged.

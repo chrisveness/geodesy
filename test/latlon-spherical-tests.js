@@ -88,7 +88,7 @@ describe('latlon-spherical', function() {
         test('square cw area',   function() { LatLon.areaOf(polySquareCw).toFixed(0).should.equal('12360230987'); });
         test('square ccw area',  function() { LatLon.areaOf(polySquareCcw).toFixed(0).should.equal('12360230987'); });
         test('quadrant area',    function() { LatLon.areaOf(polyQuadrant).toFixed(1).should.equal((π*R*R/2).toFixed(1)); });
-        test('hemisphere area',  function() { LatLon.areaOf(polyHemi).toFixed(0).should.equal('252684679676459'); });
+        test('hemisphere area',  function() { LatLon.areaOf(polyHemi).toFixed(0).should.equal('252684679676459'); }); // TODO: vectors gives 252198975941606 (0.2% error) - which is right?
         test('pole area',        function() { LatLon.areaOf(polyPole).toFixed(0).should.equal('16063139192'); });
         test('concave area',     function() { LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'); });
     });
