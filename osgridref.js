@@ -179,6 +179,7 @@ OsGridRef.osGridToLatLon = function(gridref, datum) {
 
     var point =  new LatLon(φ.toDegrees(), λ.toDegrees(), LatLon.datum.OSGB36);
     if (datum != LatLon.datum.OSGB36) point = point.convertDatum(datum);
+    point.height = 0; // clamp height to ellipsoid surface
 
     return point;
 };

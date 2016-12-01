@@ -156,7 +156,7 @@ LatLon.prototype.convertDatum = function(toDatum) {
  */
 LatLon.prototype.toCartesian = function() {
     var φ = this.lat.toRadians(), λ = this.lon.toRadians();
-    var h = 0; // height above ellipsoid - not currently used
+    var h = this.height || 0; // height above ellipsoid - only used for toCartesian() / toLatLonE()
     var a = this.datum.ellipsoid.a, f = this.datum.ellipsoid.f;
 
     var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
@@ -184,6 +184,8 @@ LatLon.prototype.toCartesian = function() {
  * @param {LatLon.datum.transform} datum - Datum to use when converting point.
  */
 Vector3d.prototype.toLatLonE = function(datum) {
+    if (datum === undefined) datum = LatLon.datum.WGS84;
+
     var x = this.x, y = this.y, z = this.z;
     var a = datum.ellipsoid.a, b = datum.ellipsoid.b, f = datum.ellipsoid.f;
 
@@ -203,12 +205,13 @@ Vector3d.prototype.toLatLonE = function(datum) {
     // longitude
     var λ = Math.atan2(y, x);
 
-    // height above ellipsoid (Bowring eqn 7) [not currently used]
+    // height above ellipsoid (Bowring eqn 7)
     var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
     var ν = a/Math.sqrt(1-e2*sinφ*sinφ); // length of the normal terminated by the minor axis
     var h = p*cosφ + z*sinφ - (a*a/ν);
 
     var point = new LatLon(φ.toDegrees(), λ.toDegrees(), datum);
+    point.height = h; // height is not a constructor parameter
 
     return point;
 };
