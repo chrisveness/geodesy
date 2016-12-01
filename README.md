@@ -58,7 +58,7 @@ All calculations are done using simple spherical trigonometric formulae.
         - Final bearing to 2nd point
     * `latlon.midpointTo(point)`
         - Midpoint to 2nd point
-    * `intermediatePointTo(point, fraction)`
+    * `latlon.intermediatePointTo(point, fraction)`
         - Point at given fraction towards 2nd point
     * `latlon.destinationPoint(distance, bearing[, radius])`
         - Destination point travelling given distance on given bearing
@@ -164,7 +164,11 @@ to a spherical earth model only.
     * `latlon.bearingTo(point)`
         - (Initial) bearing to point
     * `latlon.midpointTo(point)`
-        - Midpoint to point
+        - Midpoint to 2nd point
+    * `latlon.intermediatePointTo(point, fraction)`
+        - Point at given fraction towards 2nd point
+    * `latlon.intermediatePointOnChordTo(point, fraction)`
+        - Point at given fraction along straight line towards 2nd point
     * `latlon.destinationPoint(distance, bearing[, radius])`
         - Destination point travelling distance on bearing
     * `LatLon.intersection(path1start, path1brngEnd, path2start, path2brngEnd)`

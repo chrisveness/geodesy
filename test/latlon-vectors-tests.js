@@ -28,6 +28,8 @@ describe('latlon-vectors', function() {
         test('distance (miles)', function() { cambg.distanceTo(paris, 3959).toPrecision(4).should.equal('251.2'); });
         test('initial bearing',  function() { cambg.bearingTo(paris).toFixed(1).should.equal('156.2'); });
         test('midpoint',         function() { cambg.midpointTo(paris).toString('d').should.equal('50.5363°N, 001.2746°E'); });
+        test('int.point',        function() { cambg.intermediatePointTo(paris, 0.25).toString('d').should.equal('51.3721°N, 000.7073°E'); });
+        test('int.point-chord',  function() { cambg.intermediatePointOnChordTo(paris, 0.25).toString('d').should.equal('51.3723°N, 000.7072°E'); });
 
         var greenwich = new LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
         test('dest’n',           function() { greenwich.destinationPoint(dist, brng).toString('d').should.equal('51.5135°N, 000.0983°W'); });
@@ -50,8 +52,10 @@ describe('latlon-vectors', function() {
         var jfk = new LatLon(Dms.parseDMS('40° 38′N'), Dms.parseDMS('073° 47′W'));
         test('distance nm',   function() { lax.distanceTo(jfk, 180*60/π).toPrecision(4).should.equal('2144'); });
         test('bearing',       function() { lax.bearingTo(jfk).toPrecision(2).should.equal('66'); });
+        test('intermediate',  function() { lax.intermediatePointTo(jfk, 100/2144).toString('dm', 0).should.equal('34°37′N, 116°33′W'); });
         var d = new LatLon(Dms.parseDMS('34:30N'), Dms.parseDMS('116:30W'));
         test('cross-track',   function() { d.crossTrackDistanceTo(lax, jfk, 180*60/π).toPrecision(5).should.equal('7.4523'); });
+        test('intermediate',  function() { lax.intermediatePointTo(jfk, 0.4).toString('dm', 3).should.equal('38°40.167′N, 101°37.570′W'); });
         var reo = new LatLon(Dms.parseDMS('42.600N'), Dms.parseDMS('117.866W'));
         var bke = new LatLon(Dms.parseDMS('44.840N'), Dms.parseDMS('117.806W'));
         test('intersection',  function() { LatLon.intersection(reo, 51, bke, 137).toString('d', 3).should.equal('43.572°N, 116.189°W'); });

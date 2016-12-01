@@ -214,6 +214,70 @@ LatLon.prototype.midpointTo = function(point) {
 
 
 /**
+ * Returns the point at given fraction between ‘this’ point and specified point.
+ *
+ * @param   {LatLon}    point - Latitude/longitude of destination point.
+ * @param   {number}    fraction - Fraction between the two points (0 = this point, 1 = specified point).
+ * @returns {LatLon}    Intermediate point between this point and destination point.
+ * @throws  {TypeError} Point is not LatLon object.
+ *
+ * @example
+ *   var p1 = new LatLon(52.205, 0.119);
+ *   var p2 = new LatLon(48.857, 2.351);
+ *   var pInt = p1.intermediatePointTo(p2, 0.25); // 51.3721°N, 000.7073°E
+ */
+LatLon.prototype.intermediatePointTo = function(point, fraction) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
+    // angular distance between points; tanδ = |n₁×n₂| / n₁⋅n₂
+    var n1 = this.toVector();
+    var n2 = point.toVector();
+    var sinθ = n1.cross(n2).length();
+    var cosθ = n1.dot(n2);
+    var δ = Math.atan2(sinθ, cosθ);
+
+    // interpolated angular distance on straight line between points
+    var δi = δ * Number(fraction);
+    var sinδi = Math.sin(δi);
+    var cosδi = Math.cos(δi);
+
+    // direction vector (perpendicular to n1 in plane of n2)
+    var d = n1.cross(n2).unit().cross(n1); // unit(n₁×n₂) × n₁
+
+    // interpolated position
+    var int = n1.times(cosδi).plus(d.times(sinδi)); // n₁⋅cosδᵢ + d⋅sinδᵢ
+
+    return new Vector3d(int.x, int.y, int.z).toLatLonS();
+};
+
+
+/**
+ * Returns the latitude/longitude point projected from the point at given fraction on a straight
+ * line between between ‘this’ point and specified point.
+ *
+ * @param   {LatLon}    point - Latitude/longitude of destination point.
+ * @param   {number}    fraction - Fraction between the two points (0 = this point, 1 = specified point).
+ * @returns {LatLon}    Intermediate point between this point and destination point.
+ * @throws  {TypeError} Point is not LatLon object.
+ *
+ * @example
+ *   var p1 = new LatLon(52.205, 0.119);
+ *   var p2 = new LatLon(48.857, 2.351);
+ *   var pInt = p1.intermediatePointOnChordTo(p2, 0.25); // 51.3723°N, 000.7072°E
+ */
+LatLon.prototype.intermediatePointOnChordTo = function(point, fraction) {
+    if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
+
+    var n1 = this.toVector();
+    var n2 = point.toVector();
+
+    var int = n1.plus(n2.minus(n1).times(Number(fraction))); // n₁ + (n₂−n₁)·f ≡ n₁·(1-f) + n₂·f
+
+    return new Vector3d(int.x, int.y, int.z).toLatLonS();
+};
+
+
+/**
  * Returns the destination point from ‘this’ point having travelled the given distance on the
  * given initial bearing (bearing will normally vary before destination is reached).
  *
