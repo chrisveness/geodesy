@@ -1,9 +1,41 @@
+type format = 'd' | 'dm' | 'dms'
 type datum = 'ED50'| 'Irl1975'| 'NAD27'| 'NAD83'| 'NTF'| 'OSGB36'| 'Potsdam'| 'TokyoJapan'| 'WGS72'| 'WGS84'
 type hemisphere = 'N' | 'S'
+type ellipsoid = 'WGS84' | 'GRS80' | 'Airy1830' | 'AiryModified' | 'Intl1924' | 'Bessel1841'
+type transform = [number, number, number, number, number, number, number]
+type LatLon = LatLonEllipsoidal
 
 interface Datum {
-  ellipsoid: any
+  ellipsoid: Ellipsoid
   transform: [number, number, number, number, number, number, number]
+}
+
+interface Datums {
+  ED50: Datum
+  Irl1975: Datum
+  NAD27: Datum
+  NAD83: Datum
+  NTF: Datum
+  OSGB36: Datum
+  Potsdam: Datum
+  TokyoJapan: Datum
+  WGS72: Datum
+  WGS84: Datum
+}
+
+interface Ellipsoid {
+  a: number
+  b: number
+  f: number
+}
+
+interface Ellipsoids {
+  WGS84: Ellipsoid
+  GRS80: Ellipsoid
+  Airy1830: Ellipsoid
+  AiryModified: Ellipsoid
+  Intl1924: Ellipsoid
+  Bessel1841: Ellipsoid
 }
 
 declare class Mgrs {
@@ -28,7 +60,7 @@ declare class Mgrs {
   )
   static parse(mgrsGridRef: string): Mgrs
   toUtm(): Utm
-  toString(digits?: number): string
+  toString(digits?: 2 | 4 | 6 | 8 | 10): string
 }
 
 declare class Utm {
@@ -60,10 +92,10 @@ declare namespace Dms {
 
 declare class Dms {
   static parseDMS(dmsStr: string): number;
-  static toDMS(deg: number, format?: 'd' | 'dm' | 'dms', dp?: 0 | 2 | 4): string;
-  static toLat(deg: number, format?: 'd' | 'dm' | 'dms', dp?: 0 | 2 | 4): string;
-  static toLon(deg: number, format?: 'd' | 'dm' | 'dms', dp?: 0 | 2 | 4): string;
-  static toBrng(deg: number, format?: 'd' | 'dm' | 'dms', dp?: 0 | 2 | 4): string;
+  static toDMS(deg: number, format?: format, dp?: 0 | 2 | 4): string;
+  static toLat(deg: number, format?: format, dp?: 0 | 2 | 4): string;
+  static toLon(deg: number, format?: format, dp?: 0 | 2 | 4): string;
+  static toBrng(deg: number, format?: format, dp?: 0 | 2 | 4): string;
   static compassPoint(bearing: number, precision?: 1 | 2 | 3): string;
 }
 
@@ -84,10 +116,31 @@ declare class Vector3d {
   angleTo(v: Vector3d, n?: Vector3d): number
   rotateAround(axis: Vector3d, theta: number): Vector3d
   toString(precision?: number): string
+  toLatLonE(datum: Datum): LatLon
+  applyTransform(t: Array<number>): Vector3d
 }
 
-declare class LatLon {
+declare class OsGridRef {
+  easting: number;
+  northing: number;
+  constructor(easting: number, northing: number);
+  static latLonToOsGrid(p: LatLon): OsGridRef;
+  static osGridToLatLon(gridref: OsGridRef, datum?: Datum): LatLon;
+  static parse(gridref: string): OsGridRef;
+  toString(digits?: number): string;
+}
+
+declare class LatLonEllipsoidal {
+  lat: number
+  lon: number
+  datum: Datum
+  constructor(lat: number, lon: number, datum?: Datum);
   toUtm(): Utm
+  convertDatum(toDatum: Datum): LatLon
+  toCartesian(): Vector3d
+  toString(format?: format, dp?: 0 | 2 | 4): string;
+  static datum: Datums
+  static ellipsoid: Ellipsoids
 }
 
 export {
@@ -95,4 +148,6 @@ export {
   Utm,
   Dms,
   Vector3d,
+  OsGridRef,
+  LatLonEllipsoidal
 }

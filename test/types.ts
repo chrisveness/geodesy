@@ -1,4 +1,10 @@
-import { Mgrs, Utm, Dms, Vector3d } from '../'
+import {
+  Mgrs,
+  Utm,
+  Dms,
+  Vector3d,
+  OsGridRef,
+  LatLonEllipsoidal as LatLon } from '../'
 
 /**
  * Mgrs
@@ -79,3 +85,33 @@ const v2 = new Vector3d(5, 42, 33)
 const v3 = new Vector3d(8, 12, 43)
 
 v1.cross(v2).dot(v3)
+
+/**
+ * LatLon
+ */
+const latlon = new LatLon(52.65798, 1.71605)
+new LatLon(51.4778, -0.0016, LatLon.datum.WGS84)
+const pWGS84 = new LatLon(51.4778, -0.0016, LatLon.datum.WGS84)
+const pOSGB = pWGS84.convertDatum(LatLon.datum.OSGB36)
+
+latlon.toUtm()
+latlon.toCartesian()
+latlon.toString()
+latlon.toString('dm')
+latlon.toString('d', 0)
+
+const mgrsGrid = new LatLon(45.4215296, -75.697193).toUtm().toMgrs()
+mgrsGrid.toString(6)
+
+/**
+ * OsGridRef
+ */
+const gridref = new OsGridRef(651409, 313177)
+new OsGridRef(651409.903, 313177.270)
+new OsGridRef(651409, 313177).toString()
+
+// Static Functions
+OsGridRef.latLonToOsGrid(latlon)
+OsGridRef.osGridToLatLon(gridref)
+OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36)
+OsGridRef.parse('TG 51409 13177')
