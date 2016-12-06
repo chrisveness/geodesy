@@ -6,7 +6,7 @@
 
 var chai = require('chai');  // BDD/TDD assertion library
 
-var Dms = require('../npm.js').Dms;
+var Dms = require('../').Dms;
 
 chai.should();
 var test = it; // just an alias

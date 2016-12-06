@@ -6,9 +6,9 @@
 
 var chai = require('chai');  // BDD/TDD assertion library
 
-var LatLon = require('../npm.js').LatLonEllipsoidal;
-var Utm    = require('../npm.js').Utm;
-var Mgrs   = require('../npm.js').Mgrs;
+var LatLon = require('../').LatLonEllipsoidal;
+var Utm    = require('../').Utm;
+var Mgrs   = require('../').Mgrs;
 
 chai.should();
 var test = it; // just an alias
