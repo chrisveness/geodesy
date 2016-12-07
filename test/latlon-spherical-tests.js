@@ -56,7 +56,6 @@ describe('latlon-spherical', function() {
         test('intermediate',  function() { lax.intermediatePointTo(jfk, 100/2144).toString('dm', 0).should.equal('34°37′N, 116°33′W'); });
         var d = new LatLon(Dms.parseDMS('34:30N'), Dms.parseDMS('116:30W'));
         test('cross-track',   function() { d.crossTrackDistanceTo(lax, jfk, 180*60/π).toPrecision(5).should.equal('7.4523'); });
-        test('along-track',   function() { d.alongTrackDistanceTo(lax, jfk, 180*60/π).toPrecision(5).should.equal('99.588'); });
         test('intermediate',  function() { lax.intermediatePointTo(jfk, 0.4).toString('dm', 3).should.equal('38°40.167′N, 101°37.570′W'); });
         var reo = new LatLon(Dms.parseDMS('42.600N'), Dms.parseDMS('117.866W'));
         var bke = new LatLon(Dms.parseDMS('44.840N'), Dms.parseDMS('117.806W'));
