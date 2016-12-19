@@ -202,59 +202,18 @@ Dms.toBrng = function(deg, format, dp) {
  */
 Dms.compassPoint = function(bearing, precision) {
     if (precision === undefined) precision = 3;
-    // note precision = max length of compass point; it could be extended to 4 for quarter-winds
-    // (eg NEbN), but I think they are little used
+    // note precision could be extended to 4 for quarter-winds (eg NEbN), but I think they are little used
 
     bearing = ((bearing%360)+360)%360; // normalise to 0..360
 
-    var point;
-
-    switch (precision) {
-        case 1: // 4 compass points
-            switch (Math.round(bearing*4/360)%4) {
-                case 0: point = 'N'; break;
-                case 1: point = 'E'; break;
-                case 2: point = 'S'; break;
-                case 3: point = 'W'; break;
-            }
-            break;
-        case 2: // 8 compass points
-            switch (Math.round(bearing*8/360)%8) {
-                case 0: point = 'N';  break;
-                case 1: point = 'NE'; break;
-                case 2: point = 'E';  break;
-                case 3: point = 'SE'; break;
-                case 4: point = 'S';  break;
-                case 5: point = 'SW'; break;
-                case 6: point = 'W';  break;
-                case 7: point = 'NW'; break;
-            }
-            break;
-        case 3: // 16 compass points
-            switch (Math.round(bearing*16/360)%16) {
-                case  0: point = 'N';   break;
-                case  1: point = 'NNE'; break;
-                case  2: point = 'NE';  break;
-                case  3: point = 'ENE'; break;
-                case  4: point = 'E';   break;
-                case  5: point = 'ESE'; break;
-                case  6: point = 'SE';  break;
-                case  7: point = 'SSE'; break;
-                case  8: point = 'S';   break;
-                case  9: point = 'SSW'; break;
-                case 10: point = 'SW';  break;
-                case 11: point = 'WSW'; break;
-                case 12: point = 'W';   break;
-                case 13: point = 'WNW'; break;
-                case 14: point = 'NW';  break;
-                case 15: point = 'NNW'; break;
-            }
-            break;
-        default:
-            throw new RangeError('Precision must be between 1 and 3');
-    }
-
-    return point;
+    var cardinals = {
+        1: [ 'N', 'E', 'S', 'W' ],
+        2: [ 'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW' ],
+        3: [ 'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW' ],
+    };
+    var points = cardinals[precision].length; // no of compass points at req’d precision
+    var cardinal = cardinals[precision][Math.round(bearing/360*points)%points];
+    return cardinal;
 };
 
 
