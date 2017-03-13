@@ -256,6 +256,7 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     var θ13 = Number(brng1).toRadians(), θ23 = Number(brng2).toRadians();
     var Δφ = φ2-φ1, Δλ = λ2-λ1;
 
+    // angular distance p1-p2
     var δ12 = 2*Math.asin( Math.sqrt( Math.sin(Δφ/2)*Math.sin(Δφ/2)
         + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2) ) );
     if (δ12 == 0) return null;
@@ -268,15 +269,11 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     var θ12 = Math.sin(λ2-λ1)>0 ? θa : 2*Math.PI-θa;
     var θ21 = Math.sin(λ2-λ1)>0 ? 2*Math.PI-θb : θb;
 
-    var α1 = (θ13 - θ12 + Math.PI) % (2*Math.PI) - Math.PI; // angle 2-1-3
-    var α2 = (θ21 - θ23 + Math.PI) % (2*Math.PI) - Math.PI; // angle 1-2-3
+    var α1 = θ13 - θ12; // angle 2-1-3
+    var α2 = θ21 - θ23; // angle 1-2-3
 
     if (Math.sin(α1)==0 && Math.sin(α2)==0) return null; // infinite intersections
     if (Math.sin(α1)*Math.sin(α2) < 0) return null;      // ambiguous intersection
-
-    //α1 = Math.abs(α1);
-    //α2 = Math.abs(α2);
-    // ... Ed Williams takes abs of α1/α2, but seems to break calculation?
 
     var α3 = Math.acos( -Math.cos(α1)*Math.cos(α2) + Math.sin(α1)*Math.sin(α2)*Math.cos(δ12) );
     var δ13 = Math.atan2( Math.sin(δ12)*Math.sin(α1)*Math.sin(α2), Math.cos(α2)+Math.cos(α1)*Math.cos(α3) );
