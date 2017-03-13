@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2016  */
+/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2017  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vincenty.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-vincenty.html                        */
@@ -218,14 +218,14 @@ LatLon.prototype.inverse = function(point) {
     var tanU1 = (1-f) * Math.tan(φ1), cosU1 = 1 / Math.sqrt((1 + tanU1*tanU1)), sinU1 = tanU1 * cosU1;
     var tanU2 = (1-f) * Math.tan(φ2), cosU2 = 1 / Math.sqrt((1 + tanU2*tanU2)), sinU2 = tanU2 * cosU2;
 
-    var sinλ, cosλ, sinSqσ, sinσ, cosσ, σ, sinα, cosSqα, cos2σM, C;
+    var sinλ, cosλ, sinSqσ, sinσ=0, cosσ=0, σ=0, sinα, cosSqα=0, cos2σM=0, C;
 
     var λ = L, λʹ, iterations = 0;
     do {
         sinλ = Math.sin(λ);
         cosλ = Math.cos(λ);
         sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
-        if (sinSqσ == 0) return 0;  // co-incident points
+        if (sinSqσ == 0) break; // co-incident points
         sinσ = Math.sqrt(sinSqσ);
         cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
         σ = Math.atan2(sinσ, cosσ);
@@ -255,8 +255,8 @@ LatLon.prototype.inverse = function(point) {
 
     return {
         distance:       s,
-        initialBearing: α1.toDegrees(),
-        finalBearing:   α2.toDegrees(),
+        initialBearing: s==0 ? NaN : α1.toDegrees(),
+        finalBearing:   s==0 ? NaN : α2.toDegrees(),
         iterations:     iterations,
     };
 };
