@@ -1,14 +1,13 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy Test Harness - dms                                        (c) Chris Veness 2014-2016  */
+/*  Geodesy Test Harness - dms                                        (c) Chris Veness 2014-2017  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
 
-var chai = require('chai');  // BDD/TDD assertion library
+var should = require('chai').should();  // BDD/TDD assertion library
 
 var Dms = require('../npm.js').Dms;
 
-chai.should();
 var test = it; // just an alias
 
 describe('dms', function() {
@@ -18,10 +17,16 @@ describe('dms', function() {
         test('output 000.0000°',     function() { Dms.toDMS(0, 'd').should.equal('000.0000°'); });
         test('parse 0°',             function() { Dms.parseDMS('0°').should.equal(0); });
         test('output 000°',          function() { Dms.toDMS(0, 'd', 0).should.equal('000°'); });
+        test('parse 000 00 00 ',     function() { Dms.parseDMS('000 00 00 ').should.equal(0); });
         test('parse 000°00′00″',     function() { Dms.parseDMS('000°00′00″').should.equal(0); });
         test('output 000°00′00″',    function() { Dms.toDMS(0).should.equal('000°00′00″'); });
         test('parse 000°00′00.0″',   function() { Dms.parseDMS('000°00′00.0″').should.equal(0); });
         test('output 000°00′00.00″', function() { Dms.toDMS(0, 'dms', 2).should.equal('000°00′00.00″'); });
+        test('parse 0',              function() { Dms.parseDMS(0).should.equal(0); });
+        test('parse 0 0 0 0',        function() { Dms.parseDMS('0 0 0 0').should.be.NaN; });
+        test('parse xxx',            function() { Dms.parseDMS('xxx').should.be.NaN; });
+        test('output 0',             function() { Dms.toDMS('0', 'dms', 2).should.equal('000°00′00.00″'); });
+        test('output xxx',           function() { should.not.exist(Dms.toDMS('xxx', 'dms', 2)); });
     });
 
     describe('parse variations', function() { // including whitespace, different d/m/s symbols (ordinal, ascii/typo quotes)
@@ -57,6 +62,8 @@ describe('dms', function() {
         test('output dms '+'dm,6',  function() { Dms.toDMS(45.76260, 'd', 6).should.equal('045.762600°'); });
         test('output dms '+'dm,4',  function() { Dms.toDMS(45.76260, 'dm', 4).should.equal('045°45.7560′'); });
         test('output dms '+'dms,2', function() { Dms.toDMS(45.76260, 'dms', 2).should.equal('045°45′45.36″'); });
+        test('output dms '+'xxx',   function() { Dms.toDMS(45.76260, 'xxx').should.equal('045°45′45″'); });
+        test('output dms '+'xxx,6', function() { Dms.toDMS(45.76260, 'xxx', 6).should.equal('045.762600°'); }); // !!
     });
 
     describe('compass points', function() {
@@ -76,6 +83,16 @@ describe('dms', function() {
         test('237:1 -> W ',   function() { Dms.compassPoint(237, 1).should.equal('W'); });
         test('237:2 -> SW ',  function() { Dms.compassPoint(237, 2).should.equal('SW'); });
         test('237:3 -> WSW ', function() { Dms.compassPoint(237, 3).should.equal('WSW'); });
+    });
+
+    describe('misc', function() {
+        test('toLat num', function() { Dms.toLat(51.2, 'dms').should.equal('51°12′00″N'); });
+        test('toLat str', function() { Dms.toLat('51.2', 'dms').should.equal('51°12′00″N'); });
+        test('toLat xxx', function() { Dms.toLat('xxx', 'dms').should.equal('–'); });
+        test('toLon num', function() { Dms.toLon(0.33, 'dms').should.equal('000°19′48″E'); });
+        test('toLon str', function() { Dms.toLon('0.33', 'dms').should.equal('000°19′48″E'); });
+        test('toLon xxx', function() { Dms.toLon('xxx', 'dms').should.equal('–'); });
+        test('toBrng', function() { Dms.toBrng(1).should.equal('001°00′00″'); });
     });
 
 });

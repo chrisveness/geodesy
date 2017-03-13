@@ -1,16 +1,15 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy Test Harness - latlon-vectors                             (c) Chris Veness 2014-2016  */
+/*  Geodesy Test Harness - latlon-vectors                             (c) Chris Veness 2014-2017  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
 
-var chai     = require('chai');  // BDD/TDD assertion library
+require('chai').should();  // BDD/TDD assertion library
 
 var LatLon   = require('../npm.js').LatLonVectors;
 var Vector3d = require('../npm.js').Vector3d;
 var Dms      = require('../npm.js').Dms;
 
-chai.should();
 var test = it; // just an alias
 
 describe('latlon-vectors', function() {
@@ -114,6 +113,11 @@ describe('latlon-vectors', function() {
         test('concave enclosed n',    function() { new LatLon(2,2).enclosedBy(polyConcave).should.be.false; });
     });
 
+    describe('mean', function() {
+        var points = [ new LatLon(1,1), new LatLon(2,1), new LatLon(2,2), new LatLon(1,2) ];
+        test('mean',  function() { LatLon.meanOf(points).toString().should.equal('01°30′00″N, 001°29′60″E'); });
+    });
+
     describe('misc', function() {
         test('equals true',  function() { LatLon(52.205, 0.119).equals(LatLon(52.205, 0.119)).should.be.true; });
         test('equals false', function() { LatLon(52.206, 0.119).equals(LatLon(52.205, 0.119)).should.be.false; });
@@ -124,5 +128,8 @@ describe('latlon-vectors', function() {
         test('v to ll',           function() { Vector3d(0.500, 0.500, 0.707107).toLatLonS().toString('d').should.equal('45.0000°N, 045.0000°E'); });
         test('great circle',      function() { LatLon(53.3206, -1.7297).greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'); });
         test('gc from vector',    function() { LatLon(53.3206, -1.7297).toVector().greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'); });
+        test('divided',           function() { Vector3d(0.500, 0.500, 0.707107).dividedBy(2).toString().should.equal('[0.250,0.250,0.354]'); });
+        test('negate',            function() { Vector3d(0.500, 0.500, 0.707107).negate().toString().should.equal('[-0.500,-0.500,-0.707]'); });
+        test('rotate around',     function() { Vector3d(0.500, 0.500, 0.707107).rotateAround(Vector3d(1, 0, 0), π/4).toString().should.equal('[0.500,-0.146,0.854]'); });
     });
 });

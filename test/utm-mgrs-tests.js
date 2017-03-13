@@ -1,16 +1,15 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy Test Harness - utm/mgrs                                   (c) Chris Veness 2014-2016  */
+/*  Geodesy Test Harness - utm/mgrs                                   (c) Chris Veness 2014-2017  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
 
-var chai = require('chai');  // BDD/TDD assertion library
+require('chai').should();  // BDD/TDD assertion library
 
 var LatLon = require('../npm.js').LatLonEllipsoidal;
 var Utm    = require('../npm.js').Utm;
 var Mgrs   = require('../npm.js').Mgrs;
 
-chai.should();
 var test = it; // just an alias
 
 describe('utm/mgrs', function() {
@@ -63,6 +62,8 @@ describe('utm/mgrs', function() {
     // forgiving parsing of 100km squares spanning bands
     test('MGRS->UTM 01P ≡ UTM 01Q',    function() { Mgrs.parse('01P ET 00000 68935').toUtm().toString().should.equal('01 N 500000 1768935'); });
     test('MGRS->UTM 01Q ≡ UTM 01P',    function() { Mgrs.parse('01Q ET 00000 68935').toUtm().toString().should.equal('01 N 500000 1768935'); });
+    // military style
+    test('MGRS->UTM 0,0 military',     function() { Mgrs.parse('31NAA6602100000').toUtm().toString().should.equal('31 N 166021 0'); });
 
     // https://www.ibm.com/developerworks/library/j-coordconvert/#listing7 (note UTM/MGRS confusion; UTM is rounded, MGRS is truncated; UPS not included)
     test('IBM #01 UTM->LL',            function() { Utm.parse('31 N 166021 0').toLatLonE().toString('d').should.equal('00.0000°N, 000.0000°W'); });

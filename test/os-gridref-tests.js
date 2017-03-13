@@ -1,16 +1,15 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy Test Harness - os-gridref                                 (c) Chris Veness 2014-2016  */
+/*  Geodesy Test Harness - os-gridref                                 (c) Chris Veness 2014-2017  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
 
-var chai      = require('chai');  // BDD/TDD assertion library
+require('chai').should();  // BDD/TDD assertion library
 
 var LatLon    = require('../npm.js').LatLonEllipsoidal;
 var OsGridRef = require('../npm.js').OsGridRef;
 var Dms       = require('../npm.js').Dms;
 
-chai.should();
 var test = it; // just an alias
 
 describe('os-gridref', function() {
