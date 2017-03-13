@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy representation conversion functions                        (c) Chris Veness 2002-2016  */
+/* Geodesy representation conversion functions                        (c) Chris Veness 2002-2017  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong.html                                                    */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-dms.html                                    */
@@ -216,16 +216,6 @@ Dms.compassPoint = function(bearing, precision) {
     return cardinal;
 };
 
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-/** Polyfill String.trim for old browsers
- *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-if (String.prototype.trim === undefined) {
-    String.prototype.trim = function() {
-        return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    };
-}
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = Dms; // ≡ export default Dms

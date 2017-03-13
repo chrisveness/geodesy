@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* UTM / WGS-84 Conversion Functions                                  (c) Chris Veness 2014-2016  */
+/* UTM / WGS-84 Conversion Functions                                  (c) Chris Veness 2014-2017  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-utm-mgrs.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-utm.html                                    */
@@ -385,14 +385,6 @@ if (Math.asinh === undefined) {
 if (Math.atanh === undefined) {
     Math.atanh = function(x) {
         return Math.log((1+x) / (1-x)) / 2;
-    };
-}
-
-/** Polyfill String.trim for old browsers
- *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-if (String.prototype.trim === undefined) {
-    String.prototype.trim = function() {
-        return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     };
 }
 

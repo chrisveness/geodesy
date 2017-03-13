@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2016  */
+/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2017  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-gridref.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-osgridref.html                              */
@@ -294,16 +294,6 @@ OsGridRef.prototype.toString = function(digits) {
     return letterPair + ' ' + e + ' ' + n;
 };
 
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-/** Polyfill String.trim for old browsers
- *  (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-if (String.prototype.trim === undefined) {
-    String.prototype.trim = function() {
-        return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    };
-}
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = OsGridRef; // ≡ export default OsGridRef
