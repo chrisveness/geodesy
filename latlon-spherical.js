@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2016  */
+/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2017  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong.html                                                    */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-spherical.html                       */
@@ -399,7 +399,7 @@ LatLon.prototype.rhumbDistanceTo = function(point, radius) {
     var Δφ = φ2 - φ1;
     var Δλ = Math.abs(point.lon-this.lon).toRadians();
     // if dLon over 180° take shorter rhumb line across the anti-meridian:
-    if (Math.abs(Δλ) > Math.PI) Δλ = Δλ>0 ? -(2*Math.PI-Δλ) : (2*Math.PI+Δλ);
+    if (Δλ > Math.PI) Δλ -= 2*Math.PI;
 
     // on Mercator projection, longitude distances shrink by latitude; q is the 'stretch factor'
     // q becomes ill-conditioned along E-W line (0/0); use empirical tolerance to avoid it
@@ -431,7 +431,8 @@ LatLon.prototype.rhumbBearingTo = function(point) {
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
     var Δλ = (point.lon-this.lon).toRadians();
     // if dLon over 180° take shorter rhumb line across the anti-meridian:
-    if (Math.abs(Δλ) > Math.PI) Δλ = Δλ>0 ? -(2*Math.PI-Δλ) : (2*Math.PI+Δλ);
+    if (Δλ >  Math.PI) Δλ -= 2*Math.PI;
+    if (Δλ < -Math.PI) Δλ += 2*Math.PI;
 
     var Δψ = Math.log(Math.tan(φ2/2+Math.PI/4)/Math.tan(φ1/2+Math.PI/4));
 
