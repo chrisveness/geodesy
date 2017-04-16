@@ -209,7 +209,7 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
 
     // sinφ2 = sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ
     // tanΔλ = sinθ⋅sinδ⋅cosφ1 / cosδ−sinφ1⋅sinφ2
-    // see http://williams.best.vwh.net/avform.htm#LL
+    // see www.edwilliams.org/avform.htm#LL
 
     var δ = Number(distance) / radius; // angular distance in radians
     var θ = Number(bearing).toRadians();
@@ -249,7 +249,7 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     if (!(p1 instanceof LatLon)) throw new TypeError('p1 is not LatLon object');
     if (!(p2 instanceof LatLon)) throw new TypeError('p2 is not LatLon object');
 
-    // see http://williams.best.vwh.net/avform.htm#Intersection
+    // see www.edwilliams.org/avform.htm#Intersection
 
     var φ1 = p1.lat.toRadians(), λ1 = p1.lon.toRadians();
     var φ2 = p2.lat.toRadians(), λ2 = p2.lon.toRadians();
@@ -389,7 +389,7 @@ LatLon.prototype.rhumbDistanceTo = function(point, radius) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
     radius = (radius === undefined) ? 6371e3 : Number(radius);
 
-    // see http://williams.best.vwh.net/avform.htm#Rhumb
+    // see www.edwilliams.org/avform.htm#Rhumb
 
     var R = radius;
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
