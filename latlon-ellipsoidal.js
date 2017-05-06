@@ -6,8 +6,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // ≡ import Vector3d from 'vector3d.js'
-if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js');           // ≡ import Dms from 'dms.js'
+if (typeof module!=='undefined' && module.exports) { var Vector3d = require('./vector3d.js'); } // ≡ import Vector3d from 'vector3d.js'
+if (typeof module!=='undefined' && module.exports) { var Dms = require('./dms.js'); } // ≡ import Dms from 'dms.js'
 
 
 /**
@@ -115,16 +115,16 @@ LatLon.prototype.convertDatum = function(toDatum) {
     var oldLatLon = this;
     var transform = null;
 
-    if (oldLatLon.datum == LatLon.datum.WGS84) {
+    if (oldLatLon.datum === LatLon.datum.WGS84) {
         // converting from WGS 84
         transform = toDatum.transform;
     }
-    if (toDatum == LatLon.datum.WGS84) {
+    if (toDatum === LatLon.datum.WGS84) {
         // converting to WGS 84; use inverse transform (don't overwrite original!)
         transform = [];
         for (var p=0; p<7; p++) transform[p] = -oldLatLon.datum.transform[p];
     }
-    if (transform == null) {
+    if (transform === null) {
         // neither this.datum nor toDatum are WGS84: convert this to WGS84 first
         oldLatLon = this.convertDatum(LatLon.datum.WGS84);
         transform = toDatum.transform;
@@ -192,11 +192,6 @@ Vector3d.prototype.toLatLonE = function(datum) {
 
     // longitude
     var λ = Math.atan2(y, x);
-
-    // height above ellipsoid (Bowring eqn 7) [not currently used]
-    var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
-    var ν = a/Math.sqrt(1-e2*sinφ*sinφ); // length of the normal terminated by the minor axis
-    var h = p*cosφ + z*sinφ - (a*a/ν);
 
     var point = new LatLon(φ.toDegrees(), λ.toDegrees(), datum);
 

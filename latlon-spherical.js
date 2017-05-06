@@ -6,7 +6,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var Dms = require('./dms'); // ≡ import Dms from 'dms.js'
+if (typeof module!='undefined' && module.exports) { var Dms = require('./dms'); } // ≡ import Dms from 'dms.js'
 
 
 /**
@@ -559,19 +559,19 @@ LatLon.areaOf = function(polygon, radius) {
 
     // returns whether polygon encloses pole: sum of course deltas around pole is 0° rather than
     // normal ±360°: blog.element84.com/determining-if-a-spherical-polygon-contains-a-pole.html
-    function isPoleEnclosedBy(polygon) {
+    function isPoleEnclosedBy(poly) {
         // TODO: any better test than this?
         var ΣΔ = 0;
-        var prevBrng = polygon[0].bearingTo(polygon[1]);
-        for (var v=0; v<polygon.length-1; v++) {
-            var initBrng = polygon[v].bearingTo(polygon[v+1]);
-            var finalBrng = polygon[v].finalBearingTo(polygon[v+1]);
+        var prevBrng = poly[0].bearingTo(poly[1]);
+        for (var w=0; w<poly.length-1; w++) {
+            var initBrng = poly[w].bearingTo(poly[w+1]);
+            var finalBrng = poly[w].finalBearingTo(poly[w+1]);
             ΣΔ += (initBrng - prevBrng + 540) % 360 - 180;
             ΣΔ += (finalBrng - initBrng + 540) % 360 - 180;
             prevBrng = finalBrng;
         }
-        var initBrng = polygon[0].bearingTo(polygon[1]);
-        ΣΔ += (initBrng - prevBrng + 540) % 360 - 180;
+        var initBrng2 = poly[0].bearingTo(poly[1]);
+        ΣΔ += (initBrng2 - prevBrng + 540) % 360 - 180;
         // TODO: fix (intermittant) edge crossing pole - eg (85,90), (85,0), (85,-90)
         var enclosed = Math.abs(ΣΔ) < 90; // 0°-ish
         return enclosed;
