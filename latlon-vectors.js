@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Vector-based spherical geodetic (latitude/longitude) functions    (c) Chris Veness 2011-2016  */
+/*  Vector-based spherical geodetic (latitude/longitude) functions    (c) Chris Veness 2011-2017  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vectors.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-nvector-spherical.html               */
@@ -154,7 +154,7 @@ LatLon.prototype.distanceTo = function(point, radius) {
     var p1 = this.toVector();
     var p2 = point.toVector();
 
-    var δ = p1.angleTo(p2);
+    var δ = p1.angleTo(p2); // δ = atan2(|p₁×p₂|, p₁·p₂)
     var d = δ * radius;
 
     return d;
@@ -435,6 +435,43 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathBrngEnd, radius)
         : pathStart.greatCircle(Number(pathBrngEnd));        // great circle defined by point + bearing
 
     var α = gc.angleTo(p) - Math.PI/2; // angle between point & great-circle
+
+    var d = α * R;
+
+    return d;
+};
+
+
+/**
+ * Returns how far ‘this’ point is along a path from from start-point, heading on bearing or towards
+ * end-point. That is, if a perpendicular is drawn from ‘this’ point to the (great circle) path, the
+ * along-track distance is the distance from the start point to where the perpendicular crosses the
+ * path.
+ *
+ * @param   {LatLon}        pathStart - Start point of great circle path.
+ * @param   {LatLon|number} pathBrngEnd - End point of great circle path or initial bearing from great circle start point.
+ * @param   {number}        [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
+ * @returns {number}        Distance along great circle to point nearest ‘this’ point.
+ *
+ * @example
+ *   var pCurrent = new LatLon(53.2611, -0.7972);
+ *   var p1 = new LatLon(53.3206, -1.7297);
+ *   var p2 = new LatLon(53.1887,  0.1334);
+ *   var d = pCurrent.alongTrackDistanceTo(p1, p2);  // 62.331 km
+ */
+LatLon.prototype.alongTrackDistanceTo = function(pathStart, pathBrngEnd, radius) {
+    if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
+    var R = (radius === undefined) ? 6371e3 : Number(radius);
+
+    var p = this.toVector();
+
+    var gc = pathBrngEnd instanceof LatLon                   // (note JavaScript is not good at method overloading)
+        ? pathStart.toVector().cross(pathBrngEnd.toVector()) // great circle defined by two points
+        : pathStart.greatCircle(Number(pathBrngEnd));        // great circle defined by point + bearing
+
+    var pat = gc.cross(p).cross(gc); // along-track point c × p × c
+
+    var α = pathStart.toVector().angleTo(pat, gc); // angle between start point and along-track point
 
     var d = α * R;
 

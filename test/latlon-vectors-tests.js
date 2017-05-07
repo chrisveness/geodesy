@@ -25,20 +25,38 @@ describe('latlon-vectors', function() {
         var cambg = new LatLon(52.205, 0.119), paris = new LatLon(48.857, 2.351);
         test('distance',         function() { cambg.distanceTo(paris).toPrecision(4).should.equal('4.043e+5'); });
         test('distance (miles)', function() { cambg.distanceTo(paris, 3959).toPrecision(4).should.equal('251.2'); });
+        test('distance err',     function() { cambg.distanceTo.bind(LatLon, 'here').should.throw(TypeError); });
         test('initial bearing',  function() { cambg.bearingTo(paris).toFixed(1).should.equal('156.2'); });
+        test('initial brng err', function() { cambg.bearingTo.bind(LatLon, 999).should.throw(TypeError); });
         test('midpoint',         function() { cambg.midpointTo(paris).toString('d').should.equal('50.5363°N, 001.2746°E'); });
+        test('midpoint err',     function() { cambg.midpointTo.bind(LatLon, true).should.throw(TypeError); });
         test('int.point',        function() { cambg.intermediatePointTo(paris, 0.25).toString('d').should.equal('51.3721°N, 000.7073°E'); });
+        test('int.point err',    function() { cambg.intermediatePointTo.bind(LatLon, 1, 0.5).should.throw(TypeError); });
         test('int.point-chord',  function() { cambg.intermediatePointOnChordTo(paris, 0.25).toString('d').should.equal('51.3723°N, 000.7072°E'); });
 
         var greenwich = new LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
         test('dest’n',           function() { greenwich.destinationPoint(dist, brng).toString('d').should.equal('51.5135°N, 000.0983°W'); });
+        test('dest’n inc r',     function() { greenwich.destinationPoint(dist, brng, 6371e3).toString('d').should.equal('51.5135°N, 000.0983°W'); });
 
         var bradwell = new LatLon(53.3206, -1.7297);
         test('cross-track',      function() { new LatLon(53.2611, -0.7972).crossTrackDistanceTo(bradwell, new LatLon(53.1887,  0.1334)).toPrecision(4).should.equal('-307.5'); });
+        test('along-track',      function() { new LatLon(53.2611, -0.7972).alongTrackDistanceTo(bradwell, new LatLon(53.1887,  0.1334)).toPrecision(4).should.equal('6.233e+4'); });
 
-        test('cross-track p',    function() { LatLon(10, 1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'); });
-        test('cross-track we',   function() { LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+6'); });
-        test('cross-track ew',   function() { LatLon(10, 0).crossTrackDistanceTo(LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+6'); });
+        test('cross-track NE',   function() { LatLon(1, 1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
+        test('cross-track SE',   function() { LatLon(-1,  1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('cross-track SW?',  function() { LatLon(-1, -1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('cross-track NW?',  function() { LatLon( 1, -1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
+
+        test('along-track NE',   function() { LatLon( 1,  1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('along-track SE',   function() { LatLon(-1,  1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('along-track SW',   function() { LatLon(-1, -1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
+        test('along-track NW',   function() { LatLon( 1, -1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
+
+        test('cross-track err',  function() { LatLon(1, 1).crossTrackDistanceTo.bind(LatLon, false, LatLon(0, 2)).should.throw(TypeError); });
+        test('cross-track err',  function() { LatLon(1, 1).crossTrackDistanceTo.bind(LatLon, LatLon(0, 0), false).should.throw(TypeError); });
+
+        test('cross-track brng w-e', function() { LatLon(1, 0).crossTrackDistanceTo(LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+5'); });
+        test('cross-track brng e-w', function() { LatLon(1, 0).crossTrackDistanceTo(LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+5'); });
 
         test('nearest point on segment 1',  function() { LatLon(51.0, 1.9).nearestPointOnSegment(LatLon(51.0, 1.0), LatLon(51.0, 2.0)).toString('d').should.equal('51.0004°N, 001.9000°E'); });
         test('nearest point on segment 1d', function() { LatLon(51.0, 1.9).nearestPointOnSegment(LatLon(51.0, 1.0), LatLon(51.0, 2.0)).distanceTo(LatLon(51.0, 1.9)).toPrecision(4).should.equal('42.71'); });

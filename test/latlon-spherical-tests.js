@@ -36,15 +36,24 @@ describe('latlon-spherical', function() {
 
         var greenwich = new LatLon(51.4778, -0.0015), dist = 7794, brng = 300.7;
         test('dest’n',           function() { greenwich.destinationPoint(dist, brng).toString('d').should.equal('51.5135°N, 000.0983°W'); });
-        test('dest’n',           function() { greenwich.destinationPoint(dist, brng, 6371e3).toString('d').should.equal('51.5135°N, 000.0983°W'); });
+        test('dest’n inc R',     function() { greenwich.destinationPoint(dist, brng, 6371e3).toString('d').should.equal('51.5135°N, 000.0983°W'); });
 
         var bradwell = new LatLon(53.3206, -1.7297);
         test('cross-track',      function() { new LatLon(53.2611, -0.7972).crossTrackDistanceTo(bradwell, new LatLon(53.1887,  0.1334)).toPrecision(4).should.equal('-307.5'); });
+        test('along-track',      function() { new LatLon(53.2611, -0.7972).alongTrackDistanceTo(bradwell, new LatLon(53.1887,  0.1334)).toPrecision(4).should.equal('6.233e+4'); });
 
-        test('cross-track p',    function() { LatLon(10, 1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'); });
+        test('cross-track NE',   function() { LatLon( 1,  1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
+        test('cross-track SE',   function() { LatLon(-1,  1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('cross-track SW?',  function() { LatLon(-1, -1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('cross-track NW?',  function() { LatLon( 1, -1).crossTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
 
-        test('cross-track err',  function() { LatLon(10, 1).crossTrackDistanceTo.bind(LatLon, false, LatLon(0, 2)).should.throw(TypeError); });
-        test('cross-track err',  function() { LatLon(10, 1).crossTrackDistanceTo.bind(LatLon, LatLon(0, 0), false).should.throw(TypeError); });
+        test('along-track NE',   function() { LatLon( 1,  1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('along-track SE',   function() { LatLon(-1,  1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'); });
+        test('along-track SW',   function() { LatLon(-1, -1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
+        test('along-track NW',   function() { LatLon( 1, -1).alongTrackDistanceTo(LatLon(0, 0), LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'); });
+
+        test('cross-track err',  function() { LatLon(1, 1).crossTrackDistanceTo.bind(LatLon, false, LatLon(0, 2)).should.throw(TypeError); });
+        test('cross-track err',  function() { LatLon(1, 1).crossTrackDistanceTo.bind(LatLon, LatLon(0, 0), false).should.throw(TypeError); });
 
         test('Clairaut 0°',      function() { new LatLon(0,0).maxLatitude( 0).should.equal(90); });
         test('Clairaut 1°',      function() { new LatLon(0,0).maxLatitude( 1).should.equal(89); });

@@ -308,9 +308,42 @@ LatLon.prototype.crossTrackDistanceTo = function(pathStart, pathEnd, radius) {
     var θ13 = pathStart.bearingTo(this).toRadians();
     var θ12 = pathStart.bearingTo(pathEnd).toRadians();
 
-    var δ = Math.asin( Math.sin(δ13) * Math.sin(θ13-θ12) );
+    var δxt = Math.asin(Math.sin(δ13) * Math.sin(θ13-θ12));
 
-    return δ * R;
+    return δxt * R;
+};
+
+
+/**
+ * Returns how far ‘this’ point is along a path from from start-point, heading towards end-point.
+ * That is, if a perpendicular is drawn from ‘this’ point to the (great circle) path, the along-track
+ * distance is the distance from the start point to where the perpendicular crosses the path.
+ *
+ * @param   {LatLon} pathStart - Start point of great circle path.
+ * @param   {LatLon} pathEnd - End point of great circle path.
+ * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
+ * @returns {number} Distance along great circle to point nearest ‘this’ point.
+ *
+ * @example
+ *   var pCurrent = new LatLon(53.2611, -0.7972);
+ *   var p1 = new LatLon(53.3206, -1.7297);
+ *   var p2 = new LatLon(53.1887,  0.1334);
+ *   var d = pCurrent.alongTrackDistanceTo(p1, p2);  // 62.331 km
+ */
+LatLon.prototype.alongTrackDistanceTo = function(pathStart, pathEnd, radius) {
+    if (!(pathStart instanceof LatLon)) throw new TypeError('pathStart is not LatLon object');
+    if (!(pathEnd instanceof LatLon)) throw new TypeError('pathEnd is not LatLon object');
+    var R = (radius === undefined) ? 6371e3 : Number(radius);
+
+    var δ13 = pathStart.distanceTo(this, R) / R;
+    var θ13 = pathStart.bearingTo(this).toRadians();
+    var θ12 = pathStart.bearingTo(pathEnd).toRadians();
+
+    var δxt = Math.asin(Math.sin(δ13) * Math.sin(θ13-θ12));
+
+    var δat = Math.acos(Math.cos(δ13) / Math.abs(Math.cos(δxt)));
+
+    return δat*Math.sign(Math.cos(θ12-θ13)) * R;
 };
 
 
