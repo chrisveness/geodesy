@@ -86,13 +86,15 @@ describe('dms', function() {
     });
 
     describe('misc', function() {
-        test('toLat num', function() { Dms.toLat(51.2, 'dms').should.equal('51°12′00″N'); });
-        test('toLat str', function() { Dms.toLat('51.2', 'dms').should.equal('51°12′00″N'); });
-        test('toLat xxx', function() { Dms.toLat('xxx', 'dms').should.equal('–'); });
-        test('toLon num', function() { Dms.toLon(0.33, 'dms').should.equal('000°19′48″E'); });
-        test('toLon str', function() { Dms.toLon('0.33', 'dms').should.equal('000°19′48″E'); });
-        test('toLon xxx', function() { Dms.toLon('xxx', 'dms').should.equal('–'); });
-        test('toBrng', function() { Dms.toBrng(1).should.equal('001°00′00″'); });
+        test('toLat num',    function() { Dms.toLat(51.2, 'dms').should.equal('51°12′00″N'); });
+        test('toLat str',    function() { Dms.toLat('51.2', 'dms').should.equal('51°12′00″N'); });
+        test('toLat xxx',    function() { Dms.toLat('xxx', 'dms').should.equal('–'); });
+        test('toLon num',    function() { Dms.toLon(0.33, 'dms').should.equal('000°19′48″E'); });
+        test('toLon str',    function() { Dms.toLon('0.33', 'dms').should.equal('000°19′48″E'); });
+        test('toLon xxx',    function() { Dms.toLon('xxx', 'dms').should.equal('–'); });
+        test('toDMS rnd-up', function() { Dms.toDMS(51.19999999999999, 'dm').should.equal('051°12.00′'); });
+        test('toDMS rnd-up', function() { Dms.toDMS(51.19999999999999, 'dms').should.equal('051°12′00″'); });
+        test('toBrng',       function() { Dms.toBrng(1).should.equal('001°00′00″'); });
     });
 
 });

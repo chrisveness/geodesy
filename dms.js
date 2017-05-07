@@ -119,25 +119,28 @@ Dms.toDMS = function(deg, format, dp) {
     switch (format) {
         default: // invalid format spec!
         case 'd': case 'deg':
-            d = deg.toFixed(dp);                // round/right-pad degrees
-            if (d<100) d = '0' + d;             // left-pad with leading zeros (note may include decimals)
+            d = deg.toFixed(dp);                       // round/right-pad degrees
+            if (d<100) d = '0' + d;                    // left-pad with leading zeros (note may include decimals)
             if (d<10) d = '0' + d;
             dms = d + '°';
             break;
         case 'dm': case 'deg+min':
-            d = Math.floor(deg);                // get component deg
-            m = ((deg*60) % 60).toFixed(dp);    // get component min & round/right-pad
-            d = ('000'+d).slice(-3);            // left-pad with leading zeros
-            if (m<10) m = '0' + m;              // left-pad with leading zeros (note may include decimals)
+            d = Math.floor(deg);                       // get component deg
+            m = ((deg*60) % 60).toFixed(dp);           // get component min & round/right-pad
+            if (m == 60) { m = 0; d++; }               // check for rounding up
+            d = ('000'+d).slice(-3);                   // left-pad with leading zeros
+            if (m<10) m = '0' + m;                     // left-pad with leading zeros (note may include decimals)
             dms = d + '°'+Dms.separator + m + '′';
             break;
         case 'dms': case 'deg+min+sec':
-            d = Math.floor(deg);                // get component deg
-            m = Math.floor((deg*3600)/60) % 60; // get component min
-            s = (deg*3600 % 60).toFixed(dp);    // get component sec & round/right-pad
-            d = ('000'+d).slice(-3);            // left-pad with leading zeros
-            m = ('00'+m).slice(-2);             // left-pad with leading zeros
-            if (s<10) s = '0' + s;              // left-pad with leading zeros (note may include decimals)
+            d = Math.floor(deg);                       // get component deg
+            m = Math.floor((deg*3600)/60) % 60;        // get component min
+            s = (deg*3600 % 60).toFixed(dp);           // get component sec & round/right-pad
+            if (s == 60) { s = (0).toFixed(dp); m++; } // check for rounding up
+            if (m == 60) { m = 0; d++; }               // check for rounding up
+            d = ('000'+d).slice(-3);                   // left-pad with leading zeros
+            m = ('00'+m).slice(-2);                    // left-pad with leading zeros
+            if (s<10) s = '0' + s;                     // left-pad with leading zeros (note may include decimals)
             dms = d + '°'+Dms.separator + m + '′'+Dms.separator + s + '″';
             break;
     }

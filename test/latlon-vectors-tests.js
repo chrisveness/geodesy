@@ -115,7 +115,7 @@ describe('latlon-vectors', function() {
 
     describe('mean', function() {
         var points = [ new LatLon(1,1), new LatLon(2,1), new LatLon(2,2), new LatLon(1,2) ];
-        test('mean',  function() { LatLon.meanOf(points).toString().should.equal('01°30′00″N, 001°29′60″E'); });
+        test('mean',  function() { LatLon.meanOf(points).toString().should.equal('01°30′00″N, 001°30′00″E'); });
     });
 
     describe('misc', function() {
