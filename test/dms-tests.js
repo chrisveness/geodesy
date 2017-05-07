@@ -22,11 +22,8 @@ describe('dms', function() {
         test('output 000°00′00″',    function() { Dms.toDMS(0).should.equal('000°00′00″'); });
         test('parse 000°00′00.0″',   function() { Dms.parseDMS('000°00′00.0″').should.equal(0); });
         test('output 000°00′00.00″', function() { Dms.toDMS(0, 'dms', 2).should.equal('000°00′00.00″'); });
-        test('parse 0',              function() { Dms.parseDMS(0).should.equal(0); });
-        test('parse 0 0 0 0',        function() { Dms.parseDMS('0 0 0 0').should.be.NaN; });
-        test('parse xxx',            function() { Dms.parseDMS('xxx').should.be.NaN; });
-        test('output 0',             function() { Dms.toDMS('0', 'dms', 2).should.equal('000°00′00.00″'); });
-        test('output xxx',           function() { should.not.exist(Dms.toDMS('xxx', 'dms', 2)); });
+        test('parse num 0',          function() { Dms.parseDMS(0).should.equal(0); });
+        test('output str 0',         function() { Dms.toDMS('0', 'dms', 2).should.equal('000°00′00.00″'); });
     });
 
     describe('parse variations', function() { // including whitespace, different d/m/s symbols (ordinal, ascii/typo quotes)
@@ -52,6 +49,13 @@ describe('dms', function() {
         for (var v in variations) test('parse dms variations '+variations[v]+'E', function() { Dms.parseDMS(variations[v]+'E').should.equal(45.76260); });
         for (var v in variations) test('parse dms variations '+variations[v]+'W', function() { Dms.parseDMS(variations[v]+'W').should.equal(-45.76260); });
         test('parse dms variations '+' ws before+after ', function() { Dms.parseDMS(' 45°45′45.36″ ').should.equal(45.76260); });
+    });
+
+    describe('parse out-of-range', function() { // (these need to be normalised externally)
+        test('parse 185',  function() { Dms.parseDMS('185').should.be.equal(185); });
+        test('parse 365',  function() { Dms.parseDMS('365').should.be.equal(365); });
+        test('parse -185', function() { Dms.parseDMS('-185').should.be.equal(-185); });
+        test('parse -365', function() { Dms.parseDMS('-365').should.be.equal(-365); });
     });
 
     describe('output variations', function() {
@@ -92,9 +96,32 @@ describe('dms', function() {
         test('toLon num',    function() { Dms.toLon(0.33, 'dms').should.equal('000°19′48″E'); });
         test('toLon str',    function() { Dms.toLon('0.33', 'dms').should.equal('000°19′48″E'); });
         test('toLon xxx',    function() { Dms.toLon('xxx', 'dms').should.equal('–'); });
+        test('toDMS rnd-up', function() { Dms.toDMS(51.19999999999999, 'd').should.equal('051.2000°'); });
         test('toDMS rnd-up', function() { Dms.toDMS(51.19999999999999, 'dm').should.equal('051°12.00′'); });
         test('toDMS rnd-up', function() { Dms.toDMS(51.19999999999999, 'dms').should.equal('051°12′00″'); });
         test('toBrng',       function() { Dms.toBrng(1).should.equal('001°00′00″'); });
+    });
+
+    describe('parse failures', function() {
+        test('parse 0 0 0 0', function() { Dms.parseDMS('0 0 0 0').should.be.NaN; });
+        test('parse xxx',     function() { Dms.parseDMS('xxx').should.be.NaN; });
+        test('parse ""',      function() { Dms.parseDMS('').should.be.NaN; });
+        test('parse null',    function() { Dms.parseDMS(null).should.be.NaN; });
+        test('parse obj',     function() { Dms.parseDMS({a:1}).should.be.NaN; });
+        test('parse true',    function() { Dms.parseDMS(true).should.be.NaN; });
+        test('parse false',   function() { Dms.parseDMS(false).should.be.NaN; });
+    });
+
+    describe('convert failures', function() {
+        test('output 0 0 0 0', function() { should.equal(Dms.toDMS('0 0 0 0'), null); });
+        test('output xxx',     function() { should.equal(Dms.toDMS('xxx', 'dms', 2), null); });
+        test('output xxx',     function() { should.equal(Dms.toDMS('xxx'), null); });
+        test('output ""',      function() { should.equal(Dms.toDMS(''), '000°00′00″'); }); // TODO: fix on next semver major
+        test('output null',    function() { should.equal(Dms.toDMS(null), '000°00′00″'); }); // TODO: fix on next semver major
+        test('output obj',     function() { should.equal(Dms.toDMS({a:1}), null); });
+        test('output true',    function() { should.equal(Dms.toDMS(true), '001°00′00″'); }); // TODO: fix on next semver major
+        test('output false',   function() { should.equal(Dms.toDMS(false), '000°00′00″'); }); // TODO: fix on next semver major
+        test('output ∞',       function() { should.equal(Dms.toDMS(1/0), 'ity°aN′NaN″'); }); // TODO: fix on next semver major
     });
 
 });
