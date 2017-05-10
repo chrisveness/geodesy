@@ -6,8 +6,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
-if (typeof module!='undefined' && module.exports) var Vector3d = require('./vector3d.js'); // ≡ import Vector3d from 'vector3d.js'
-if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js');           // ≡ import Dms from 'dms.js'
+if (typeof module!='undefined' && module.exports) { var Vector3d = require('./vector3d.js'); } // ≡ import Vector3d from 'vector3d.js'
+if (typeof module!='undefined' && module.exports) { var Dms = require('./dms.js'); }           // ≡ import Dms from 'dms.js'
 
 
 /**
@@ -580,8 +580,8 @@ LatLon.prototype.enclosedBy = function(polygon) {
 
     // sum subtended angles of each edge (using vector p to determine sign)
     var Σθ = 0;
-    for (var v=0; v<nVertices; v++) {
-        Σθ += vectorToVertex[v].angleTo(vectorToVertex[v+1], p);
+    for (var u=0; u<nVertices; u++) {
+        Σθ += vectorToVertex[u].angleTo(vectorToVertex[u+1], p);
     }
 
     var enclosed = Math.abs(Σθ) > Math.PI;
@@ -630,7 +630,7 @@ LatLon.areaOf = function(polygon, radius) {
     // normal for sign of α
     var n1 = polygon[0].toVector();
     var Σα = 0;
-    for (var v=0; v<n; v++) Σα += c[v].angleTo(c[v+1], n1);
+    for (var w=0; w<n; w++) Σα += c[w].angleTo(c[w+1], n1);
     var Σθ = n*Math.PI - Math.abs(Σα);
 
     var E = (Σθ - (n-2)*Math.PI); // spherical excess (in steradians)
