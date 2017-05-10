@@ -6,9 +6,9 @@
 
 require('chai').should();  // BDD/TDD assertion library
 
-var LatLon   = require('../npm.js').LatLonVectors;
-var Vector3d = require('../npm.js').Vector3d;
-var Dms      = require('../npm.js').Dms;
+var LatLon   = require('../').LatLonVectors;
+var Vector3d = require('../').Vector3d;
+var Dms      = require('../').Dms;
 
 var test = it; // just an alias
 

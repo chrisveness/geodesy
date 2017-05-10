@@ -6,8 +6,8 @@
 
 var should = require('chai').should();  // BDD/TDD assertion library
 
-var LatLon = require('../npm.js').LatLonSpherical;
-var Dms    = require('../npm.js').Dms;
+var LatLon = require('../').LatLonSpherical;
+var Dms    = require('../').Dms;
 
 var test = it; // just an alias
 
