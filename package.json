@@ -7,6 +7,7 @@
     "author": "Chris Veness",
     "version": "1.1.1",
     "license": "MIT",
+    "types": "index.d.ts",
     "main": "npm.js",
     "bugs": "https://github.com/chrisveness/geodesy/issues",
     "scripts": {
@@ -19,7 +20,8 @@
         "jsdoc": "^3.4.0",
         "mocha": "^3.0.2",
         "npm-check": "^5.2.3",
-        "npm-check-updates": "^2.8.0"
+        "npm-check-updates": "^2.8.0",
+        "typescript": "^2.0.10"
     },
     "eslintConfig": {
         "env": {
