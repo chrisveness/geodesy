@@ -52,6 +52,10 @@ LatLon.prototype.distanceTo = function(point, radius) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
     radius = (radius === undefined) ? 6371e3 : Number(radius);
 
+    // a = sin²(Δφ/2) + cos(φ1)⋅cos(φ2)⋅sin²(Δλ/2)
+    // tanδ = √(a) / √(1−a)
+    // see mathforum.org/library/drmath/view/51879.html for derivation
+
     var R = radius;
     var φ1 = this.lat.toRadians(),  λ1 = this.lon.toRadians();
     var φ2 = point.lat.toRadians(), λ2 = point.lon.toRadians();
@@ -82,10 +86,11 @@ LatLon.prototype.distanceTo = function(point, radius) {
 LatLon.prototype.bearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
 
+    // tanθ = sinΔλ⋅cosφ2 / cosφ1⋅sinφ2 − sinφ1⋅cosφ2⋅cosΔλ
+    // see mathforum.org/library/drmath/view/55417.html for derivation
+
     var φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
     var Δλ = (point.lon-this.lon).toRadians();
-
-    // see http://mathforum.org/library/drmath/view/55417.html
     var y = Math.sin(Δλ) * Math.cos(φ2);
     var x = Math.cos(φ1)*Math.sin(φ2) -
             Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
@@ -131,7 +136,7 @@ LatLon.prototype.midpointTo = function(point) {
 
     // φm = atan2( sinφ1 + sinφ2, √( (cosφ1 + cosφ2⋅cosΔλ) ⋅ (cosφ1 + cosφ2⋅cosΔλ) ) + cos²φ2⋅sin²Δλ )
     // λm = λ1 + atan2(cosφ2⋅sinΔλ, cosφ1 + cosφ2⋅cosΔλ)
-    // see http://mathforum.org/library/drmath/view/51822.html for derivation
+    // see mathforum.org/library/drmath/view/51822.html for derivation
 
     var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
     var φ2 = point.lat.toRadians();
@@ -209,7 +214,7 @@ LatLon.prototype.destinationPoint = function(distance, bearing, radius) {
 
     // sinφ2 = sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ
     // tanΔλ = sinθ⋅sinδ⋅cosφ1 / cosδ−sinφ1⋅sinφ2
-    // see www.edwilliams.org/avform.htm#LL
+    // see mathforum.org/library/drmath/view/52049.html for derivation
 
     var δ = Number(distance) / radius; // angular distance in radians
     var θ = Number(bearing).toRadians();
@@ -522,7 +527,7 @@ LatLon.prototype.rhumbDestinationPoint = function(distance, bearing, radius) {
 LatLon.prototype.rhumbMidpointTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
 
-    // http://mathforum.org/kb/message.jspa?messageID=148837
+    // see mathforum.org/kb/message.jspa?messageID=148837
 
     var φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
     var φ2 = point.lat.toRadians(), λ2 = point.lon.toRadians();
