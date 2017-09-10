@@ -107,7 +107,7 @@ describe('dms', function() {
         test('parse xxx',     function() { Dms.parseDMS('xxx').should.be.NaN; });
         test('parse ""',      function() { Dms.parseDMS('').should.be.NaN; });
         test('parse null',    function() { Dms.parseDMS(null).should.be.NaN; });
-        test('parse obj',     function() { Dms.parseDMS({a:1}).should.be.NaN; });
+        test('parse obj',     function() { Dms.parseDMS({ a: 1 }).should.be.NaN; });
         test('parse true',    function() { Dms.parseDMS(true).should.be.NaN; });
         test('parse false',   function() { Dms.parseDMS(false).should.be.NaN; });
     });
@@ -118,7 +118,7 @@ describe('dms', function() {
         test('output xxx',     function() { should.equal(Dms.toDMS('xxx'), null); });
         test('output ""',      function() { should.equal(Dms.toDMS(''), '000°00′00″'); }); // TODO: fix on next semver major
         test('output null',    function() { should.equal(Dms.toDMS(null), '000°00′00″'); }); // TODO: fix on next semver major
-        test('output obj',     function() { should.equal(Dms.toDMS({a:1}), null); });
+        test('output obj',     function() { should.equal(Dms.toDMS({ a: 1 }), null); });
         test('output true',    function() { should.equal(Dms.toDMS(true), '001°00′00″'); }); // TODO: fix on next semver major
         test('output false',   function() { should.equal(Dms.toDMS(false), '000°00′00″'); }); // TODO: fix on next semver major
         test('output ∞',       function() { should.equal(Dms.toDMS(1/0), 'ity°aN′NaN″'); }); // TODO: fix on next semver major
