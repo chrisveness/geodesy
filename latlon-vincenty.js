@@ -220,7 +220,7 @@ LatLon.prototype.inverse = function(point) {
 
     var sinλ, cosλ, sinSqσ, sinσ=0, cosσ=0, σ=0, sinα, cosSqα=0, cos2σM=0, C;
 
-    var λ = L, λʹ, iterations = 0;
+    var λ = L, λʹ, iterations = 0, antimeridian = Math.abs(L) > Math.PI;
     do {
         sinλ = Math.sin(λ);
         cosλ = Math.cos(λ);
@@ -235,7 +235,8 @@ LatLon.prototype.inverse = function(point) {
         C = f/16*cosSqα*(4+f*(4-3*cosSqα));
         λʹ = λ;
         λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
-        if (Math.abs(λ) > Math.PI) throw new Error('λ > π');
+        var iterationCheck = antimeridian ? Math.abs(λ)-Math.PI : Math.abs(λ);
+        if (iterationCheck > Math.PI) throw new Error('λ > π');
     } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000);
     if (iterations >= 1000) throw new Error('Formula failed to converge');
 

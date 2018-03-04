@@ -129,6 +129,8 @@ describe('latlon-spherical', function() {
         test('dest’n',                function() { dov.rhumbDestinationPoint(40310, 116.7).toString('d').should.equal('50.9641°N, 001.8531°E'); });
         test('dest’n',                function() { dov.rhumbDestinationPoint(40310, 116.7, 6371e3).toString('d').should.equal('50.9641°N, 001.8531°E'); });
         test('dest’n',                function() { new LatLon(1, 1).rhumbDestinationPoint(111178, 90).toString('d').should.equal('01.0000°N, 002.0000°E'); });
+        test('dest’n dateline',       function() { new LatLon(1, 179).rhumbDestinationPoint(222356, 90).toString('d').should.equal('01.0000°N, 179.0000°W'); });
+        test('dest’n dateline',       function() { new LatLon(1, -179).rhumbDestinationPoint(222356, 270).toString('d').should.equal('01.0000°N, 179.0000°E'); });
         test('midpoint',              function() { dov.rhumbMidpointTo(cal).toString('d').should.equal('51.0455°N, 001.5957°E'); });
         test('midpoint dateline',     function() { new LatLon(1, -179).rhumbMidpointTo(new LatLon(1, 178)).toString('d').should.equal('01.0000°N, 179.5000°E'); });
         test('midpoint err',          function() { dov.rhumbMidpointTo.bind(LatLon, false).should.throw(TypeError); });

@@ -32,6 +32,8 @@ describe('latlon-vincenty', function() {
     test('inverse equatorial distance',          function() { new LatLon(0,0).distanceTo(new LatLon(0,1)).should.equal(111319.491); });
     test('direct coincident destination',        function() { le.destinationPoint(0, 0).toString('d').should.equal(le.toString('d')); });
 
+    test('crossing antimeridian',                function() { new LatLon(30, 120).distanceTo(new LatLon(30, -120)).should.equal(10825924.089); });
+
     test('Q1 a', function() { new LatLon( 30, 30).distanceTo(new LatLon( 60, 60)).should.equal(4015703.021); });
     test('Q1 b', function() { new LatLon( 60, 60).distanceTo(new LatLon( 30, 30)).should.equal(4015703.021); });
     test('Q1 c', function() { new LatLon( 30, 60).distanceTo(new LatLon( 60, 30)).should.equal(4015703.021); });
