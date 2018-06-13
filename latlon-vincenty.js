@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2017  */
+/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vincenty.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-vincenty.html                        */
@@ -66,7 +66,7 @@ LatLon.prototype.initialBearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
 
     try {
-        return Number(this.inverse(point).initialBearing.toFixed(9)); // round to 0.00001″ precision
+        return Number(this.inverse(point).initialBearing.toFixed(7)); // round to 0.001″ precision
     } catch (e) {
         return NaN; // failed to converge
     }
@@ -91,7 +91,7 @@ LatLon.prototype.finalBearingTo = function(point) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
 
     try {
-        return Number(this.inverse(point).finalBearing.toFixed(9)); // round to 0.00001″ precision
+        return Number(this.inverse(point).finalBearing.toFixed(7)); // round to 0.001″ precision
     } catch (e) {
         return NaN; // failed to converge
     }
@@ -134,7 +134,7 @@ LatLon.prototype.destinationPoint = function(distance, initialBearing) {
  *   var b2 = p1.finalBearingOn(306.86816, 54972.271); // 307.1736°
  */
 LatLon.prototype.finalBearingOn = function(distance, initialBearing) {
-    return Number(this.direct(Number(distance), Number(initialBearing)).finalBearing.toFixed(9)); // round to 0.00001″ precision
+    return Number(this.direct(Number(distance), Number(initialBearing)).finalBearing.toFixed(7)); // round to 0.001″ precision
 };
 
 
