@@ -38,7 +38,7 @@ if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon
  * @example
  *   var utmCoord = new Utm(31, 'N', 448251, 5411932);
  */
-function Utm(zone, hemisphere, easting, northing, datum, convergence, scale) {
+var Utm = function(zone, hemisphere, easting, northing, datum, convergence, scale) {
     if (!(this instanceof Utm)) { // allow instantiation without 'new'
         return new Utm(zone, hemisphere, easting, northing, datum, convergence, scale);
     }

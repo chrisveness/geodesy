@@ -35,7 +35,7 @@ if (typeof module!='undefined' && module.exports) var Dms = require('./dms.js');
  * @example
  *   var p1 = new LatLon(52.205, 0.119);
  */
-function LatLon(lat, lon) {
+var LatLon = function(lat, lon) {
     // allow instantiation without 'new'
     if (!(this instanceof LatLon)) return new LatLon(lat, lon);
 

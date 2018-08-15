@@ -36,7 +36,7 @@ if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon
  * @example
  *   var grid = new OsGridRef(651409, 313177);
  */
-function OsGridRef(easting, northing) {
+var OsGridRef = function(easting, northing) {
     // allow instantiation without 'new'
     if (!(this instanceof OsGridRef)) return new OsGridRef(easting, northing);
 
