@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2017  */
+/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-gridref.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-osgridref.html                              */
@@ -17,9 +17,17 @@ if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon
  *
  * www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf.
  *
+ * Note OSGB grid references cover Great Britain only; Ireland and the Channel Islands have their
+ * own references.
+ *
+ * Note that these formulae are based on ellipsoidal calculations, and according to the OS are
+ * accurate to about 4–5 metres – for greater accuracy, a geoid-based transformation (OSTN15) must
+ * be used.
+ *
  * @module   osgridref
  * @requires latlon-ellipsoidal
  */
+
 /*
  * Converted 2015 to work with WGS84 by default, OSGB36 as option;
  * www.ordnancesurvey.co.uk/blog/2014/12/confirmation-on-changes-to-latitude-and-longitude
