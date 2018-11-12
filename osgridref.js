@@ -36,14 +36,41 @@ if (typeof module!='undefined' && module.exports) var LatLon = require('./latlon
  * @example
  *   var grid = new OsGridRef(651409, 313177);
  */
-function OsGridRef(easting, northing) {
+function OsGridRef(easting, northing, projection) {
     // allow instantiation without 'new'
     if (!(this instanceof OsGridRef)) return new OsGridRef(easting, northing);
 
+    if (projection === undefined) projection = OsGridRef.projection.NationalGridGB;
+
     this.easting = Number(easting);
     this.northing = Number(northing);
+    this.projection = projection;
 }
-
+/**
+ * Projection parameters 
+ * ellipsoid reference from LatLon
+ * Scale factor on central meridian (F0)
+ * True origin (φ0 and λ0) in degrees
+ * Map coordinates of true origin (m) (E0 and N0)
+*/
+OsGridRef.projection = {
+    NationalGridGB:     { ellipsoid: LatLon.ellipsoid.Airy1830,      F0: 0.9996012717,   φ0: 49,     λ0: -2,                 E0: 400000, N0: -100000  },
+    IrishGrid:          { ellipsoid: LatLon.ellipsoid.AiryModified,  F0: 1.000035,       φ0: 53.5,   λ0: -8,                 E0: 200000, N0:  250000  },
+    ITM:                { ellipsoid: LatLon.ellipsoid.GRS80,         F0: 0.99982,        φ0: 53.5,   λ0: -8,                 E0: 600000, N0:  750000  },
+    NewJTM:             { ellipsoid: LatLon.ellipsoid.GRS80,         F0: 0.99999,        φ0: 49.225, λ0: -2.135,             E0: 40000,  N0:  70000   },
+    Guernsey_Grid:      { ellipsoid: LatLon.ellipsoid.GRS80,         F0: 0.999997,       φ0: 49.5,   λ0: -2.416666666666667, E0: 47000,  N0:  50000   }
+}
+/*
+Sources:
+NationalGridGB, ITM from https://www.ordnancesurvey.co.uk/business-and-government/help-and-support/navigation-technology/os-net/formats-for-developers.html
+NationalGridGB: http://spatialreference.org/ref/epsg/7405/html/
+IrishGrid: http://spatialreference.org/ref/epsg/29903/html/
+ITM: http://spatialreference.org/ref/epsg/2157/html/
+NewJTM: http://spatialreference.org/ref/epsg/3109/html/
+PROJCS["NewJTM",GEOGCS["GCS_ETRF_1989",DATUM["D_ETRF_1989",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",40000.0],PARAMETER["False_Northing",70000.0],PARAMETER["Central_Meridian",-2.135],PARAMETER["Scale_Factor",0.99999],PARAMETER["Latitude_Of_Origin",49.225],UNIT["Meter",1.0]]
+Guernsey_Grid: http://spatialreference.org/ref/epsg/3108/html/
+PROJCS["Guernsey_Grid",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",47000.0],PARAMETER["False_Northing",50000.0],PARAMETER["Central_Meridian",-2.416666666666667],PARAMETER["Scale_Factor",0.999997],PARAMETER["Latitude_Of_Origin",49.5],UNIT["Meter",1.0]]
+*/
 
 /**
  * Converts latitude/longitude to Ordnance Survey grid reference easting/northing coordinate.
@@ -60,19 +87,19 @@ function OsGridRef(easting, northing) {
  *   // for conversion of (historical) OSGB36 latitude/longitude point:
  *   var p = new LatLon(52.65757, 1.71791, LatLon.datum.OSGB36);
  */
-OsGridRef.latLonToOsGrid = function(point) {
+OsGridRef.latLonToOsGrid = function(point, projection) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
-
+    if (projection == undefined) projection = OsGridRef.projection.NationalGridGB;
     // if necessary convert to OSGB36 first
     if (point.datum != LatLon.datum.OSGB36) point = point.convertDatum(LatLon.datum.OSGB36);
 
     var φ = point.lat.toRadians();
     var λ = point.lon.toRadians();
 
-    var a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
-    var F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
-    var φ0 = (49).toRadians(), λ0 = (-2).toRadians();  // NatGrid true origin is 49°N,2°W
-    var N0 = -100000, E0 = 400000;                     // northing & easting of true origin, metres
+    var a = projection.ellipsoid.a, b = projection.ellipsoid.b;  //  major & minor semi-axes
+    var F0 = projection.F0;                          // NatGrid scale factor on central meridian
+    var φ0 = (projection.φ0).toRadians(), λ0 = (projection.λ0).toRadians();  // true origin is in degrees
+    var N0 = projection.N0, E0 = projection.E0;        // northing & easting of true origin, metres
     var e2 = 1 - (b*b)/(a*a);                          // eccentricity squared
     var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;         // n, n², n³
 
@@ -136,11 +163,12 @@ OsGridRef.osGridToLatLon = function(gridref, datum) {
 
     var E = gridref.easting;
     var N = gridref.northing;
+    var projection = gridref.projection;
 
-    var a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
-    var F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
-    var φ0 = (49).toRadians(), λ0 = (-2).toRadians();  // NatGrid true origin is 49°N,2°W
-    var N0 = -100000, E0 = 400000;                     // northing & easting of true origin, metres
+    var a = projection.ellipsoid.a, b = projection.ellipsoid.b;  //  major & minor semi-axes
+    var F0 = projection.F0;                          // NatGrid scale factor on central meridian
+    var φ0 = (projection.φ0).toRadians(), λ0 = (projection.λ0).toRadians();  // true origin is in degrees
+    var N0 = projection.N0, E0 = projection.E0;        // northing & easting of true origin, metres
     var e2 = 1 - (b*b)/(a*a);                          // eccentricity squared
     var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;         // n, n², n³
 
