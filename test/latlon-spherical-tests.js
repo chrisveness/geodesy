@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy Test Harness - latlon-spherical                           (c) Chris Veness 2014-2017  */
+/*  Geodesy Test Harness - latlon-spherical                           (c) Chris Veness 2014-2018  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
@@ -95,6 +95,7 @@ describe('latlon-spherical', function() {
         test('bad point 1',            function() { LatLon.intersection.bind(LatLon, false, N, LatLon(1, 0), E).should.throw(TypeError); });
         test('bad point 2',            function() { LatLon.intersection.bind(LatLon, LatLon(0, 1), N, false, E).should.throw(TypeError); });
         test('coincident points',      function() { should.not.exist(LatLon.intersection(LatLon(0, 1), N, LatLon(0, 1), E)); });
+        test('rounding errors',        function() { LatLon.intersection(LatLon(51,0), 120, LatLon(50,0), 60).toString('d').should.equal('50.4921°N, 001.3612°E'); });
     });
 
     describe('polygonal', function() {
