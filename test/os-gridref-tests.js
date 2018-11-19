@@ -69,22 +69,25 @@ describe('os-gridref-ci', function() {
 
     // Co-ordinates from Jersey and Guernsey Address data
     //69390460	69390460				St. Aubin's Promenade		La Neuve Route		Jersey	St. Brelade			37514.0	66008.0	49.1890997628	-2.16910447719
+    var coords = [
+        {'name':'St. Aubin’s Promenade',    'E':'37514.0',  'N':'66008.0', 'lat':'49.1890997628', 'lon':'-2.16910447719','grid':'JE' }
+    ];
+    for (var place of coords) {
+        osgb = new LatLon(place.lat, place.lon);
+        gridref = OsGridRef.latLonToOsGrid(osgb, OsGridRef.projection.NewJTM);
+        test(place.name+' E',   function() { gridref.easting.toFixed(1).should.equal(place.E); });
+        test(place.name+' N',   function() { gridref.northing.toFixed(1).should.equal(place.N); });
+        var osgb2 = OsGridRef.osGridToLatLon(gridref);
+        test(place.name+' round-trip lat',            function() { Dms.toDMS(osgb2.lat,'dms', 4).should.equal(Dms.toDMS(osgb.lat,'dms', 4)); });
+        test(place.name+' round-trip lon',            function() { Dms.toDMS(osgb2.lon,'dms', 4).should.equal(Dms.toDMS(osgb.lon,'dms', 4)); });
 
-
-    osgb = new LatLon(49.1890997628, -2.16910447719);
-    gridref = OsGridRef.latLonToOsGrid(osgb, OsGridRef.projection.NewJTM);
-    test('La Neuve E',                         function() { gridref.easting.toFixed(1).should.equal('37514.0'); });
-    test('La Neuve N',                         function() { gridref.northing.toFixed(1).should.equal('66008.0'); });
-    var osgb2 = OsGridRef.osGridToLatLon(gridref);
-    test('La Neuve round-trip lat',            function() { osgb2.lat.should.equal(49.1890997628); });
-    test('La Neuve round-trip lon',            function() { osgb2.lon.should.equal(-2.16910447719); });
-
-    gridref = new OsGridRef(37514.0, 66008.0, OsGridRef.projection.NewJTM);
-    var osgb3 = OsGridRef.osGridToLatLon(gridref);
-    test('La Neuve lat',                           function() { osgb3.lat.should.equal(49.1890997628); });
-    test('La Neuve lon',                           function() { osgb3.lon.should.equal(-2.16910447719); });
-    var gridref2 = OsGridRef.latLonToOsGrid(osgb3, OsGridRef.projection.NewJTM);
-    test('La Neuve E round-trip',              function() { gridref2.easting.toFixed(1).should.equal('37514.0'); });
-    test('La Neuve N round-trip',              function() { gridref2.northing.toFixed(1).should.equal('66008.0'); });
+        gridref = new OsGridRef(place.E, place.N, OsGridRef.projection.NewJTM);
+        var osgb3 = OsGridRef.osGridToLatLon(gridref);
+        test(place.name+' lat',                           function() { Dms.toDMS(osgb3.lat,'dms', 4).should.equal(Dms.toDMS(osgb.lat,'dms', 4)); });
+        test(place.name+' lon',                           function() { Dms.toDMS(osgb3.lon,'dms', 4).should.equal(Dms.toDMS(osgb.lon,'dms', 4)); });
+        var gridref2 = OsGridRef.latLonToOsGrid(osgb3, OsGridRef.projection.NewJTM);
+        test(place.name+' E round-trip',              function() { gridref2.easting.toFixed(1).should.equal(place.E); });
+        test(place.name+' N round-trip',              function() { gridref2.northing.toFixed(1).should.equal(place.N); });
+    }
 
 });
