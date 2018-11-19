@@ -190,7 +190,7 @@ OsGridRef.osGridToLatLon = function(gridref, datum) {
         var Md = (35/24)*n3 * Math.sin(3*(φ-φ0)) * Math.cos(3*(φ+φ0));
         M = b * F0 * (Ma - Mb + Mc - Md);              // meridional arc
 
-    } while (N-N0-M >= 0.00001);  // ie until < 0.01mm
+    } while (Math.abs(N-N0-M) >= 0.00001);  // ie until < 0.01mm
 
     var cosφ = Math.cos(φ), sinφ = Math.sin(φ);
     var ν = a*F0/Math.sqrt(1-e2*sinφ*sinφ);            // nu = transverse radius of curvature
