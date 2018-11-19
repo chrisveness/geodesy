@@ -54,11 +54,11 @@ function OsGridRef(easting, northing, projection) {
  * Map coordinates of true origin (m) (E0 and N0)
 */
 OsGridRef.projection = {
-    NationalGridGB:     { ellipsoid: LatLon.ellipsoid.Airy1830,      F0: 0.9996012717,   φ0: 49,     λ0: -2,                 E0: 400000, N0: -100000  },
-    IrishGrid:          { ellipsoid: LatLon.ellipsoid.AiryModified,  F0: 1.000035,       φ0: 53.5,   λ0: -8,                 E0: 200000, N0:  250000  },
-    ITM:                { ellipsoid: LatLon.ellipsoid.GRS80,         F0: 0.99982,        φ0: 53.5,   λ0: -8,                 E0: 600000, N0:  750000  },
-    NewJTM:             { ellipsoid: LatLon.ellipsoid.GRS80,         F0: 0.99999,        φ0: 49.225, λ0: -2.135,             E0: 40000,  N0:  70000   },
-    Guernsey_Grid:      { ellipsoid: LatLon.ellipsoid.GRS80,         F0: 0.999997,       φ0: 49.5,   λ0: -2.416666666666667, E0: 47000,  N0:  50000   }
+    NationalGridGB:     { ellipsoid: LatLon.ellipsoid.Airy1830,     datum: LatLon.datum.OSGB36,  F0: 0.9996012717,   φ0: 49,     λ0: -2,                 E0: 400000, N0: -100000  },
+    IrishGrid:          { ellipsoid: LatLon.ellipsoid.AiryModified, datum: LatLon.datum.Irl1975, F0: 1.000035,       φ0: 53.5,   λ0: -8,                 E0: 200000, N0:  250000  },
+    ITM:                { ellipsoid: LatLon.ellipsoid.GRS80,        datum: LatLon.datum.WGS84,   F0: 0.99982,        φ0: 53.5,   λ0: -8,                 E0: 600000, N0:  750000  },
+    NewJTM:             { ellipsoid: LatLon.ellipsoid.GRS80,        datum: LatLon.datum.WGS84,   F0: 0.99999,        φ0: 49.225, λ0: -2.135,             E0: 40000,  N0:  70000   },
+    Guernsey_Grid:      { ellipsoid: LatLon.ellipsoid.GRS80,        datum: LatLon.datum.WGS84,   F0: 0.999997,       φ0: 49.5,   λ0: -2.416666666666667, E0: 47000,  N0:  50000   }
 }
 /*
 Sources:
@@ -90,8 +90,8 @@ PROJCS["Guernsey_Grid",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_19
 OsGridRef.latLonToOsGrid = function(point, projection) {
     if (!(point instanceof LatLon)) throw new TypeError('point is not LatLon object');
     if (projection == undefined) projection = OsGridRef.projection.NationalGridGB;
-    // if necessary convert to OSGB36 first
-    if (point.datum != LatLon.datum.OSGB36) point = point.convertDatum(LatLon.datum.OSGB36);
+    // if necessary convert to local datum first
+    if (point.datum != projection.datum) point = point.convertDatum(projection.datum);
 
     var φ = point.lat.toRadians();
     var λ = point.lon.toRadians();
@@ -136,7 +136,7 @@ OsGridRef.latLonToOsGrid = function(point, projection) {
     N = Number(N.toFixed(3)); // round to mm precision
     E = Number(E.toFixed(3));
 
-    return new OsGridRef(E, N); // gets truncated to SW corner of 1m grid square
+    return new OsGridRef(E, N, projection); // gets truncated to SW corner of 1m grid square
 };
 
 
@@ -205,8 +205,8 @@ OsGridRef.osGridToLatLon = function(gridref, datum) {
     φ = φ - VII*dE2 + VIII*dE4 - IX*dE6;
     var λ = λ0 + X*dE - XI*dE3 + XII*dE5 - XIIA*dE7;
 
-    var point =  new LatLon(φ.toDegrees(), λ.toDegrees(), LatLon.datum.OSGB36);
-    if (datum != LatLon.datum.OSGB36) point = point.convertDatum(datum);
+    var point =  new LatLon(φ.toDegrees(), λ.toDegrees(), projection.datum);
+    if (datum != projection.datum) point = point.convertDatum(datum);
 
     return point;
 };

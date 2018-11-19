@@ -2,8 +2,25 @@
     "name": "geodesy",
     "description": "Libraries of geodesy functions",
     "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
-    "repository": { "type": "git", "url": "https://github.com/chrisveness/geodesy" },
-    "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "wgs84", "utm", "mgrs" ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/chrisveness/geodesy"
+    },
+    "keywords": [
+        "geodesy",
+        "latitude",
+        "longitude",
+        "distance",
+        "bearing",
+        "haversine",
+        "vincenty",
+        "rhumb",
+        "ellipsoid",
+        "datum",
+        "wgs84",
+        "utm",
+        "mgrs"
+    ],
     "author": "Chris Veness",
     "version": "1.1.3",
     "license": "MIT",
@@ -29,19 +46,55 @@
         },
         "extends": "eslint:recommended",
         "rules": {
-            "array-bracket-spacing": [ "error", "always", { "singleValue": false } ],
-            "comma-dangle": [ "error", "always-multiline" ],
-            "curly": [ "error", "multi-line" ],
-            "indent": [ "error", 4, { "SwitchCase": 1 } ],
-            "key-spacing": [ "error", { "align": "value" } ],
+            "array-bracket-spacing": [
+                "error",
+                "always",
+                {
+                    "singleValue": false
+                }
+            ],
+            "comma-dangle": [
+                "error",
+                "always-multiline"
+            ],
+            "curly": [
+                "error",
+                "multi-line"
+            ],
+            "indent": [
+                "error",
+                4,
+                {
+                    "SwitchCase": 1
+                }
+            ],
+            "key-spacing": [
+                "error",
+                {
+                    "align": "value"
+                }
+            ],
             "no-console": "warn",
             "no-redeclare": "warn",
             "no-shadow": "warn",
             "no-unused-vars": "warn",
-            "object-curly-spacing": [ "error", "always" ],
-            "quotes": [ "error", "single", "avoid-escape" ],
-            "semi": [ "error", "always" ],
-            "strict": [ "error", "global" ]
+            "object-curly-spacing": [
+                "error",
+                "always"
+            ],
+            "quotes": [
+                "error",
+                "single",
+                "avoid-escape"
+            ],
+            "semi": [
+                "error",
+                "always"
+            ],
+            "strict": [
+                "error",
+                "global"
+            ]
         }
     }
 }
