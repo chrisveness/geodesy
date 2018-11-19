@@ -64,30 +64,34 @@ describe('os-gridref', function() {
     test('DG round-trip WGS84 numeric',  function() { OsGridRef.latLonToOsGrid(dgWgs).toString(0).should.equal('544358.997,180653'); });
 });
 
+
 describe('os-gridref-ci', function() {
-    var osgb=null, gridref=null;
 
-    // Co-ordinates from Jersey and Guernsey Address data
-    //69390460	69390460				St. Aubin's Promenade		La Neuve Route		Jersey	St. Brelade			37514.0	66008.0	49.1890997628	-2.16910447719
-    var coords = [
-        {'name':'St. Aubin’s Promenade',    'E':'37514.0',  'N':'66008.0', 'lat':'49.1890997628', 'lon':'-2.16910447719','grid':'JE' }
+    // Co-ordinates from Jersey and Guernsey Address data 
+    const coords = [
+        {'name':'St. Aubin’s Promenade',    'E':'37514.0',  'N':'66008.0', 'lat':'49.1890997628', 'lon':'-2.16910447719','grid':'JE' },
+        {'name':'Government House Jersey',  'E':'42965.9',  'N':'66644.5', 'lat':'49.1948209152', 'lon':'-2.09430726701','grid':'JE' },
+        {'name':'Sark Medical Centre',      'E':'51184.6',  'N':'42758.1', 'lat':'49.4348714082', 'lon':'-2.35897378892','grid':'GY' },
+        {'name':'Government House Guernsey','E':'37504.9',  'N':'44630.5', 'lat':'49.4516470415', 'lon':'-2.54761956752','grid':'GY' }
     ];
-    for (var place of coords) {
-        osgb = new LatLon(place.lat, place.lon);
-        gridref = OsGridRef.latLonToOsGrid(osgb, OsGridRef.projection.NewJTM);
-        test(place.name+' E',   function() { gridref.easting.toFixed(1).should.equal(place.E); });
-        test(place.name+' N',   function() { gridref.northing.toFixed(1).should.equal(place.N); });
-        var osgb2 = OsGridRef.osGridToLatLon(gridref);
-        test(place.name+' round-trip lat',            function() { Dms.toDMS(osgb2.lat,'dms', 4).should.equal(Dms.toDMS(osgb.lat,'dms', 4)); });
-        test(place.name+' round-trip lon',            function() { Dms.toDMS(osgb2.lon,'dms', 4).should.equal(Dms.toDMS(osgb.lon,'dms', 4)); });
+    const grids = {'JE': OsGridRef.projection.NewJTM,'GY': OsGridRef.projection.Guernsey_Grid}
+    for (const place of coords) {
+        const osgb = new LatLon(place.lat, place.lon);
+        const gridref = OsGridRef.latLonToOsGrid(osgb, grids[place.grid]);
+        test(place.name+' E', function() {gridref.easting.toFixed(1).should.equal(place.E); });
+        test(place.name+' N', function() {gridref.northing.toFixed(1).should.equal(place.N); });
+       
+        const osgb2 = OsGridRef.osGridToLatLon(gridref);
+        test(place.name+' round-trip lat', function() { Dms.toDMS(osgb2.lat,'dms', 3).should.equal(Dms.toDMS(osgb.lat,'dms', 3)); });
+        test(place.name+' round-trip lon', function() { Dms.toDMS(osgb2.lon,'dms', 3).should.equal(Dms.toDMS(osgb.lon,'dms', 3)); });
 
-        gridref = new OsGridRef(place.E, place.N, OsGridRef.projection.NewJTM);
-        var osgb3 = OsGridRef.osGridToLatLon(gridref);
-        test(place.name+' lat',                           function() { Dms.toDMS(osgb3.lat,'dms', 4).should.equal(Dms.toDMS(osgb.lat,'dms', 4)); });
-        test(place.name+' lon',                           function() { Dms.toDMS(osgb3.lon,'dms', 4).should.equal(Dms.toDMS(osgb.lon,'dms', 4)); });
-        var gridref2 = OsGridRef.latLonToOsGrid(osgb3, OsGridRef.projection.NewJTM);
-        test(place.name+' E round-trip',              function() { gridref2.easting.toFixed(1).should.equal(place.E); });
-        test(place.name+' N round-trip',              function() { gridref2.northing.toFixed(1).should.equal(place.N); });
+        const gridref2 = new OsGridRef(place.E, place.N,  grids[place.grid]);
+        const osgb3 = OsGridRef.osGridToLatLon(gridref2);
+        test(place.name+' lat', function() { Dms.toDMS(osgb3.lat,'dms', 2).should.equal(Dms.toDMS(osgb.lat,'dms', 2)); });
+        test(place.name+' lon', function() { Dms.toDMS(osgb3.lon,'dms', 2).should.equal(Dms.toDMS(osgb.lon,'dms', 2)); });
+        const gridref3 = OsGridRef.latLonToOsGrid(osgb3, grids[place.grid]);
+        test(place.name+' E round-trip', function() { gridref3.easting.toFixed(1).should.equal(place.E); });
+        test(place.name+' N round-trip', function() { gridref3.northing.toFixed(1).should.equal(place.N); });
     }
 
 });
