@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2017  */
+/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong.html                                                    */
 /* www.movable-type.co.uk/scripts/geodesy/docs/module-latlon-spherical.html                       */
@@ -267,9 +267,10 @@ LatLon.intersection = function(p1, brng1, p2, brng2) {
     if (δ12 == 0) return null;
 
     // initial/final bearings between points
-    var θa = Math.acos( ( Math.sin(φ2) - Math.sin(φ1)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ1) ) );
-    if (isNaN(θa)) θa = 0; // protect against rounding
-    var θb = Math.acos( ( Math.sin(φ1) - Math.sin(φ2)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ2) ) );
+    var cosθa = ( Math.sin(φ2) - Math.sin(φ1)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ1) );
+    var cosθb = ( Math.sin(φ1) - Math.sin(φ2)*Math.cos(δ12) ) / ( Math.sin(δ12)*Math.cos(φ2) );
+    var θa = Math.acos( Math.min(Math.max(cosθa, -1), 1) ); // protect against rounding errors
+    var θb = Math.acos( Math.min(Math.max(cosθb, -1), 1) ); // protect against rounding errors
 
     var θ12 = Math.sin(λ2-λ1)>0 ? θa : 2*Math.PI-θa;
     var θ21 = Math.sin(λ2-λ1)>0 ? 2*Math.PI-θb : θb;
