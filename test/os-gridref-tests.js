@@ -66,14 +66,19 @@ describe('os-gridref', function() {
 
 describe('os-gridref-ci', function() {
 
-    // Co-ordinates from Jersey and Guernsey Address data 
+    // Co-ordinates from Jersey and Guernsey Address data,  https://irish.gridreferencefinder.com/ https://gridreferencefinder.com/
     const coords = [
+        {'name':'Caister water tower',      'E':'651409.0', 'N':'313177.0','lat':'52.657977',     'lon':'1.7160384',     'grid':'GB' },
+        {'name':'Buckingham Palace',        'E':'528993.0', 'N':'179624.0','lat':'51.500842',     'lon':'-0.14299196',   'grid':'GB' },
+        {'name':'Stormont Castle',          'E':'340248.7', 'N':'374788.8','lat':'54.601844',     'lon':'-5.8305098',    'grid':'BT' },
+        {'name':'Dublin Castle',            'E':'315440.4', 'N':'233926.2','lat':'53.343186',     'lon':'-6.267468',     'grid':'BT' },
+        {'name':'Dublin Castle (ITM)',      'E':'715367.2', 'N':'733950.1','lat':'53.343186',     'lon':'-6.267468',     'grid':'ITM' },
         {'name':'St. Aubin’s Promenade',    'E':'37514.0',  'N':'66008.0', 'lat':'49.1890997628', 'lon':'-2.16910447719','grid':'JE' },
         {'name':'Government House Jersey',  'E':'42965.9',  'N':'66644.5', 'lat':'49.1948209152', 'lon':'-2.09430726701','grid':'JE' },
         {'name':'Sark Medical Centre',      'E':'51184.6',  'N':'42758.1', 'lat':'49.4348714082', 'lon':'-2.35897378892','grid':'GY' },
         {'name':'Government House Guernsey','E':'37504.9',  'N':'44630.5', 'lat':'49.4516470415', 'lon':'-2.54761956752','grid':'GY' }
     ];
-    const grids = {'JE': OsGridRef.projection.NewJTM,'GY': OsGridRef.projection.Guernsey_Grid}
+    const grids = {'GB': OsGridRef.projection.NationalGridGB, 'JE': OsGridRef.projection.NewJTM,'GY': OsGridRef.projection.Guernsey_Grid, 'BT':OsGridRef.projection.IrishGrid, 'ITM':OsGridRef.projection.ITM}
     for (const place of coords) {
         const osgb = new LatLon(place.lat, place.lon);
         const gridref = OsGridRef.latLonToOsGrid(osgb, grids[place.grid]);
