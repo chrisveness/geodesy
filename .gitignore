@@ -48,3 +48,6 @@ npm-debug.log
 *.rar
 *.tar
 *.zip
+
+#git stuff
+.gitignore
