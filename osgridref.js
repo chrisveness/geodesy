@@ -63,7 +63,7 @@ function OsGridRef(easting, northing, projection) {
 */
 OsGridRef.projection = {
     NationalGridGB:     { ellipsoid: LatLon.ellipsoid.Airy1830,     datum: LatLon.datum.OSGB36,  F0: 0.9996012717,   φ0: 49,     λ0: -2,                 E0: 400000, N0: -100000  },
-    IrishGrid:          { ellipsoid: LatLon.ellipsoid.AiryModified, datum: LatLon.datum.Irl1975, F0: 1.000035,       φ0: 53.5,   λ0: -8,                 E0: 200000, N0:  250000  },
+    IrishGrid:          { ellipsoid: LatLon.ellipsoid.AiryModified, datum: LatLon.datum.OSGB36,   F0: 1.000035,       φ0: 53.5,   λ0: -8,                 E0: 200000, N0:  250000  },
     ITM:                { ellipsoid: LatLon.ellipsoid.GRS80,        datum: LatLon.datum.WGS84,   F0: 0.99982,        φ0: 53.5,   λ0: -8,                 E0: 600000, N0:  750000  },
     NewJTM:             { ellipsoid: LatLon.ellipsoid.GRS80,        datum: LatLon.datum.WGS84,   F0: 0.99999,        φ0: 49.225, λ0: -2.135,             E0: 40000,  N0:  70000   },
     Guernsey_Grid:      { ellipsoid: LatLon.ellipsoid.GRS80,        datum: LatLon.datum.WGS84,   F0: 0.999997,       φ0: 49.5,   λ0: -2.416666666666667, E0: 47000,  N0:  50000   }
