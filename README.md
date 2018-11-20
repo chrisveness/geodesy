@@ -279,14 +279,14 @@ More information at www.movable-type.co.uk/scripts/latlong-utm-mgrs.html.
 --------------------------------------------------
 
 Conversions between UK OS grid references and (OSGB36) latitude/longitude points (based on Ordnance
-Survey formulae).
+Survey formulae). Support added for related grid projections for Ireland and the Channel Islands
 
 * *Constructor*
-    * `new OsGridRef(easting, northing)`
-        - Create new OS grid reference
+    * `new OsGridRef(easting, northing, [projection])`
+        - Create new OS grid reference (with optional projection to choose another Grid)
 * *Methods*
-    * `OsGridRef.latLonToOsGrid(point)`
-        - Convert UTM coordinate to MGRS grid reference
+    * `OsGridRef.latLonToOsGrid(point, [projection])`
+        - Convert UTM coordinate to MGRS grid reference with optional projection
     * `OsGridRef.osGridToLatLon(gridref, datum)`
         - Convert OS grid reference to latitude/longitude
     * `OsGridRef.parse(gridref)`
