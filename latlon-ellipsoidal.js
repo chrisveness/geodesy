@@ -72,32 +72,34 @@ LatLon.ellipsoid = {
  */
 LatLon.datum = {
     // transforms: t in metres, s in ppm, r in arcseconds                    tx       ty        tz       s        rx       ry       rz
-    ED50:       { ellipsoid: LatLon.ellipsoid.Intl1924,      transform: [   89.5,    93.8,    123.1,    -1.2,     0.0,     0.0,     0.156  ] },
-    Irl1975:    { ellipsoid: LatLon.ellipsoid.AiryModified,  transform: [ -482.530, 130.596, -564.557,  -8.150,  -1.042,  -0.214,  -0.631  ] },
-    NAD27:      { ellipsoid: LatLon.ellipsoid.Clarke1866,    transform: [    8,    -160,     -176,       0,       0,       0,       0      ] },
-    NAD83:      { ellipsoid: LatLon.ellipsoid.GRS80,         transform: [    1.004,  -1.910,   -0.515,  -0.0015,  0.0267,  0.00034, 0.011  ] },
-    NTF:        { ellipsoid: LatLon.ellipsoid.Clarke1880IGN, transform: [  168,      60,     -320,       0,       0,       0,       0      ] },
-    OSGB36:     { ellipsoid: LatLon.ellipsoid.Airy1830,      transform: [ -446.448, 125.157, -542.060,  20.4894, -0.1502, -0.2470, -0.8421 ] },
-    Potsdam:    { ellipsoid: LatLon.ellipsoid.Bessel1841,    transform: [ -582,    -105,     -414,      -8.3,     1.04,    0.35,   -3.08   ] },
-    TokyoJapan: { ellipsoid: LatLon.ellipsoid.Bessel1841,    transform: [  148,    -507,     -685,       0,       0,       0,       0      ] },
-    WGS72:      { ellipsoid: LatLon.ellipsoid.WGS72,         transform: [    0,       0,     -4.5,      -0.22,    0,       0,       0.554  ] },
-    WGS84:      { ellipsoid: LatLon.ellipsoid.WGS84,         transform: [    0.0,     0.0,      0.0,     0.0,     0.0,     0.0,     0.0    ] },
+    ED50:       { ellipsoid: LatLon.ellipsoid.Intl1924,      transform: [   89.5,    93.8,    123.1,    -1.2,     0.0,     0.0,     0.156    ] }, // epsg.io/1311
+    Irl1975:    { ellipsoid: LatLon.ellipsoid.AiryModified,  transform: [ -482.530, 130.596, -564.557,  -8.150,   1.042,   0.214,   0.631    ] }, // epsg.io/1954
+    NAD27:      { ellipsoid: LatLon.ellipsoid.Clarke1866,    transform: [    8,    -160,     -176,       0,       0,       0,       0        ] },
+    NAD83:      { ellipsoid: LatLon.ellipsoid.GRS80,         transform: [    0.9956  -1.9103,  -0.5215, -0.00062, 0.025915,0.009426,0.011599 ] },
+    NTF:        { ellipsoid: LatLon.ellipsoid.Clarke1880IGN, transform: [  168,      60,     -320,       0,       0,       0,       0        ] },
+    OSGB36:     { ellipsoid: LatLon.ellipsoid.Airy1830,      transform: [ -446.448, 125.157, -542.060,  20.4894, -0.1502, -0.2470, -0.8421   ] }, // epsg.io/1314
+    Potsdam:    { ellipsoid: LatLon.ellipsoid.Bessel1841,    transform: [ -582,    -105,     -414,      -8.3,     1.04,    0.35,   -3.08     ] },
+    TokyoJapan: { ellipsoid: LatLon.ellipsoid.Bessel1841,    transform: [  148,    -507,     -685,       0,       0,       0,       0        ] },
+    WGS72:      { ellipsoid: LatLon.ellipsoid.WGS72,         transform: [    0,       0,       -4.5,    -0.22,    0,       0,       0.554    ] },
+    WGS84:      { ellipsoid: LatLon.ellipsoid.WGS84,         transform: [    0.0,     0.0,      0.0,     0.0,     0.0,     0.0,     0.0      ] },
 };
 /* sources:
- * - ED50:          www.gov.uk/guidance/oil-and-gas-petroleum-operations-notices#pon-4
- * - Irl1975:       www.osi.ie/wp-content/uploads/2015/05/transformations_booklet.pdf
- *   ... note: many sources have opposite sign to rotations - to be checked!
- * - NAD27:         en.wikipedia.org/wiki/Helmert_transformation
- * - NAD83: (2009); www.uvm.edu/giv/resources/WGS84_NAD83.pdf
- *   ... note: functionally ≡ WGS84 - if you *really* need to convert WGS84<->NAD83, you need more knowledge than this!
- * - NTF:           Nouvelle Triangulation Francaise geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf
- * - OSGB36:        www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
- * - Potsdam:       kartoweb.itc.nl/geometrics/Coordinate%20transformations/coordtrans.html
- * - TokyoJapan:    www.geocachingtoolbox.com?page=datumEllipsoidDetails
- * - WGS72:         www.icao.int/safety/pbn/documentation/eurocontrol/eurocontrol wgs 84 implementation manual.pdf
+ * - ED50:       www.gov.uk/guidance/oil-and-gas-petroleum-operations-notices#pon-4
+ * - Irl1975:    www.osi.ie/wp-content/uploads/2015/05/transformations_booklet.pdf
+ * - NAD27:      en.wikipedia.org/wiki/Helmert_transformation
+ * - NAD83:      www.uvm.edu/giv/resources/WGS84_NAD83.pdf [strictly, WGS84(G1150) -> NAD83(CORS96) @ epoch 1997.0]
+ *               (note NAD83(1986) ≡ WGS84(Original); confluence.qps.nl/pages/viewpage.action?pageId=29855173)
+ * - NTF:        Nouvelle Triangulation Francaise geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf
+ * - OSGB36:     www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
+ * - Potsdam:    kartoweb.itc.nl/geometrics/Coordinate%20transformations/coordtrans.html
+ * - TokyoJapan: www.geocachingtoolbox.com?page=datumEllipsoidDetails
+ * - WGS72:      www.icao.int/safety/pbn/documentation/eurocontrol/eurocontrol wgs 84 implementation manual.pdf
  *
  * more transform parameters are available from earth-info.nga.mil/GandG/coordsys/datums/NATO_DT.pdf,
  * www.fieldenmaps.info/cconv/web/cconv_params.js
+ */
+/* note:
+ * - ETRS89 reference frames are coincident with WGS-84 at epoch 1989.0 (ie null transform) at the one metre level.
  */
 
 
