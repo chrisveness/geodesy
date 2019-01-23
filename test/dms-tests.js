@@ -123,5 +123,12 @@ describe('dms', function() {
         test('output false',   function() { should.equal(Dms.toDMS(false), '000°00′00″'); }); // TODO: fix on next semver major
         test('output ∞',       function() { should.equal(Dms.toDMS(1/0), 'ity°aN′NaN″'); }); // TODO: fix on next semver major
     });
+    
+    describe('packed infix',function(){
+        test('infix 56N2219',function(){ Dms.parseDMS('56N2219').should.equal(Dms.parseDMS('56°22′19″N')); });
+        test('infix 006W1627',function(){ Dms.parseDMS('006W1627').should.equal(Dms.parseDMS('6°16′27″W')); });
+        test('infix 56S2219',function(){ Dms.parseDMS('56S2219').should.equal(Dms.parseDMS('56°22′19″S')); });
+        test('infix 160E1627',function(){ Dms.parseDMS('160E1627').should.equal(Dms.parseDMS('160°16′27″E')); });
+    });
 
 });

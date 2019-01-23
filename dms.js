@@ -25,7 +25,8 @@ var Dms = {};
 
 // note Unicode Degree = U+00B0. Prime = U+2032, Double prime = U+2033
 
-
+const longre =/(?:[0-8]\d|90)([NS])(?:[0-5]\d)(?:[0-5]\d)/;
+const latre=/([0-1]\d\d)([EW])(?:[0-5]\d)(?:[0-5]\d)/;
 /**
  * Parses string representing degrees/minutes/seconds into numeric degrees.
  *
@@ -44,11 +45,21 @@ var Dms = {};
 Dms.parseDMS = function(dmsStr) {
     // check for signed decimal degrees without NSEW, if so return it directly
     if (typeof dmsStr == 'number' && isFinite(dmsStr)) return Number(dmsStr);
-
-    // strip off any sign or compass dir'n & split out separate d/m/s
-    var dms = String(dmsStr).trim().replace(/^-/, '').replace(/[NSEW]$/i, '').split(/[^0-9.,]+/);
-    if (dms[dms.length-1]=='') dms.splice(dms.length-1);  // from trailing symbol
-
+    // check for packed infix  DMS  like 56N2219 or 006W1627
+    const packedlat = latre.exec(dmsStr);
+    let dms='';
+    if (packedlat) {
+        dms = [packedlat[0].slice(0,3),packedlat[0].slice(4,6),packedlat[0].slice(6,8)];
+    } else {
+        const packedlong = longre.exec(dmsStr);
+        if (packedlong) {
+            dms = [packedlong[0].slice(0,2),packedlong[0].slice(3,5),packedlong[0].slice(5,7)];
+        } else {
+            // strip off any sign or compass dir'n & split out separate d/m/s
+            dms = String(dmsStr).trim().replace(/^-/, '').replace(/[NSEW]$/i, '').split(/[^0-9.,]+/);
+            if (dms[dms.length-1]=='') dms.splice(dms.length-1);  // from trailing symbol
+        }
+    }
     if (dms == '') return NaN;
 
     // and convert to decimal degrees...
@@ -69,7 +80,7 @@ Dms.parseDMS = function(dmsStr) {
         default:
             return NaN;
     }
-    if (/^-|[WS]$/i.test(dmsStr.trim())) deg = -deg; // take '-', west and south as -ve
+    if (/^-|[WS]$|[WS]\d\d\d\d$/i.test(dmsStr.trim())) deg = -deg; // take '-', west and south as -ve
 
     return Number(deg);
 };

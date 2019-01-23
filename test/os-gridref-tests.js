@@ -93,6 +93,8 @@ describe('os-gridref-ci', function() {
         const osgb3 = OsGridRef.osGridToLatLon(gridref2);
         test(place.name+' lat', function() { Dms.toDMS(osgb3.lat,'dms', 2).should.equal(Dms.toDMS(osgb.lat,'dms', 2)); });
         test(place.name+' lon', function() { Dms.toDMS(osgb3.lon,'dms', 2).should.equal(Dms.toDMS(osgb.lon,'dms', 2)); });
+//         test(place.name+' lat exact', function() { osgb3.lat.should.equal(osgb.lat); });
+//         test(place.name+' lon exact', function() { osgb3.lon.should.equal(osgb.lon); });
         const gridref3 = OsGridRef.latLonToOsGrid(osgb3, grids[place.grid]);
         test(place.name+' E round-trip', function() { gridref3.easting.toFixed(1).should.equal(place.E); });
         test(place.name+' N round-trip', function() { gridref3.northing.toFixed(1).should.equal(place.N); });
