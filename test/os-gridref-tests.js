@@ -1,65 +1,92 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Geodesy Test Harness - os-gridref                                 (c) Chris Veness 2014-2017  */
+/* Geodesy Test Harness - os-gridref                                  (c) Chris Veness 2014-2019  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-'use strict';
+import OsGridRef, { LatLon, Dms } from '../osgridref.js';
 
-require('chai').should();  // BDD/TDD assertion library
-
-var LatLon    = require('../npm.js').LatLonEllipsoidal;
-var OsGridRef = require('../npm.js').OsGridRef;
-var Dms       = require('../npm.js').Dms;
-
-var test = it; // just an alias
+if (typeof window == 'undefined') { // node
+    import('chai').then(chai => global.should = chai.should());
+} else {                            // browser
+    window.should = chai.should();
+}
 
 describe('os-gridref', function() {
-    var osgb=null, gridref=null;
+    const test = it;    // just an alias
+    Dms.separator = ''; // tests are easier without any DMS separator
 
-    // OS Guide to coordinate systems in Great Britain C.1, C.2; Caister water tower
+    describe('@examples', function() {
+        test('Constructor',     () => new OsGridRef(651409, 313177).should.deep.equal({ easting: 651409, northing: 313177 }));
+        test('toLatLon',        () => new OsGridRef(651409.903, 313177.270).toLatLon().toString('dms', 3).should.equal('52°39′28.723″N, 001°42′57.787″E'));
+        test('toLatLon OSGB36', () => new OsGridRef(651409.903, 313177.270).toLatLon(LatLon.datums.OSGB36).toString('dms', 3).should.equal('52°39′27.253″N, 001°43′04.518″E'));
+        test('parse',           () => OsGridRef.parse('TG 51409 13177').should.deep.equal({ easting: 651409, northing: 313177 }));
+        test('toString',        () => new OsGridRef(651409, 313177).toString(8).should.equal('TG 5140 1317'));
+        test('toString',        () => new OsGridRef(651409, 313177).toString(0).should.equal('651409,313177'));
+    });
 
-    osgb = new LatLon(Dms.parseDMS('52°39′27.2531″N'), Dms.parseDMS('1°43′4.5177″E'), LatLon.datum.OSGB36);
-    gridref = OsGridRef.latLonToOsGrid(osgb);
-    test('C1 E',                         function() { gridref.easting.toFixed(3).should.equal('651409.903'); });
-    test('C1 N',                         function() { gridref.northing.toFixed(3).should.equal('313177.270'); });
-    var osgb2 = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
-    test('C1 round-trip',                function() { osgb2.toString('dms', 4).should.equal('52°39′27.2531″N, 001°43′04.5177″E'); });
+    describe('@examples LatLon', function() {
+        test('toOsGrid', () => new LatLon(52.65798, 1.71605).toOsGrid().toString().should.equal('TG 51409 13177'));
+        test('toOsGrid', () => new LatLon(52.65757, 1.71791, 0, LatLon.datums.OSGB36).toOsGrid().toString().should.equal('TG 51409 13177'));
+    });
 
-    gridref = new OsGridRef(651409.903, 313177.270);
-    osgb = OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
-    test('C2',                           function() { osgb.toString('dms', 4).should.equal('52°39′27.2531″N, 001°43′04.5177″E'); });
-    var gridref2 = OsGridRef.latLonToOsGrid(osgb);
-    test('C2 E round-trip',              function() { gridref2.easting.toFixed(3).should.equal('651409.903'); });
-    test('C2 N round-trip',              function() { gridref2.northing.toFixed(3).should.equal('313177.270'); });
+    describe('constructor fail', function() {
+        test('Invalid northing', () => should.Throw(function() { new OsGridRef(0, 1301e3); }, Error, 'Invalid northing ‘1301000’'));
+        test('Invalid easting',  () => should.Throw(function() { new OsGridRef(701e3, 0); }, Error, 'Invalid easting ‘701000’'));
+        test('texts',            () => should.Throw(function() { new OsGridRef('e', 'n'); }, Error, 'Invalid easting ‘e’'));
+    });
 
-    test('parse 100km origin',           function() { OsGridRef.parse('SU00').toString().should.equal('SU 00000 00000'); });
-    test('parse 100km origin',           function() { OsGridRef.parse('SU 0 0').toString().should.equal('SU 00000 00000'); });
-    test('parse no whitespace',          function() { OsGridRef.parse('SU387148').toString().should.equal('SU 38700 14800'); });
-    test('parse 6-digit',                function() { OsGridRef.parse('SU 387 148').toString().should.equal('SU 38700 14800'); });
-    test('parse 10-digit',               function() { OsGridRef.parse('SU 38700 14800').toString().should.equal('SU 38700 14800'); });
-    test('parse numeric',                function() { OsGridRef.parse('438700,114800').toString().should.equal('SU 38700 14800'); });
+    describe('parse fail', function() {
+        test('text',                () => should.Throw(function() { OsGridRef.parse('Cambridge'); }, Error, 'Invalid grid reference ‘Cambridge’'));
+        test('outside range',       () => should.Throw(function() { OsGridRef.parse('AA 1 2'); }, Error, 'Invalid grid reference ‘AA 1 2’'));
+        test('unbalanced numerics', () => should.Throw(function() { OsGridRef.parse('SV 1 20'); }, Error, 'Invalid grid reference ‘SV 1 20’'));
+    });
 
-    var greenwichWGS84 = LatLon(51.4778, -0.0016); // default WGS84
-    var greenwichOSGB36 = greenwichWGS84.convertDatum(LatLon.datum.OSGB36);
-    test('convert WGS84 -> OSGB36',      function() { greenwichOSGB36.toString('d').should.equal('51.4773°N, 000.0000°E'); });
-    test('convert OSGB36 -> WGS84',      function() { greenwichOSGB36.convertDatum(LatLon.datum.WGS84).toString('d').should.equal('51.4778°N, 000.0016°W'); });
+    describe('toString fail', function() {
+        test('1bad precision', () => should.Throw(function() { new OsGridRef(651409, 313177).toString(20); }, Error, 'Invalid precision ‘20’'));
+    });
 
-    // limits
-    test('SW regular', function() { new OsGridRef(     0,       0).toString().should.equal('SV 00000 00000'); });
-    test('NE regular', function() { new OsGridRef(699999, 1299999).toString().should.equal('JM 99999 99999'); });
-    test('SW numeric', function() { new OsGridRef(     0,       0).toString('0').should.equal('000000,000000'); });
-    test('NW numeric', function() { new OsGridRef(699999, 1299999).toString('0').should.equal('699999,1299999'); }); // note 7-digit N
+    describe('Caister water tower', function() {
+        // OS Guide to coordinate systems in Great Britain C.1, C.2; Caister water tower
 
-    // DG round-trip
+        const osgb = LatLon.parse('52°39′27.2531″N, 1°43′4.5177″E', 0, LatLon.datums.OSGB36);
+        const gridref = osgb.toOsGrid();
+        test('C1 E',                () => gridref.easting.toFixed(3).should.equal('651409.903'));
+        test('C1 N',                () => gridref.northing.toFixed(3).should.equal('313177.270'));
+        const osgb2 = gridref.toLatLon(LatLon.datums.OSGB36);
+        test('C1 round-trip',       () => osgb2.toString('dms', 4).should.equal('52°39′27.2531″N, 001°43′04.5177″E'));
 
-    var dgGridRef = OsGridRef.parse('TQ 44359 80653');
+        const gridrefʹ = new OsGridRef(651409.903, 313177.270);
+        const osgbʹ = gridrefʹ.toLatLon(LatLon.datums.OSGB36);
+        test('C2',                  () => osgbʹ.toString('dms', 4).should.equal('52°39′27.2531″N, 001°43′04.5177″E'));
+        const gridref2 = osgb.toOsGrid();
+        test('C2 E round-trip',     () => gridref2.easting.toFixed(3).should.equal('651409.903'));
+        test('C2 N round-trip',     () => gridref2.northing.toFixed(3).should.equal('313177.270'));
 
-    // round-tripping OSGB36 works perfectly
-    var dgOsgb = OsGridRef.osGridToLatLon(dgGridRef, LatLon.datum.OSGB36);
-    test('DG round-trip OSGB36',         function() { dgGridRef.toString().should.equal( OsGridRef.latLonToOsGrid(dgOsgb).toString()); });
-    test('DG round-trip OSGB36 numeric', function() { OsGridRef.latLonToOsGrid(dgOsgb).toString(0).should.equal('544359,180653'); });
+        test('parse 100km origin',  () => OsGridRef.parse('SU00').toString().should.equal('SU 00000 00000'));
+        test('parse 100km origin',  () => OsGridRef.parse('SU 0 0').toString().should.equal('SU 00000 00000'));
+        test('parse no whitespace', () => OsGridRef.parse('SU387148').toString().should.equal('SU 38700 14800'));
+        test('parse 6-digit',       () => OsGridRef.parse('SU 387 148').toString().should.equal('SU 38700 14800'));
+        test('parse 10-digit',      () => OsGridRef.parse('SU 38700 14800').toString().should.equal('SU 38700 14800'));
+        test('parse numeric',       () => OsGridRef.parse('438700,114800').toString().should.equal('SU 38700 14800'));
+    });
 
-    // reversing Helmert transform (OSGB->WGS->OSGB) introduces small error (≈ 3mm in UK), so WGS84
-    // round-trip is not quite perfect: test needs to incorporate 3mm error to pass
-    var dgWgs = OsGridRef.osGridToLatLon(dgGridRef); // default is WGS84
-    test('DG round-trip WGS84 numeric',  function() { OsGridRef.latLonToOsGrid(dgWgs).toString(0).should.equal('544358.997,180653'); });
+    describe('DG round-trip', function() {
+        const dgGridRef = OsGridRef.parse('TQ 44359 80653');
+
+        // round-tripping OSGB36 works perfectly
+        const dgOsgb = dgGridRef.toLatLon(LatLon.datums.OSGB36);
+        test('DG round-trip OSGB36', function () {
+            dgGridRef.toString().should.equal(dgOsgb.toOsGrid().toString());
+        });
+        test('DG round-trip OSGB36 numeric', function () {
+            dgOsgb.toOsGrid().toString(0).should.equal('544359,180653');
+        });
+
+        // reversing Helmert transform (OSGB->WGS->OSGB) introduces small error (≈ 3mm in UK), so WGS84
+        // round-trip is not quite perfect: test needs to incorporate 3mm error to pass
+        const dgWgs = dgGridRef.toLatLon(); // default is WGS84
+        dgWgs.height = 0;
+        test('DG round-trip WGS84 numeric', function () {
+            dgWgs.toOsGrid().toString(0).should.equal('544358.997,180653');
+        });
+    });
 });

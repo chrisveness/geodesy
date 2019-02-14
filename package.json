@@ -1,47 +1,73 @@
 {
-    "name": "geodesy",
-    "description": "Libraries of geodesy functions",
-    "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
-    "repository": { "type": "git", "url": "https://github.com/chrisveness/geodesy" },
-    "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "wgs84", "utm", "mgrs" ],
-    "author": "Chris Veness",
-    "version": "1.1.3",
-    "license": "MIT",
-    "main": "npm.js",
-    "bugs": "https://github.com/chrisveness/geodesy/issues",
-    "scripts": {
-        "test": "mocha test/*.js",
-        "lint": "eslint ."
+  "name": "geodesy",
+  "description": "Libraries of geodesy functions",
+  "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisveness/geodesy"
+  },
+  "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "destination", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "reference frame", "TRF", "wgs84", "utm", "mgrs" ],
+  "author": "Chris Veness",
+  "version": "2.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "bugs": "https://github.com/chrisveness/geodesy/issues",
+  "scripts": {
+    "test": "mocha --exit -r esm test/*.js",
+    "lint": "eslint .",
+    "cover": "nyc --reporter=html npm test; rm -r ./.nyc_output",
+    "docs": "jsdoc *.js README.md -d ../../geodesy/docs"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "chai": "^4.2.0",
+    "eslint": "^5.13.0",
+    "esm": "^3.2.4",
+    "jsdoc": "^3.5.5",
+    "mocha": "^5.2.0",
+    "nyc": "^13.2.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es6": true,
+      "mocha": true,
+      "node": true
     },
-    "devDependencies": {
-        "chai": "^4.1.2",
-        "eslint": "^4.18.2",
-        "jsdoc": "^3.5.5",
-        "mocha": "^5.0.1",
-        "npm-check": "^5.5.2",
-        "npm-check-updates": "^2.14.1"
+    "parser": "babel-eslint",
+    "extends": "eslint:recommended",
+    "globals": {
+      "chai": true,
+      "should": true
     },
-    "eslintConfig": {
-        "env": {
-            "browser": true,
-            "node": true,
-            "mocha": true
-        },
-        "extends": "eslint:recommended",
-        "rules": {
-            "array-bracket-spacing": [ "error", "always", { "singleValue": false } ],
-            "comma-dangle": [ "error", "always-multiline" ],
-            "curly": [ "error", "multi-line" ],
-            "indent": [ "error", 4, { "SwitchCase": 1 } ],
-            "key-spacing": [ "error", { "align": "value" } ],
-            "no-console": "warn",
-            "no-redeclare": "warn",
-            "no-shadow": "warn",
-            "no-unused-vars": "warn",
-            "object-curly-spacing": [ "error", "always" ],
-            "quotes": [ "error", "single", "avoid-escape" ],
-            "semi": [ "error", "always" ],
-            "strict": [ "error", "global" ]
-        }
+    "rules": {
+      "array-bracket-spacing": [ "error", "always" ],
+      "comma-dangle": [ "error", "always-multiline" ],
+      "comma-spacing": [ "error" ],
+      "curly": [ "error", "multi-line" ],
+      "indent": [ "error", 4, { "SwitchCase": 1 } ],
+      "key-spacing": [ "error", { "align": "value" } ],
+      "keyword-spacing": [ "error" ],
+      "no-case-declarations": "warn",
+      "no-console": [ "warn", { "allow": [ "error", "info" ] } ],
+      "no-irregular-whitespace": "warn",
+      "no-redeclare": "warn",
+      "no-shadow": "warn",
+      "no-unused-vars": "warn",
+      "no-var": "error",
+      "object-curly-spacing": [ "error", "always" ],
+      "prefer-const": "error",
+      "quotes": [ "error", "single", "avoid-escape" ],
+      "semi": [ "error", "always" ],
+      "space-before-blocks": [ "error", "always" ],
+      "space-in-parens": [ "error" ],
+      "strict": [ "error", "global" ]
     }
+  },
+  "jsdoc": {
+    "plugins": [ "plugins/markdown" ],
+    "markdown": { "idInHeadings": true }
+  }
 }
