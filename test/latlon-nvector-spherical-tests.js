@@ -195,8 +195,10 @@ describe('latlon-nvector-spherical', function() {
     });
 
     describe('misc', function() {
+        test('equals true',  () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
+        test('equals false', () => new LatLon(52.206, 0.119).equals(new LatLon(52.205, 0.119)).should.be.false);
         test('equals (fail)', () => should.Throw(function() { new LatLon(52.205, 0.119).equals('cambg'); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
-
+        test('toGeoJSON',    () => new LatLon(52.205, 0.119).toGeoJSON().should.deep.equal({ type: 'Point', coordinates: [ 0.119, 52.205 ] }));
     });
 });
 

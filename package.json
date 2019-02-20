@@ -23,11 +23,12 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
+    "coveralls": "^3.0.2",
     "eslint": "^5.13.0",
-    "esm": "^3.2.4",
+    "esm": "^3.2.5",
     "jsdoc": "^3.5.5",
-    "mocha": "^5.2.0",
-    "nyc": "^13.2.0"
+    "mocha": "^6.0.0",
+    "nyc": "^13.3.0"
   },
   "eslintConfig": {
     "env": {

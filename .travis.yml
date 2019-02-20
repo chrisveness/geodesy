@@ -11,4 +11,4 @@ os:
 - windows
 
 after_success:
-- nyc npm test && nyc report --reporter=text-lcov | coveralls
+- ESM_DISABLE_CACHE=1 nyc --cache=false npm test && nyc report --reporter=text-lcov | coveralls; ls -al .nyc_output

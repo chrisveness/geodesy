@@ -1,11 +1,8 @@
 Geodesy functions
 =================
 
-[![Build Status](https://travis-ci.org/chrisveness/geodesy.svg?branch=v2.0.0)
-](https://travis-ci.org/chrisveness/geodesy)
-[![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/bad
-ge.svg?branch=master)](https://coveralls.io/github/chrisveness/geodesy?branch
-=v2.0.0)
+[![Build Status](https://travis-ci.org/chrisveness/geodesy.svg?branch=v2.0.0)](https://travis-ci.org/chrisveness/geodesy)
+[![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/badge.svg?branch=master)](https://coveralls.io/github/chrisveness/geodesy?branch=2.0.0)
 
 These libraries started life (a long time ago) as simple ‘latitude/longitude’ code fragments
 covering distances and bearings, intended to help people who had little experience of geodesy, and
@@ -103,7 +100,7 @@ example,
         console.assert(d.toFixed(3) == '968874.704');
 
         const mid = p1.midpointTo(p2);
-        console.assert(mid.toString('dms') == '54°21′44″N, 004°31′51″W');
+        console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 51″ W');
     </script>
 
 ### Usage in Node.js
