@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- LatLon object returned by Utm.toLatLon() was missing a .toUtm() method
+
 ## [2.0.0] - 2019-02-14
 
 ### Changed

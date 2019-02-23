@@ -23,6 +23,7 @@ describe('utm/mgrs', function() {
         test('toLatLon',    () => new Utm(31, 'N', 448251.795, 5411932.678).toLatLon().toString().should.equal('48.8582°N, 002.2945°E'));
         test('parse',       () => Utm.parse('31 N 448251 5411932').toString().should.equal('31 N 448251 5411932'));
         test('toString',    () => new Utm('31', 'N', 448251, 5411932).toString(4).should.equal('31 N 448251.0000 5411932.0000'));
+        test('README',      () => Utm.parse('48 N 377298.745 1483034.794').toLatLon().toUtm().toString(3).should.equal('48 N 377298.745 1483034.794'));
     });
 
     describe('@examples MGRS', function() {

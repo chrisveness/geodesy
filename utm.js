@@ -168,7 +168,7 @@ class Utm {
         const convergence = Number(γ.toDegrees().toFixed(9));
         const scale = Number(k.toFixed(12));
 
-        const latLong = new LatLonEllipsoidal(lat, lon, 0, this.datum);
+        const latLong = new LatLon_Utm(lat, lon, 0, this.datum);
         // ... and add the convergence and scale into the LatLon object ... wonderful JavaScript!
         latLong.convergence = convergence;
         latLong.scale = scale;

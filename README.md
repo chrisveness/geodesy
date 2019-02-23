@@ -137,8 +137,8 @@ e.g. for UTM conversions:
 
     const utm = Utm.parse('48 N 377298.745 1483034.794');
     const latlon = utm.toLatLon();
-    console.assert(latlon.toString('dms', 2) == '13°24′45.00″N, 103°52′00.00″E');
-
+    
+    console.assert(latlon.toString('dms', 2) == '13° 24′ 45.00″ N, 103° 52′ 00.00″ E');
     console.assert(latlon.toUtm().toString() == '48 N 377298.745 1483034.794';
 
 e.g. for MGRS/NATO map references:
