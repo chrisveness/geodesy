@@ -90,10 +90,14 @@ class Mgrs {
     /**
      * Converts MGRS grid reference to UTM coordinate.
      *
-     * @returns {Utm} UTM coordinate equivalent to this MGRS grid reference
+     * Grid references refer to squares rather than points (with the size of the square indicated
+     * by the precision of the reference); this conversion will return the UTM coordinate of the SW
+     * corner of the grid reference square.
+     *
+     * @returns {Utm} UTM coordinate of SW corner of this MGRS grid reference.
      *
      * @example
-     *   const mgrsRef = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932);
+     *   const mgrsRef = Mgrs.parse('31U DQ 48251 11932');
      *   const utmCoord = mgrsRef.toUtm(); // 31 N 448251 5411932
      */
     toUtm() {
@@ -185,7 +189,11 @@ class Mgrs {
      * Components are separated by spaces: for a military-style unseparated string, use
      *   Mgrs.toString().replace(/ /g, '');
      *
-     * Note that MGRS grid references get truncated, not rounded (unlike UTM coordinates).
+     * Note that MGRS grid references get truncated, not rounded (unlike UTM coordinates); grid
+     * references indicate a bounding square, rather than a point, with the size of the square
+     * indicated by the precision - a precision of 10 indicates a 1-metre square, a precision of 4
+     * indicates a 1,000-metre square (hence 31U DQ 48 11 indicates a 1km square with SW corner at
+     * 31 N 448000 5411000, which would include the 1m square 31U DQ 48251 11932).
      *
      * @param   {number}     [digits=10] - Precision of returned grid reference (eg 4 = km, 10 = m).
      * @returns {string}     This grid reference in standard format.
@@ -195,7 +203,7 @@ class Mgrs {
      *   const mgrsStr = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString(); // 31U DQ 48251 11932
      */
     toString(digits=10) {
-        if (![ 2,4,6,8,10 ].includes(Number(digits))) throw new RangeError(`Invalid precision ‘${digits}’`); // eslint-disable-line comma-spacing
+        if (![ 2, 4, 6, 8, 10 ].includes(Number(digits))) throw new RangeError(`Invalid precision ‘${digits}’`);
 
         const zone = this.zone.toString().padStart(2, '0'); // ensure leading zero
         const band = this.band;

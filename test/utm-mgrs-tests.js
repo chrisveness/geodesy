@@ -28,7 +28,7 @@ describe('utm/mgrs', function() {
 
     describe('@examples MGRS', function() {
         test('constructor',          () => new Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString().should.equal('31U DQ 48251 11932'));
-        test('toUtm',                () => new Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toUtm().toString().should.equal('31 N 448251 5411932'));
+        test('toUtm',                () => Mgrs.parse('31U DQ 48251 11932').toUtm().toString().should.equal('31 N 448251 5411932'));
         test('parse',                () => Mgrs.parse('31U DQ 48251 11932').toString().should.equal('31U DQ 48251 11932'));
         test('parse military-style', () => Mgrs.parse('31UDQ4825111932').toString().should.equal('31U DQ 48251 11932'));
     });
