@@ -42,7 +42,7 @@ class Utm {
      * @param  {number}        northing - Northing in metres from equator (N) or from false northing -10,000km (S).
      * @param  {LatLon.datums} [datum=WGS84] - Datum UTM coordinate is based on.
      * @param  {number}        [convergence=null] - Meridian convergence (bearing of grid north
-     *         clockwise from true north), in degrees.
+     *                         clockwise from true north), in degrees.
      * @param  {number}        [scale=null] - Grid scale factor.
      * @throws {TypeError} Invalid UTM coordinate.
      *
@@ -53,9 +53,9 @@ class Utm {
     constructor(zone, hemisphere, easting, northing, datum=LatLonEllipsoidal.datums.WGS84, convergence=null, scale=null) {
         if (!(1<=zone && zone<=60)) throw new RangeError(`Invalid UTM zone ‘${zone}’`);
         if (!hemisphere.match(/[NS]/i)) throw new RangeError(`Invalid UTM hemisphere ‘${hemisphere}’`);
-        // range-check easting/northing (with 40km overlap between zones) - TODO is this worthwhile?
-        //if (!(120e3<=easting && easting<=880e3)) throw new Error('Invalid UTM easting '+ easting);
-        //if (!(0<=northing && northing<=10000e3)) throw new Error('Invalid UTM northing '+ northing);
+        if (!(0<=easting && easting<=1000e3)) throw new RangeError(`Invalid UTM easting ‘${easting}’`);
+        if (hemisphere=='N' && !(0<=northing && northing<9328094)) throw new RangeError(`Invalid UTM northing ‘${northing}’`);
+        if (hemisphere=='S' && !(1118414<northing && northing<=10000e3)) throw new RangeError(`Invalid UTM northing ‘${northing}’`);
 
         this.zone = Number(zone);
         this.hemisphere = hemisphere.toUpperCase();
