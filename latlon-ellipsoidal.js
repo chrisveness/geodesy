@@ -247,8 +247,7 @@ class LatLonEllipsoidal {
         const φ = this.lat.toRadians();
         const λ = this.lon.toRadians();
         const h = this.height;
-        const a = ellipsoid.a;
-        const f = ellipsoid.f;
+        const { a, f } = ellipsoid;
 
         const sinφ = Math.sin(φ), cosφ = Math.cos(φ);
         const sinλ = Math.sin(λ), cosλ = Math.cos(λ);
@@ -373,8 +372,8 @@ class Cartesian extends Vector3d {
         // note ellipsoid is available as a parameter for when toLatLon gets subclassed.
         if (!ellipsoid || !ellipsoid.a) throw new TypeError('Invalid ellipsoid');
 
-        const x = this.x, y = this.y, z = this.z;
-        const a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
+        const { x, y, z } = this;
+        const { a, b, f } = ellipsoid;
 
         const e2 = 2*f - f*f;           // 1st eccentricity squared ≡ (a²−b²)/a²
         const ε2 = e2 / (1-e2);         // 2nd eccentricity squared ≡ (a²−b²)/b²

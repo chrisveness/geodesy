@@ -518,11 +518,11 @@ class Cartesian_ReferenceFrame extends Cartesian {
      * @returns {string} Comma-separated latitude/longitude.
      */
     toString(dp=0) {
-        const x = this.x.toFixed(dp), y = this.y.toFixed(dp), z = this.z.toFixed(dp);
+        const { x, y, z } = this;
         const epochFmt = { useGrouping: false, minimumFractionDigits: 1, maximumFractionDigits: 20 };
         const epoch = this.referenceFrame && this.epoch != this.referenceFrame.epoch ? this.epoch.toLocaleString('en', epochFmt) : '';
         const trf = this.referenceFrame ? `(${this.referenceFrame.name}${epoch?'@'+epoch:''})` : '';
-        return `[${x},${y},${z}]${trf}`;
+        return `[${x.toFixed(dp)},${y.toFixed(dp)},${z.toFixed(dp)}]${trf}`;
     }
 }
 

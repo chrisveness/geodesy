@@ -205,21 +205,18 @@ class Mgrs {
     toString(digits=10) {
         if (![ 2, 4, 6, 8, 10 ].includes(Number(digits))) throw new RangeError(`Invalid precision ‘${digits}’`);
 
-        const zone = this.zone.toString().padStart(2, '0'); // ensure leading zero
-        const band = this.band;
-
-        const e100k = this.e100k;
-        const n100k = this.n100k;
+        const { zone, band, e100k, n100k, easting, northing } = this;
 
         // truncate to required precision
-        const eRounded = Math.floor(this.easting/Math.pow(10, 5-digits/2));
-        const nRounded = Math.floor(this.northing/Math.pow(10, 5-digits/2));
+        const eRounded = Math.floor(easting/Math.pow(10, 5-digits/2));
+        const nRounded = Math.floor(northing/Math.pow(10, 5-digits/2));
 
         // ensure leading zeros
-        const easting = eRounded.toString().padStart(digits/2, '0');
-        const northing = nRounded.toString().padStart(digits/2, '0');
+        const zPadded = zone.toString().padStart(2, '0');
+        const ePadded = eRounded.toString().padStart(digits/2, '0');
+        const nPadded = nRounded.toString().padStart(digits/2, '0');
 
-        return `${zone}${band} ${e100k}${n100k} ${easting} ${northing}`;
+        return `${zPadded}${band} ${e100k}${n100k} ${ePadded} ${nPadded}`;
     }
 }
 

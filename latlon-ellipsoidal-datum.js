@@ -305,7 +305,7 @@ class Cartesian_Datum extends Cartesian {
      */
     applyTransform(t)   {
         // this point
-        const x1 = this.x, y1 = this.y, z1 = this.z;
+        const { x: x1, y: y1, z: z1 } = this;
 
         // transform parameters
         const tx = t[0];                    // x-shift in metres

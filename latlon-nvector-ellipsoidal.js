@@ -227,7 +227,7 @@ class NvectorEllipsoidal extends Vector3d {
     toLatLon() {
         // tanφ = z / √(x²+y²), tanλ = y / x (same as spherical calculation)
 
-        const x = this.x, y = this.y, z = this.z;
+        const { x, y, z } = this;
 
         const φ = Math.atan2(z, Math.sqrt(x*x + y*y));
         const λ = Math.atan2(y, x);
@@ -251,13 +251,8 @@ class NvectorEllipsoidal extends Vector3d {
         const ellipsoid = this.datum ? this.datum.ellipsoid :
             this.referenceFrame ? this.referenceFrame.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
 
-        const b = ellipsoid.b;
-        const f = ellipsoid.f;
-
-        const x = this.x;
-        const y = this.y;
-        const z = this.z;
-        const h = this.h;
+        const { b, f } = ellipsoid;
+        const { x, y, z, h } = this;
 
         const m = (1-f) * (1-f); // (1−f)² = b²/a²
         const n = b / Math.sqrt(x*x/m + y*y/m + z*z);
@@ -283,12 +278,10 @@ class NvectorEllipsoidal extends Vector3d {
      *   new Nvector(0.5000, 0.5000, 0.7071, 1).toString(6, 0); // [0.500002,0.500002,0.707103+1m]
      */
     toString(dp=3, dpHeight=null) {
-        const x = this.x.toFixed(dp);
-        const y = this.y.toFixed(dp);
-        const z = this.z.toFixed(dp);
+        const { x, y, z } = this;
         const h = `${this.h>=0 ? '+' : ''}${this.h.toFixed(dpHeight)}m`;
 
-        return `[${x},${y},${z}${dpHeight==null ? '' : h}]`;
+        return `[${x.toFixed(dp)},${y.toFixed(dp)},${z.toFixed(dp)}${dpHeight==null ? '' : h}]`;
     }
 
 }
@@ -318,12 +311,8 @@ class Cartesian_Nvector extends Cartesian {
      *   const n = c.toNvector(); // { x: 0.6228, y: 0.0000, z: 0.7824, h: 0.0000 }
      */
     toNvector(datum=LatLonEllipsoidal.datums.WGS84) {
-        const a = datum.ellipsoid.a;
-        const f = datum.ellipsoid.f;
-
-        const x = this.x;
-        const y = this.y;
-        const z = this.z;
+        const { a, f } = datum.ellipsoid;
+        const { x, y, z } = this;
 
         const e2 = 2*f - f*f; // e² = 1st eccentricity squared ≡ (a²-b²)/a²
         const e4 = e2*e2;     // e⁴
@@ -386,9 +375,9 @@ class Ned {
      * @returns {number} Length of NED vector in metres.
      */
     get length() {
-        const n = this.north, e = this.east, d = this.down;
+        const { north, east, down } = this;
 
-        return Math.sqrt(n*n + e*e + d*d);
+        return Math.sqrt(north*north + east*east + down*down);
     }
 
 

@@ -79,8 +79,7 @@ class OsGridRef {
      *   const pOsgb = gridref.toLatLon(LatLon.datums.OSGB36); // 52°39′27.253″N, 001°43′04.518″E
      */
     toLatLon(datum=LatLonEllipsoidal.datums.WGS84) {
-        const E = this.easting;
-        const N = this.northing;
+        const { easting: E, northing: N } = this;
 
         const a = 6377563.396, b = 6356256.909;             // Airy 1830 major & minor semi-axes
         const F0 = 0.9996012717;                            // NatGrid scale factor on central meridian
@@ -208,8 +207,7 @@ class OsGridRef {
     toString(digits=10) {
         if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`Invalid precision ‘${digits}’`); // eslint-disable-line comma-spacing
 
-        let e = this.easting;
-        let n = this.northing;
+        let { easting: e, northing: n } = this;
 
         // use digits = 0 to return numeric format (in metres) - note northing may be >= 1e7
         if (digits == 0) {

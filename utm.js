@@ -78,13 +78,11 @@ class Utm {
      *   const latlong = grid.toLatLon(); // 48°51′29.52″N, 002°17′40.20″E
      */
     toLatLon() {
-        const z = this.zone;
-        const h = this.hemisphere;
+        const { zone: z, hemisphere: h } = this;
 
         const falseEasting = 500e3, falseNorthing = 10000e3;
 
-        const a = this.datum.ellipsoid.a, f = this.datum.ellipsoid.f;
-        // WGS-84: a = 6378137, b = 6356752.314245, f = 1/298.257223563;
+        const { a, f } = this.datum.ellipsoid; // WGS-84: a = 6378137, f = 1/298.257223563;
 
         const k0 = 0.9996; // UTM scale on the central meridian
 
@@ -283,8 +281,7 @@ class LatLon_Utm extends LatLonEllipsoidal {
         const λ = this.lon.toRadians() - λ0; // longitude ± from central meridian
 
         const ellipsoid = this.datum ? this.datum.ellipsoid : this.referenceFrame ? this.referenceFrame.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
-        const a = ellipsoid.a, f = ellipsoid.f;
-        // WGS-84: a = 6378137, b = 6356752.314245, f = 1/298.257223563;
+        const { a, f } = ellipsoid; // WGS-84: a = 6378137, f = 1/298.257223563;
 
         const k0 = 0.9996; // UTM scale on the central meridian
 
