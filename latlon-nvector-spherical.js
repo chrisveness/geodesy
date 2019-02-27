@@ -774,8 +774,8 @@ class LatLonNvectorSpherical {
     equals(point) {
         if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
 
-        if (this.lat != point.lat) return false;
-        if (this.lon != point.lon) return false;
+        if (Math.abs(this.lat - point.lat) > Number.EPSILON) return false;
+        if (Math.abs(this.lon - point.lon) > Number.EPSILON) return false;
 
         return true;
     }

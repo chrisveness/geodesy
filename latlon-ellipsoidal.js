@@ -278,9 +278,9 @@ class LatLonEllipsoidal {
     equals(point) {
         if (!(point instanceof LatLonEllipsoidal)) throw new TypeError('‘point’ is not LatLon object');
 
-        if (this.lat != point.lat) return false;
-        if (this.lon != point.lon) return false;
-        if (this.height != point.height) return false;
+        if (Math.abs(this.lat - point.lat) > Number.EPSILON) return false;
+        if (Math.abs(this.lon - point.lon) > Number.EPSILON) return false;
+        if (Math.abs(this.height - point.height) > Number.EPSILON) return false;
         if (this.datum != point.datum) return false;
         if (this.referenceFrame != point.referenceFrame) return false;
         if (this.epoch != point.epoch) return false;
