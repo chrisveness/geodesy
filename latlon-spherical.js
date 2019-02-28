@@ -219,6 +219,7 @@ class LatLonSpherical {
      */
     initialBearingTo(point) {
         if (!(point instanceof LatLonSpherical)) point = LatLonSpherical.parse(point); // allow literal forms
+        if (this.equals(point)) return NaN; // coincident points
 
         // tanθ = sinΔλ⋅cosφ2 / cosφ1⋅sinφ2 − sinφ1⋅cosφ2⋅cosΔλ
         // see mathforum.org/library/drmath/view/55417.html for derivation
@@ -311,6 +312,7 @@ class LatLonSpherical {
      */
     intermediatePointTo(point, fraction) {
         if (!(point instanceof LatLonSpherical)) point = LatLonSpherical.parse(point); // allow literal forms
+        if (this.equals(point)) return new LatLonSpherical(this.lat, this.lon); // coincident points
 
         const φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
         const φ2 = point.lat.toRadians(), λ2 = point.lon.toRadians();
@@ -403,7 +405,7 @@ class LatLonSpherical {
         // angular distance p1-p2
         const δ12 = 2 * Math.asin(Math.sqrt(Math.sin(Δφ/2) * Math.sin(Δφ/2)
             + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2)));
-        if (δ12 == 0) return null;
+        if (Math.abs(δ12) < Number.EPSILON) return new LatLonSpherical(p1.lat, p1.lon); // coincident points
 
         // initial/final bearings between points
         const cosθa = (Math.sin(φ2) - Math.sin(φ1)*Math.cos(δ12)) / (Math.sin(δ12)*Math.cos(φ1));
@@ -532,6 +534,8 @@ class LatLonSpherical {
      * @returns {Object|null} Object containing { lon1, lon2 } or null if given latitude not reached.
      */
     static crossingParallels(point1, point2, latitude) {
+        if (point1.equals(point2)) return null; // coincident points
+
         const φ = Number(latitude).toRadians();
 
         const φ1 = point1.lat.toRadians();
@@ -617,6 +621,7 @@ class LatLonSpherical {
      */
     rhumbBearingTo(point) {
         if (!(point instanceof LatLonSpherical)) point = LatLonSpherical.parse(point); // allow literal forms
+        if (this.equals(point)) return NaN; // coincident points
 
         const φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
         let Δλ = (point.lon - this.lon).toRadians();

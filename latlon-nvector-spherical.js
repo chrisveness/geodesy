@@ -200,6 +200,7 @@ class LatLonNvectorSpherical {
      */
     initialBearingTo(point) {
         if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
+        if (this.equals(point)) return NaN; // coincident points
 
         const p1 = this.toNvector();
         const p2 = point.toNvector();
@@ -384,6 +385,8 @@ class LatLonNvectorSpherical {
         if (!(path1brngEnd instanceof LatLonNvectorSpherical) && isNaN(path1brngEnd)) throw new TypeError('‘path1brngEnd’ is not LatLon object or bearing');
         if (!(path2brngEnd instanceof LatLonNvectorSpherical) && isNaN(path2brngEnd)) throw new TypeError('‘path2brngEnd’ is not LatLon object or bearing');
 
+        if (path1start.equals(path2start)) return new LatLonNvectorSpherical(path1start.lat, path2start.lon); // coincident points
+
         // if c1 & c2 are great circles through start and end points (or defined by start point + bearing),
         // then candidate intersections are simply c1 × c2 & c2 × c1; most of the work is deciding correct
         // intersection point to select! if bearing is given, that determines which intersection, if both
@@ -476,6 +479,8 @@ class LatLonNvectorSpherical {
     crossTrackDistanceTo(pathStart, pathBrngEnd, radius=6371e3) {
         if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError('‘pathStart’ is not (NvectorSpherical) LatLon object');
 
+        if (this.equals(pathStart)) return NaN; // coincident points
+
         const p = this.toNvector();
         const R = Number(radius);
 
@@ -516,7 +521,7 @@ class LatLonNvectorSpherical {
     nearestPointOnSegment(point1, point2) {
         let p = null;
 
-        if (this.isWithinExtent(point1, point2)) {
+        if (this.isWithinExtent(point1, point2) && !point1.equals(point2)) {
             // closer to segment than to its endpoints, find closest point on segment
             const n0 = this.toNvector(), n1 = point1.toNvector(), n2 = point2.toNvector();
             const c1 = n1.cross(n2); // n1×n2 = vector representing great circle through p1, p2
@@ -527,7 +532,8 @@ class LatLonNvectorSpherical {
             // beyond segment extent, take closer endpoint
             const d1 = this.distanceTo(point1);
             const d2 = this.distanceTo(point2);
-            p = d1<d2 ? point1 : point2;
+            const pCloser = d1<d2 ? point1 : point2;
+            p = new LatLonNvectorSpherical(pCloser.lat, pCloser.lon);
         }
 
         return p;
@@ -550,6 +556,8 @@ class LatLonNvectorSpherical {
      *   const within2 = new LatLon(51, 0).isWithinExtent(p1, p2); // false
      */
     isWithinExtent(point1, point2) {
+        if (point1.equals(point2)) return this.equals(point1); // null segment
+
         const n0 = this.toNvector(), n1 = point1.toNvector(), n2 = point2.toNvector(); // n-vectors
 
         // get vectors representing p0->p1, p0->p2, p1->p2, p2->p1
@@ -637,6 +645,8 @@ class LatLonNvectorSpherical {
         const y = (δ1*δ1 - δ3*δ3 + i*i + j*j) / (2*j) - x*i/j; // y component of n1 -> intersection
         // const eZ = eX.cross(eY);                            // unit vector perpendicular to plane
         // const z = Math.sqrt(δ1*δ1 - x*x - y*y);             // z will be NaN for no intersections
+
+        if (!isFinite(x) || !isFinite(y)) return null; // coincident points?
 
         const n = n1.plus(eX.times(x)).plus(eY.times(y)); // note don't use z component; assume points at same height
 

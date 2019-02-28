@@ -252,7 +252,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
             sinλ = Math.sin(λ);
             cosλ = Math.cos(λ);
             sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
-            if (sinSqσ == 0) break;  // co-incident points
+            if (Math.abs(sinSqσ) < Number.EPSILON) break;  // co-incident points
             sinσ = Math.sqrt(sinSqσ);
             cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
             σ = Math.atan2(sinσ, cosσ);
@@ -280,8 +280,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
 
         return {
             distance:       s,
-            initialBearing: s==0 ? NaN : Dms.wrap360(α1.toDegrees()),
-            finalBearing:   s==0 ? NaN : Dms.wrap360(α2.toDegrees()),
+            initialBearing: Math.abs(s) < Number.EPSILON ? NaN : Dms.wrap360(α1.toDegrees()),
+            finalBearing:   Math.abs(s) < Number.EPSILON ? NaN : Dms.wrap360(α2.toDegrees()),
             iterations:     iterations,
         };
     }

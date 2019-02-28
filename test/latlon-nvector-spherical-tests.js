@@ -32,6 +32,7 @@ describe('latlon-nvector-spherical', function() {
         test('nearestPointOnSegment 2',    () => new LatLon(51.0, 2.1).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0000°N, 002.0000°E'));
         test('isWithinExtent 1',           () => new LatLon(52, 1).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.true);
         test('isWithinExtent 2',           () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.false);
+        test('isWithinExtent coincident',  () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(51, 1)).should.be.false);
         test('triangulate',                () => LatLon.triangulate(new LatLon(50.7175, 1.65139), 333.3508, new LatLon(50.9250, 1.7094), 310.1414).toString().should.equal('51.1297°N, 001.3214°E'));
         test('trilaterate',                () => LatLon.trilaterate(new LatLon(0, 0), 157e3, new LatLon(0, 1), 111e3, new LatLon(1, 0), 111e3).toString().should.equal('00.9985°N, 000.9986°E'));
         const bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
@@ -111,6 +112,7 @@ describe('latlon-nvector-spherical', function() {
         test('distance',           () => cambg.distanceTo(paris).toPrecision(4).should.equal('4.043e+5'));
         test('distance (miles)',   () => cambg.distanceTo(paris, 3959).toPrecision(4).should.equal('251.2'));
         test('initial bearing',    () => cambg.initialBearingTo(paris).toFixed(1).should.equal('156.2'));
+        test('initial brng coinc', () => cambg.initialBearingTo(cambg).should.be.NaN);
         test('final bearing',      () => cambg.finalBearingTo(paris).toFixed(1).should.equal('157.9'));
         test('bearing (reverse)',  () => paris.initialBearingTo(cambg).toFixed(1).should.equal('337.9'));
         test('midpoint',           () => cambg.midpointTo(paris).toString().should.equal('50.5363°N, 001.2746°E'));
@@ -151,6 +153,8 @@ describe('latlon-nvector-spherical', function() {
 
         test('end+end',                       () => LatLon.intersection(new LatLon(1, 1), new LatLon(2, 2), new LatLon(1, 4), new LatLon(2, 3)).toString().should.equal('02.4994°N, 002.5000°E'));
 
+        test('coincident',                    () => LatLon.intersection(new LatLon(1, 1), 0, new LatLon(1, 1), 90).toString().should.equal('01.0000°N, 001.0000°E'));
+
         const stn = new LatLon(51.8853, 0.2545), cdg = new LatLon(49.0034, 2.5735);
         test('stn-cdg-bxl',                   () => LatLon.intersection(stn, 108.547, cdg, 32.435).toString().should.equal('50.9078°N, 004.5084°E'));
 
@@ -165,6 +169,7 @@ describe('latlon-nvector-spherical', function() {
         test('cross-track b',      () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+6'));
         test('cross-track p',      () => new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'));
         test('cross-track -',      () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+6'));
+        test('cross-track coinc',  () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(10, 0), 0).should.be.NaN);
         test('cross-track (fail)', () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(null, 0); }, TypeError, '‘pathStart’ is not (NvectorSpherical) LatLon object'));
     });
 
@@ -173,6 +178,7 @@ describe('latlon-nvector-spherical', function() {
         const p2 = new LatLon(37.417243, -121.961889), d2 = 234.592423446;
         const p3 = new LatLon(37.418692, -121.960194), d3 = 54.8954278262;
         test('gis.stackexchange', () => LatLon.trilaterate(p1, d1, p2, d2, p3, d3).toString('d', 6).should.equal('37.419078°N, 121.960579°W'));
+        test('coincident', () => should.equal(LatLon.trilaterate(p1, d1, p1, d2, p1, d3), null));
     });
 
     describe('area', function() {

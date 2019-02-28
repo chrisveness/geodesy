@@ -122,9 +122,12 @@ describe('latlon-spherical', function() {
         test('distance (miles)',   () => cambg.distanceTo(paris, 3959).toPrecision(4).should.equal('251.2'));
         test('initial bearing',    () => cambg.initialBearingTo(paris).toFixed(1).should.equal('156.2'));
         test('final bearing',      () => cambg.finalBearingTo(paris).toFixed(1).should.equal('157.9'));
+        test('initial brng coinc', () => cambg.initialBearingTo(cambg).should.be.NaN);
+        test('final brng coinc',   () => cambg.finalBearingTo(cambg).should.be.NaN);
         test('bearing (reverse)',  () => paris.initialBearingTo(cambg).toFixed(1).should.equal('337.9'));
         test('midpoint',           () => cambg.midpointTo(paris).toString().should.equal('50.5363°N, 001.2746°E'));
         test('int.point',          () => cambg.intermediatePointTo(paris, 0.25).toString().should.equal('51.3721°N, 000.7073°E'));
+        test('int.point coinc',    () => cambg.intermediatePointTo(cambg, 0.25).toString().should.equal('52.2050°N, 000.1190°E'));
         test('distance (fail)',    () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, 'Invalid coordinate ‘paris’'));
         test('distance (fail)',    () => should.Throw(function() { cambg.distanceTo(paris, 'xxx'); }, TypeError, 'Radius is not a number'));
         test('init brng (fail)',   () => should.Throw(function() { cambg.initialBearingTo('paris'); }, TypeError, 'Invalid coordinate ‘paris’'));
@@ -155,6 +158,7 @@ describe('latlon-spherical', function() {
         test('parallels 1',        () => new LatLon(30, parallels.lon1).toString('dms').should.equal('30°00′00″N, 009°35′39″E'));
         test('parallels 2',        () => new LatLon(30, parallels.lon2).toString('dms').should.equal('30°00′00″N, 170°24′21″E'));
         test('parallels -',        () => should.equal(LatLon.crossingParallels(new LatLon(0, 0), new LatLon(10, 60), 60), null));
+        test('parallels coinc',    () => should.equal(LatLon.crossingParallels(new LatLon(0, 0), new LatLon(0, 0), 0), null));
     });
 
     describe('Ed Williams', function() { // www.edwilliams.org/avform.htm
@@ -187,7 +191,7 @@ describe('latlon-spherical', function() {
 
         test('bad point 1',            () => should.Throw(function() { LatLon.intersection(false, N, new LatLon(1, 0), E); }, TypeError, 'Invalid coordinate ‘false’'));
         test('bad point 2',            () => should.Throw(function() { LatLon.intersection(new LatLon(0, 1), N, false, E); }, TypeError, 'Invalid coordinate ‘false’'));
-        test('coincident points',      () => should.equal(LatLon.intersection(new LatLon(0, 1), N, new LatLon(0, 1), E), null));
+        test('coincident points',      () => LatLon.intersection(new LatLon(0, 1), W, new LatLon(0, 1), S).toString('d').should.equal('00.0000°N, 001.0000°E'));
         test('rounding errors',        () => LatLon.intersection(new LatLon(51, 0), 120, new LatLon(50, 0), 60).toString('d').should.equal('50.4921°N, 001.3612°E'));
     });
 
@@ -219,6 +223,7 @@ describe('latlon-spherical', function() {
         test('bearing',               () => dov.rhumbBearingTo(cal).toFixed(1).should.equal('116.7'));
         test('bearing dateline',      () => new LatLon(1, -179).rhumbBearingTo(new LatLon(1, 179)).should.equal(270));
         test('bearing dateline',      () => new LatLon(1, 179).rhumbBearingTo(new LatLon(1, -179)).should.equal(90));
+        test('bearing coincident',    () => dov.rhumbBearingTo(dov).should.be.NaN);
         test('bearing err',           () => should.Throw(function() { dov.rhumbBearingTo(false); }, TypeError, 'Invalid coordinate ‘false’'));
         test('dest’n',                () => dov.rhumbDestinationPoint(40310, 116.7).toString('d').should.equal('50.9641°N, 001.8531°E'));
         test('dest’n',                () => dov.rhumbDestinationPoint(40310, 116.7, 6371e3).toString('d').should.equal('50.9641°N, 001.8531°E'));
