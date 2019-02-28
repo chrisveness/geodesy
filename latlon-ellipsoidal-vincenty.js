@@ -205,7 +205,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
 
         const α2 = Math.atan2(sinα, -x);
 
-        const destinationPoint = new LatLonEllipsoidal_Vincenty(φ2.toDegrees(), Dms.wrap180(λ2.toDegrees()), 0, this.datum);
+        const destinationPoint = new LatLonEllipsoidal_Vincenty(φ2.toDegrees(), λ2.toDegrees(), 0, this.datum);
 
         return {
             point:        destinationPoint,

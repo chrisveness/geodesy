@@ -294,7 +294,7 @@ class LatLonSpherical {
         const lat = φ3.toDegrees();
         const lon = λ3.toDegrees();
 
-        return new LatLonSpherical(lat, Dms.wrap180(lon));
+        return new LatLonSpherical(lat, lon);
     }
 
 
@@ -337,7 +337,7 @@ class LatLonSpherical {
         const lat = φ3.toDegrees();
         const lon = λ3.toDegrees();
 
-        return new LatLonSpherical(lat, Dms.wrap180(lon));
+        return new LatLonSpherical(lat, lon);
     }
 
 
@@ -373,7 +373,7 @@ class LatLonSpherical {
         const lat = φ2.toDegrees();
         const lon = λ2.toDegrees();
 
-        return new LatLonSpherical(lat, Dms.wrap180(lon));
+        return new LatLonSpherical(lat, lon);
     }
 
 
@@ -434,7 +434,7 @@ class LatLonSpherical {
         const lat = φ3.toDegrees();
         const lon = λ3.toDegrees();
 
-        return new LatLonSpherical(lat, Dms.wrap180(lon));
+        return new LatLonSpherical(lat, lon);
     }
 
 
@@ -672,7 +672,7 @@ class LatLonSpherical {
         const lat = φ2.toDegrees();
         const lon = λ2.toDegrees();
 
-        return new LatLonSpherical(lat, Dms.wrap180(lon));
+        return new LatLonSpherical(lat, lon);
     }
 
 
@@ -708,7 +708,7 @@ class LatLonSpherical {
         const lat = φ3.toDegrees();
         const lon = λ3.toDegrees();
 
-        return new LatLonSpherical(lat, Dms.wrap180(lon));
+        return new LatLonSpherical(lat, lon);
     }
 
 
