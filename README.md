@@ -3,6 +3,7 @@ Geodesy functions
 
 [![Build Status](https://travis-ci.org/chrisveness/geodesy.svg?branch=v2.0.0)](https://travis-ci.org/chrisveness/geodesy)
 [![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/badge.svg?branch=2.0.0)](https://coveralls.io/github/chrisveness/geodesy?branch=2.0.0)
+[![Documentation](https://img.shields.io/badge/docs-www.movable--type.co.uk%2Fscripts%2Fgeodesy--library.html-lightgrey.svg)](https://www.movable-type.co.uk/scripts/geodesy-library.html)
 
 These libraries started life (a long time ago) as simple ‘latitude/longitude’ code fragments
 covering distances and bearings, intended to help people who had little experience of geodesy, and
@@ -76,7 +77,8 @@ const p2 = p1.destinationPoint(dist, brng); // 37.6528°S, 143.9265°E
 ````
 
 Full documentation is available at [www.movable-type.co.uk/scripts/geodesy-library.html](https://www.movable-type.co.uk/scripts/geodesy-library.html), 
-and there is a full [test suite](https://www.movable-type.co.uk/scripts/test/geodesy-test.html).
+and tests in the [browser](https://www.movable-type.co.uk/scripts/test/geodesy-test.html) as well as
+[Travis CI](https://travis-ci.org/chrisveness/geodesy).
 
 Usage
 -----
