@@ -37,7 +37,7 @@ class Vector3d {
      *   const v = new Vector3d(0.267, 0.535, 0.802);
      */
     constructor(x, y, z) {
-        if (isNaN(x) || isNaN(x) || isNaN(x)) throw new TypeError('Invalid vector');
+        if (isNaN(x) || isNaN(x) || isNaN(x)) throw new TypeError(`invalid vector [${x},${y},${z}]`);
 
         this.x = Number(x);
         this.y = Number(y);
@@ -88,7 +88,7 @@ class Vector3d {
      * @returns {Vector3d} Vector scaled by x.
      */
     times(x) {
-        x = Number(x);
+        if (isNaN(x)) throw new TypeError(`invalid scalar value ‘${x}’`);
 
         return new Vector3d(this.x * x, this.y * x, this.z * x);
     }
@@ -101,7 +101,7 @@ class Vector3d {
      * @returns {Vector3d} Vector divided by x.
      */
     dividedBy(x) {
-        x = Number(x);
+        if (isNaN(x)) throw new TypeError(`invalid scalar value ‘${x}’`);
 
         return new Vector3d(this.x / x, this.y / x, this.z / x);
     }
