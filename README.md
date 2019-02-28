@@ -2,7 +2,7 @@ Geodesy functions
 =================
 
 [![Build Status](https://travis-ci.org/chrisveness/geodesy.svg?branch=v2.0.0)](https://travis-ci.org/chrisveness/geodesy)
-[![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/badge.svg?branch=master)](https://coveralls.io/github/chrisveness/geodesy?branch=2.0.0)
+[![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/badge.svg?branch=2.0.0)](https://coveralls.io/github/chrisveness/geodesy?branch=2.0.0)
 
 These libraries started life (a long time ago) as simple ‘latitude/longitude’ code fragments
 covering distances and bearings, intended to help people who had little experience of geodesy, and
