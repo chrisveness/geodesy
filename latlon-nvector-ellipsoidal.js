@@ -248,10 +248,7 @@ class NvectorEllipsoidal extends Vector3d {
      *   const p = c.toLatLon();                                            // 45.0000°N, 045.0000°E
      */
     toCartesian() {
-        const ellipsoid = this.datum ? this.datum.ellipsoid :
-            this.referenceFrame ? this.referenceFrame.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
-
-        const { b, f } = ellipsoid;
+        const { b, f } = this.datum.ellipsoid;
         const { x, y, z, h } = this;
 
         const m = (1-f) * (1-f); // (1−f)² = b²/a²

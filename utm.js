@@ -280,7 +280,8 @@ class LatLon_Utm extends LatLonEllipsoidal {
         const φ = this.lat.toRadians();      // latitude ± from equator
         const λ = this.lon.toRadians() - λ0; // longitude ± from central meridian
 
-        const ellipsoid = this.datum ? this.datum.ellipsoid : this.referenceFrame ? this.referenceFrame.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
+        // allow alternative ellipsoid to be specified
+        const ellipsoid = this.datum ? this.datum.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
         const { a, f } = ellipsoid; // WGS-84: a = 6378137, f = 1/298.257223563;
 
         const k0 = 0.9996; // UTM scale on the central meridian

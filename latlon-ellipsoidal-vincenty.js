@@ -167,9 +167,9 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const α1 = initialBearing.toRadians();
         const s = distance;
 
-        const ellipsoid = this.datum ? this.datum.ellipsoid :
-            this.referenceFrame ? this.referenceFrame.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
-        const a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
+        // allow alternative ellipsoid to be specified
+        const ellipsoid = this.datum ? this.datum.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
+        const { a, b, f } = ellipsoid;
 
         const sinα1 = Math.sin(α1);
         const cosα1 = Math.cos(α1);
@@ -235,9 +235,9 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const φ1 = p1.lat.toRadians(), λ1 = p1.lon.toRadians();
         const φ2 = p2.lat.toRadians(), λ2 = p2.lon.toRadians();
 
-        const ellipsoid = this.datum ? this.datum.ellipsoid :
-            this.referenceFrame ? this.referenceFrame.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
-        const a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
+        // allow alternative ellipsoid to be specified
+        const ellipsoid = this.datum ? this.datum.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
+        const { a, b, f } = ellipsoid;
 
         const L = λ2 - λ1;
         const tanU1 = (1-f) * Math.tan(φ1), cosU1 = 1 / Math.sqrt((1 + tanU1*tanU1)), sinU1 = tanU1 * cosU1;

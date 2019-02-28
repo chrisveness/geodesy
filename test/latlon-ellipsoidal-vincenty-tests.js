@@ -90,7 +90,8 @@ describe('latlon-ellipsoidal-vincenty', function() {
     });
 
     describe('convergence', function() {
-        test('vincenty antipodal convergence failure', () => new LatLon(0, 0).distanceTo(new LatLon(0.5, 179.7)).should.be.NaN);
+        test('vincenty antipodal λ > π',       () => new LatLon(0.0, 0.0).distanceTo(new LatLon(0.5, 179.7)).should.be.NaN);
+        test('vincenty antipodal convergence', () => new LatLon(5.0, 0.0).distanceTo(new LatLon(-5.1, 179.4)).should.be.NaN);
     });
 
     describe('direct returns LatLonEllipsoidal_Vincenty object', function() {
@@ -104,7 +105,10 @@ describe('latlon-ellipsoidal-vincenty', function() {
         const jog = new LatLon(58.644399, -3.068521); // in OSGB-36
         le.datum = datums.OSGB36; // source point determines ellipsoid to use
         const dist = 969982.014; // 27.848m more than on WGS-84 ellipsoid; Airy1830 has a smaller flattening, hence larger distance at higher latitudes
+        const brngInit = 9.1428517;
         test('inverse distance', () => le.distanceTo(jog).should.equal(dist));
+        test('inverse bearing', () => le.initialBearingTo(jog).should.equal(brngInit));
+        test('direct destination', () => le.destinationPoint(dist, brngInit).toString('d', 6).should.equal('58.644399°N, 003.068521°W'));
     });
 
 });
