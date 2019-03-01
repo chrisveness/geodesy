@@ -58,23 +58,23 @@ for instance:
 
 - to find the distance between two points using a simple spherical earth model:
 
-````
-import LatLon from '/js/geodesy/latlon-spherical.js
+```javascript
+import LatLon from '/js/geodesy/latlon-spherical.js';
 const p1 = new LatLon(52.205, 0.119);
 const p2 = new LatLon(48.857, 2.351);
 const d = p1.distanceTo(p2); // 404.3×10³ m
-````
+```
 
 - or to find the destination point for a given distance and initial bearing on an ellipsoidal model
   earth:
 
-````
-import LatLon from '/js/geodesy/latlon-ellipsoidal-vincency.js
+```javascript
+import LatLon from '/js/geodesy/latlon-ellipsoidal-vincency.js';
 const p1 = new LatLon(-37.95103, 144.42487);
 const dist = 54972.271;
 const brng = 306.86816;
 const p2 = p1.destinationPoint(dist, brng); // 37.6528°S, 143.9265°E
-````
+```
 
 Full documentation is available at [www.movable-type.co.uk/scripts/geodesy-library.html](https://www.movable-type.co.uk/scripts/geodesy-library.html), 
 and tests in the [browser](https://www.movable-type.co.uk/scripts/test/geodesy-test.html) as well as
@@ -91,33 +91,37 @@ either client-side in-browser, or with Node.js.
 The library can be used in the browser by taking a local copy, or loading it from jsDelivr: for
 example,
 
-    <!doctype html><title>geodesy example</title><meta charset="utf-8">
-    <script type="module">
-        import LatLon from 'https://cdn.jsdelivr.net/gh/chrisveness/geodesy@2.0.0/latlon-spherical.min.js';
+```html
+<!doctype html><title>geodesy example</title><meta charset="utf-8">
+<script type="module">
+    import LatLon from 'https://cdn.jsdelivr.net/gh/chrisveness/geodesy@2.0.0/latlon-spherical.min.js';
 
-        const p1 = new LatLon(50.06632, -5.71475);
-        const p2 = new LatLon(58.64402, -3.07009);
+    const p1 = new LatLon(50.06632, -5.71475);
+    const p2 = new LatLon(58.64402, -3.07009);
 
-        const d = p1.distanceTo(p2);
-        console.assert(d.toFixed(3) == '968874.704');
+    const d = p1.distanceTo(p2);
+    console.assert(d.toFixed(3) == '968874.704');
 
-        const mid = p1.midpointTo(p2);
-        console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 51″ W');
-    </script>
+    const mid = p1.midpointTo(p2);
+    console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 51″ W');
+</script>
+```
 
 ### Usage in Node.js
 
-The library can be used in a Node.js app from npm:
+The library can be used in a Node.js app from [npm](https://www.npmjs.com/package/geodesy):
 
-    $ npm install geodesy
-    $ node -r esm
-    > import LatLon from 'geodesy/latlon-spherical';
-    > const p1 = new LatLon(50.06632, -5.71475);
-    > const p2 = new LatLon(58.64402, -3.07009);
-    > const d = p1.distanceTo(p2);
-    > console.assert(d.toFixed(3) == '968874.704');
-    > const mid = p1.midpointTo(p2);
-    > console.assert(mid.toString() == '54°21′44″N, 004°31′51″W');
+```shell
+$ npm install geodesy
+$ node -r esm
+> import LatLon from 'geodesy/latlon-spherical';
+> const p1 = new LatLon(50.06632, -5.71475);
+> const p2 = new LatLon(58.64402, -3.07009);
+> const d = p1.distanceTo(p2);
+> console.assert(d.toFixed(3) == '968874.704');
+> const mid = p1.midpointTo(p2);
+> console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 51″ W');
+```
 
 ### Other examples
 
@@ -125,76 +129,89 @@ Some examples of calculations possible with the libraries:
 
 e.g. for geodesic distance on an ellipsoidal model earth using Vincenty’s algorithm:
 
-    import LatLon from 'geodesy/latlon-ellipsoidal-vincenty.js';
+```javascript
+import LatLon from 'geodesy/latlon-ellipsoidal-vincenty.js';
 
-    const p1 = new LatLon(50.06632, -5.71475);
-    const p2 = new LatLon(58.64402, -3.07009);
+const p1 = new LatLon(50.06632, -5.71475);
+const p2 = new LatLon(58.64402, -3.07009);
 
-    const d = p1.distanceTo(p2);
-    console.assert(d.toFixed(3) == '969954.166');
+const d = p1.distanceTo(p2);
+console.assert(d.toFixed(3) == '969954.166');
+```
 
 e.g. for UTM conversions:
 
-    import Utm from 'geodesy/utm.js';
+```javascript
+import Utm from 'geodesy/utm.js';
 
-    const utm = Utm.parse('48 N 377298.745 1483034.794');
-    const latlon = utm.toLatLon();
-    
-    console.assert(latlon.toString('dms', 2) == '13° 24′ 45.00″ N, 103° 52′ 00.00″ E');
-    console.assert(latlon.toUtm().toString() == '48 N 377298.745 1483034.794';
+const utm = Utm.parse('48 N 377298.745 1483034.794');
+const latlon = utm.toLatLon();
+
+console.assert(latlon.toString('dms', 2) == '13° 24′ 45.00″ N, 103° 52′ 00.00″ E');
+console.assert(latlon.toUtm().toString() == '48 N 377298.745 1483034.794';
+```
 
 e.g. for MGRS/NATO map references:
 
-    import Mgrs, { LatLon } from 'geodesy/mgrs.js';
+```javascript
+import Mgrs, { LatLon } from 'geodesy/mgrs.js';
 
-    const mgrs = Mgrs.parse('31U DQ 48251 11932');
-    const latlon = mgrs.toUtm().toLatLon();
-    console.assert(latlon.toString('dms', 2) == '48°51′29.50″N, 002°17′40.16″E');
+const mgrs = Mgrs.parse('31U DQ 48251 11932');
+const latlon = mgrs.toUtm().toLatLon();
+console.assert(latlon.toString('dms', 2) == '48° 51′ 29.50″ N, 002° 17′ 40.16″ E');
 
-    const p = LatLon.parse('51°28′40.37″N, 000°00′05.29″W');
-    const ref = p.toUtm().toMgrs();
-    console.assert(ref.toString() == '30U YC 08215 07233');
+const p = LatLon.parse('51°28′40.37″N, 000°00′05.29″W');
+const ref = p.toUtm().toMgrs();
+console.assert(ref.toString() == '30U YC 08215 07233');
+```
 
 e.g. for OS grid references:
 
-    import OsGridRef, { LatLon } from 'geodesy/osgridref.js';
+```javascript
+import OsGridRef, { LatLon } from 'geodesy/osgridref.js';
 
-    const gridref = new OsGridRef(651409.903, 313177.270);
+const gridref = new OsGridRef(651409.903, 313177.270);
 
-    const pWgs84 = OsGridRef.osGridToLatLon(gridref);
-    console.assert(pWgs84.toString('dms', 4) == '52°39′28.7230″N, 001°42′57.7870″E');
+const pWgs84 = gridref.toLatLon();
+console.assert(pWgs84.toString('dms', 4) == '52° 39′ 28.7230″ N, 001° 42′ 57.7870″ E');
 
-    const pOsgb = OsGridRef.osGridToLatLon(gridref, LatLon.datums.OSGB36);
-    console.assert(pOsgb.toString('dms', 4) == '52°39′27.2531″N, 001°43′04.5177″E');
+const pOsgb = gridref.toLatLon(LatLon.datums.OSGB36);
+console.assert(pOsgb.toString('dms', 4) == '52° 39′ 27.2531″ N, 001° 43′ 04.5177″ E');
+```
 
 e.g. for testing if a point is enclosed within a polygon:
 
-    import LatLon from 'geodesy/latlon-nvector-spherical.js';
+```javascript
+import LatLon from 'geodesy/latlon-nvector-spherical.js';
 
-    const polygon = [ new LatLon(48,2), new LatLon(49,2), new LatLon(49,3), new LatLon(48,3) ];
+const polygon = [ new LatLon(48,2), new LatLon(49,2), new LatLon(49,3), new LatLon(48,3) ];
 
-    const enclosed = new LatLon(48.9,2.4).isEnclosedBy(polygon)
-
-    console.assert(enclosed == true);
+const enclosed = new LatLon(48.9,2.4).isEnclosedBy(polygon);
+console.assert(enclosed == true);
+```
 
 e.g. greater parsing & presentation control:
 
-    import LatLon from 'geodesy/latlon-spherical.js';
+```javascript
+import LatLon from 'geodesy/latlon-spherical.js';
+Dms.separator = ' '; // full-space separator between degrees-minutes-seconds
 
-    const p1 = LatLon.parse('50°03′59″N, 005°42′53″W'));
-    const p2 = LatLon.parse('58°38′38″N, 003°04′12″W'));
+const p1 = LatLon.parse({ lat: '50:03:59N', lng: '005:42:53W' });
+const p2 = LatLon.parse({ lat: '58:38:38N', lng: '003:04:12W' });
 
-    const mid = p1.midpointTo(p2);
-    Dms.separator = ' '; // full-space separator between degrees-minutes-seconds
-    console.assert(mid.toString('dms') == '54° 21′ 44″N, 004° 31′ 51″W');
+const mid = p1.midpointTo(p2);
+console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 50″ W');
+```
 
 e.g. datum conversions:
 
-    import LatLon from 'geodesy/latlon-ellipsoidal-datum.js';
+```javascript
+import LatLon from 'geodesy/latlon-ellipsoidal-datum.js';
 
-    const pWgs84 = new LatLon('53.3498° N, 6.2603° W');
-    const pIrl1975 = pWgs84.convertDatum(LatLon.datums.Irl1975);
+const pWgs84 = new LatLon(53.3444, -6.2577);
 
-    console.assert(pIrl1975.toString() == '53.3497°N, 006.2589°W');
+const pIrl1975 = pWgs84.convertDatum(LatLon.datums.Irl1975);
+console.assert(pIrl1975.toString() == '53.3442° N, 006.2567° W');
+```
 
 (The format of the import statements will vary according to deployment).
