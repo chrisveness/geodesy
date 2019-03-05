@@ -402,14 +402,14 @@ class LatLonNvectorSpherical {
             c1 = p1.cross(path1brngEnd.toNvector());
             path1def = 'endpoint';
         } else {                              // path 1 defined by initial bearing
-            c1 = path1start.greatCircle(Number(path1brngEnd));
+            c1 = path1start.greatCircle(path1brngEnd);
             path1def = 'bearing';
         }
         if (path2brngEnd instanceof LatLonNvectorSpherical) { // path 2 defined by endpoint
             c2 = p2.cross(path2brngEnd.toNvector());
             path2def = 'endpoint';
         } else {                              // path 2 defined by initial bearing
-            c2 = path2start.greatCircle(Number(path2brngEnd));
+            c2 = path2start.greatCircle(path2brngEnd);
             path2def = 'bearing';
         }
 
@@ -486,7 +486,7 @@ class LatLonNvectorSpherical {
 
         const gc = pathBrngEnd instanceof LatLonNvectorSpherical   // (note JavaScript is not good at method overloading)
             ? pathStart.toNvector().cross(pathBrngEnd.toNvector()) // great circle defined by two points
-            : pathStart.greatCircle(Number(pathBrngEnd));          // great circle defined by point + bearing
+            : pathStart.greatCircle(pathBrngEnd);                  // great circle defined by point + bearing
 
         const α = gc.angleTo(p) - π/2; // angle between point & great-circle
 
