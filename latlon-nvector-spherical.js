@@ -478,6 +478,7 @@ class LatLonNvectorSpherical {
      */
     crossTrackDistanceTo(pathStart, pathBrngEnd, radius=6371e3) {
         if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError('‘pathStart’ is not (NvectorSpherical) LatLon object');
+        if (!(pathBrngEnd instanceof LatLonNvectorSpherical || !isNaN(pathBrngEnd))) throw new TypeError('‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number');
 
         if (this.equals(pathStart)) return NaN; // coincident points
 
@@ -494,7 +495,40 @@ class LatLonNvectorSpherical {
     }
 
 
-    // TODO: alongTrackDistanceTo
+    /**
+     * Returns how far ‘this’ point is along a path from from start-point, heading on bearing or towards
+     * end-point. That is, if a perpendicular is drawn from ‘this’ point to the (great circle) path, the
+     * along-track distance is the distance from the start point to where the perpendicular crosses the
+     * path.
+     *
+     * @param   {LatLon}        pathStart - Start point of great circle path.
+     * @param   {LatLon|number} pathBrngEnd - End point of great circle path or initial bearing from great circle start point.
+     * @param   {number}        [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
+     * @returns {number}        Distance along great circle to point nearest ‘this’ point.
+     *
+     * @example
+     *   const pCurrent = new LatLon(53.2611, -0.7972);
+     *   const p1 = new LatLon(53.3206, -1.7297);
+     *   const p2 = new LatLon(53.1887,  0.1334);
+     *   const d = pCurrent.alongTrackDistanceTo(p1, p2);  // 62.331 km
+     */
+    alongTrackDistanceTo(pathStart, pathBrngEnd, radius=6371e3) {
+        if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError('‘pathStart’ is not (NvectorSpherical) LatLon object');
+        if (!(pathBrngEnd instanceof LatLonNvectorSpherical || !isNaN(pathBrngEnd))) throw new TypeError('‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number');
+
+        const p = this.toNvector();
+        const R = Number(radius);
+
+        const gc = pathBrngEnd instanceof LatLonNvectorSpherical   // (note JavaScript is not good at method overloading)
+            ? pathStart.toNvector().cross(pathBrngEnd.toNvector()) // great circle defined by two points
+            : pathStart.greatCircle(pathBrngEnd);                  // great circle defined by point + bearing
+
+        const pat = gc.cross(p).cross(gc); // along-track point c × p × c
+
+        const α = pathStart.toNvector().angleTo(pat, gc); // angle between start point and along-track point
+
+        return α * R;
+    }
 
 
     /**

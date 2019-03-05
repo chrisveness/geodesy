@@ -28,6 +28,7 @@ describe('latlon-nvector-spherical', function() {
         test('destinationPoint',            () => new LatLon(51.47788, -0.00147).destinationPoint(7794, 300.7).toString().should.equal('51.5136°N, 000.0983°W'));
         test('intersection',                () => LatLon.intersection(new LatLon(51.8853, 0.2545), 108.547, new LatLon(49.0034, 2.5735), 32.435).toString().should.equal('50.9078°N, 004.5084°E'));
         test('crossTrackDistanceTo',        () => new LatLon(53.2611, -0.7972).crossTrackDistanceTo(new LatLon(53.3206, -1.7297), new LatLon(53.1887, 0.1334)).toFixed(1).should.equal('-307.5'));
+        test('alongTrackDistanceTo',        () => new LatLon(53.2611, -0.7972).alongTrackDistanceTo(new LatLon(53.3206, -1.7297), new LatLon(53.1887, 0.1334)).toFixed().should.equal('62331'));
         test('nearestPointOnSegment 1',     () => new LatLon(51.0, 1.9).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0004°N, 001.9000°E'));
         test('nearestPointOnSegment 2',     () => new LatLon(51.0, 2.1).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0000°N, 002.0000°E'));
         test('nearestPointOnSegment antip', () => new LatLon(10, -140).nearestPointOnSegment(new LatLon(0, 20), new LatLon(0, 40)).toString().should.equal('00.0000°N, 020.0000°E'));
@@ -166,12 +167,34 @@ describe('latlon-nvector-spherical', function() {
         test('int’n (fail 5)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, '‘path2brngEnd’ is not LatLon object'));
     });
 
-    describe('cross-track', function() {
-        test('cross-track b',      () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+6'));
-        test('cross-track p',      () => new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'));
-        test('cross-track -',      () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+6'));
-        test('cross-track coinc',  () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(10, 0), 0).should.be.NaN);
-        test('cross-track (fail)', () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(null, 0); }, TypeError, '‘pathStart’ is not (NvectorSpherical) LatLon object'));
+    describe('cross-track / along-track', function() {
+        test('cross-track b',       () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+6'));
+        test('cross-track p',       () => new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'));
+        test('cross-track -',       () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+6'));
+
+        const bradwell = new LatLon(53.3206, -1.7297), dunham = new LatLon(53.2611, -0.7972), partney = new LatLon(53.1887,  0.1334);
+        test('cross-track',          () => dunham.crossTrackDistanceTo(bradwell, partney).toPrecision(4).should.equal('-307.5'));
+        test('along-track brng',     () => dunham.alongTrackDistanceTo(bradwell, 96.0).toPrecision(4).should.equal('6.233e+4'));
+        test('along-track end-p',    () => dunham.alongTrackDistanceTo(bradwell, partney).toPrecision(4).should.equal('6.233e+4'));
+
+        test('cross-track NE',       () => new LatLon(1, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
+        test('cross-track SE',       () => new LatLon(-1,  1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
+        test('cross-track SW?',      () => new LatLon(-1, -1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
+        test('cross-track NW?',      () => new LatLon( 1, -1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
+
+        test('along-track NE',       () => new LatLon( 1,  1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
+        test('along-track SE',       () => new LatLon(-1,  1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
+        test('along-track SW',       () => new LatLon(-1, -1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
+        test('along-track NW',       () => new LatLon( 1, -1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
+
+        test('cross-track brng w-e', () => new LatLon(1, 0).crossTrackDistanceTo(new LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+5'));
+        test('cross-track brng e-w', () => new LatLon(1, 0).crossTrackDistanceTo(new LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+5'));
+
+        test('cross-track coinc',    () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(10, 0), 0).should.be.NaN);
+        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(null, 0); }, TypeError, '‘pathStart’ is not (NvectorSpherical) LatLon object'));
+        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, '‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number'));
+        test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(null, 0); }, TypeError, '‘pathStart’ is not (NvectorSpherical) LatLon object'));
+        test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, '‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number'));
     });
 
     describe('trilaterate', function() { // http://gis.stackexchange.com/a/415/41129
