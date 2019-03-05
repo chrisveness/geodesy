@@ -39,15 +39,15 @@ class LatLonSpherical {
      *
      * @param  {number} lat - Latitude (in degrees).
      * @param  {number} lon - Longitude (in degrees).
-     * @throws {TypeError} Non-numeric lat/lon.
+     * @throws {TypeError} Invalid lat/lon.
      *
      * @example
      *   import LatLon from '/js/geodesy/latlon-spherical.js';
      *   const p = new LatLon(52.205, 0.119);
      */
     constructor(lat, lon) {
-        if (isNaN(lat)) throw new TypeError(`Invalid lat ‘${lat}’`);
-        if (isNaN(lon)) throw new TypeError(`Invalid lon ‘${lon}’`);
+        if (isNaN(lat)) throw new TypeError(`invalid lat ‘${lat}’`);
+        if (isNaN(lon)) throw new TypeError(`invalid lon ‘${lon}’`);
 
         this._lat = Dms.wrap90(lat);
         this._lon = Dms.wrap180(lon);
@@ -62,11 +62,11 @@ class LatLonSpherical {
     get latitude()  { return this._lat; }
     set lat(lat) {
         this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(lat);
-        if (isNaN(this._lat)) throw new TypeError(`Invalid lat ‘${lat}’`);
+        if (isNaN(this._lat)) throw new TypeError(`invalid lat ‘${lat}’`);
     }
     set latitude(lat) {
         this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(lat);
-        if (isNaN(this._lat)) throw new TypeError(`Invalid latitude ‘${lat}’`);
+        if (isNaN(this._lat)) throw new TypeError(`invalid latitude ‘${lat}’`);
     }
 
     /**
@@ -78,15 +78,15 @@ class LatLonSpherical {
     get longitude() { return this._lon; }
     set lon(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(lon);
-        if (isNaN(this._lon)) throw new TypeError(`Invalid lon ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid lon ‘${lon}’`);
     }
     set lng(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(lon);
-        if (isNaN(this._lon)) throw new TypeError(`Invalid lng ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid lng ‘${lon}’`);
     }
     set longitude(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(lon);
-        if (isNaN(this._lon)) throw new TypeError(`Invalid longitude ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid longitude ‘${lon}’`);
     }
 
 
@@ -114,7 +114,7 @@ class LatLonSpherical {
      * @param   {number|string|Object} lat|latlon - Latitude (in degrees) or comma-separated lat/lon or lat/lon object.
      * @param   {number|string}        [lon]      - Longitude (in degrees).
      * @returns {LatLon} Latitude/longitude point.
-     * @throws  {TypeError} Invalid coordinate.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const p1 = LatLon.parse(52.205, 0.119);                                    // numeric pair (≡ new LatLon)
@@ -127,8 +127,8 @@ class LatLonSpherical {
      *   const p8 = LatLon.parse({ type: 'Point', coordinates: [ 0.119, 52.205] }); // GeoJSON
      */
     static parse(...args) {
-        if (args.length == 0) throw new TypeError('Invalid (empty) coordinate');
-        if (args[0]===null || args[1]===null) throw new TypeError('Invalid (null) coordinate');
+        if (args.length == 0) throw new TypeError('invalid (empty) point');
+        if (args[0]===null || args[1]===null) throw new TypeError('invalid (null) point');
 
         let lat=undefined, lon=undefined;
 
@@ -136,14 +136,14 @@ class LatLonSpherical {
             [ lat, lon ] = args;
             lat = Dms.wrap90(Dms.parse(lat));
             lon = Dms.wrap180(Dms.parse(lon));
-            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`Invalid coordinate ‘${args.toString()}’`);
+            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`invalid point ‘${args.toString()}’`);
         }
 
         if (args.length == 1 && typeof args[0] == 'string') { // single comma-separated lat,lon string
             [ lat, lon ] = args[0].split(',');
             lat = Dms.wrap90(Dms.parse(lat));
             lon = Dms.wrap180(Dms.parse(lon));
-            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`Invalid coordinate ‘${args[0]}’`);
+            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`invalid point ‘${args[0]}’`);
         }
 
         if (args.length == 1 && typeof args[0] == 'object') { // single { lat, lon } object
@@ -159,10 +159,10 @@ class LatLonSpherical {
                 lat = Dms.wrap90(Dms.parse(lat));
                 lon = Dms.wrap180(Dms.parse(lon));
             }
-            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`Invalid coordinate ‘${JSON.stringify(args[0])}’`);
+            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`invalid point ‘${JSON.stringify(args[0])}’`);
         }
 
-        if (isNaN(lat) || isNaN(lon)) throw new TypeError(`Invalid coordinate ‘${args.toString()}’`);
+        if (isNaN(lat) || isNaN(lon)) throw new TypeError(`invalid point ‘${args.toString()}’`);
 
         return new LatLonSpherical(lat, lon);
     }
@@ -176,7 +176,7 @@ class LatLonSpherical {
      * @param   {LatLon} point - Latitude/longitude of destination point.
      * @param   {number} [radius=6371e3] - Radius of earth (defaults to mean radius in metres).
      * @returns {number} Distance between this point and destination point, in same units as radius.
-     * @throws  {TypeError} Radius is not a number.
+     * @throws  {TypeError} Invalid radius.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -186,7 +186,7 @@ class LatLonSpherical {
      */
     distanceTo(point, radius=6371e3) {
         if (!(point instanceof LatLonSpherical)) point = LatLonSpherical.parse(point); // allow literal forms
-        if (isNaN(radius)) throw new TypeError('Radius is not a number');
+        if (isNaN(radius)) throw new TypeError(`invalid radius ‘${radius}’`);
 
         // a = sin²(Δφ/2) + cos(φ1)⋅cos(φ2)⋅sin²(Δλ/2)
         // δ = 2·atan2(√(a), √(1−a))
@@ -612,7 +612,6 @@ class LatLonSpherical {
      *
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @returns {number}    Bearing in degrees from north.
-     * @throws  {TypeError} Invalid coordinate.
      *
      * @example
      *   const p1 = new LatLon(51.127, 1.338);
@@ -830,7 +829,7 @@ class LatLonSpherical {
      */
     toString(format='d', dp=undefined) {
         // note: explicitly set dp to undefined for passing through to toLat/toLon
-        if (![ 'd', 'dm', 'dms', 'n' ].includes(format)) throw new RangeError(`Invalid format ‘${format}’`);
+        if (![ 'd', 'dm', 'dms', 'n' ].includes(format)) throw new RangeError(`invalid format ‘${format}’`);
 
         if (format == 'n') { // signed numeric degrees
             if (dp == undefined) dp = 4;

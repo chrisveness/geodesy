@@ -161,7 +161,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
      * @throws  {EvalError}  Formula failed to converge.
      */
     direct(distance, initialBearing) {
-        if (this.height != 0) throw new RangeError('Point must be on the surface of the ellipsoid');
+        if (this.height != 0) throw new RangeError('point must be on the surface of the ellipsoid');
 
         const φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
         const α1 = initialBearing.toRadians();
@@ -223,13 +223,13 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
      * @private
      * @param   {LatLon} point - Latitude/longitude of destination point.
      * @returns {Object} Object including distance, initialBearing, finalBearing.
-     * @throws  {TypeError}  Point not LatLon object.
+     * @throws  {TypeError}  Invalid point.
      * @throws  {RangeError} Points must be on surface of ellipsoid.
      * @throws  {EvalError}  Formula failed to converge.
      */
     inverse(point) {
-        if (!(point instanceof LatLonEllipsoidal)) throw new TypeError('‘point’ is not (Ellipsoidal) LatLon object');
-        if (this.height!=0 || point.height!=0) throw new RangeError('Point must be on the surface of the ellipsoid');
+        if (!(point instanceof LatLonEllipsoidal)) throw new TypeError(`invalid point ‘${point}’`);
+        if (this.height!=0 || point.height!=0) throw new RangeError('point must be on the surface of the ellipsoid');
 
         const p1 = this, p2 = point;
         const φ1 = p1.lat.toRadians(), λ1 = p1.lon.toRadians();

@@ -55,12 +55,12 @@ describe('latlon-nvector-spherical', function() {
     });
 
     describe('constructor fail', function() {
-        test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'Invalid lat ‘x’'));
-        test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'Invalid lon ‘x’'));
+        test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
+        test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));
     });
     describe('constructor fail', function() {
-        test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'Invalid lat ‘x’'));
-        test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'Invalid lon ‘x’'));
+        test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
+        test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));
     });
 
     describe('getters/setters', function() {
@@ -86,11 +86,11 @@ describe('latlon-nvector-spherical', function() {
 
     describe('setters (fail)', function() {
         const camb = new LatLon(0, 0);
-        test('lat',       () => should.Throw(function() { camb.lat = 'xxx'; }, TypeError, 'Invalid lat ‘xxx’'));
-        test('latitude',  () => should.Throw(function() { camb.latitude = 'xxx'; }, TypeError, 'Invalid latitude ‘xxx’'));
-        test('lon',       () => should.Throw(function() { camb.lon = 'xxx'; }, TypeError, 'Invalid lon ‘xxx’'));
-        test('lgn',       () => should.Throw(function() { camb.lng = 'xxx'; }, TypeError, 'Invalid lng ‘xxx’'));
-        test('longitude', () => should.Throw(function() { camb.longitude = 'xxx'; }, TypeError, 'Invalid longitude ‘xxx’'));
+        test('lat',       () => should.Throw(function() { camb.lat = 'xxx'; }, TypeError, 'invalid lat ‘xxx’'));
+        test('latitude',  () => should.Throw(function() { camb.latitude = 'xxx'; }, TypeError, 'invalid latitude ‘xxx’'));
+        test('lon',       () => should.Throw(function() { camb.lon = 'xxx'; }, TypeError, 'invalid lon ‘xxx’'));
+        test('lgn',       () => should.Throw(function() { camb.lng = 'xxx'; }, TypeError, 'invalid lng ‘xxx’'));
+        test('longitude', () => should.Throw(function() { camb.longitude = 'xxx'; }, TypeError, 'invalid longitude ‘xxx’'));
     });
 
     describe('toString', function() {
@@ -101,7 +101,7 @@ describe('latlon-nvector-spherical', function() {
         test('dms,2',   () => btTower.toString('dms', 2).should.equal('51°31′17.29″N, 000°08′19.80″W'));
         test('n',       () => btTower.toString('n').should.equal('51.5215,-0.1388'));
         test('n,6',     () => btTower.toString('n', 6).should.equal('51.521470,-0.138833'));
-        test('bad fmt', () => should.Throw(function() { btTower.toString('x', 6); }, RangeError, 'Invalid format ‘x’'));
+        test('bad fmt', () => should.Throw(function() { btTower.toString('x', 6); }, RangeError, 'invalid format ‘x’'));
     });
 
     describe('great circle', function() {
@@ -124,13 +124,13 @@ describe('latlon-nvector-spherical', function() {
 
     describe('geodesics fails', function() {
         const cambg = new LatLon(52.205, 0.119), paris = new LatLon(48.857, 2.351);
-        test('distance (fail p)',   () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
-        test('distance (fail r)',   () => should.Throw(function() { cambg.distanceTo(paris, 'xxx'); }, TypeError, 'Radius is not a number'));
-        test('init brng (fail)',    () => should.Throw(function() { cambg.initialBearingTo('paris'); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
-        test('final brng (fail)',   () => should.Throw(function() { cambg.finalBearingTo('paris'); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
-        test('midpoint (fail)',     () => should.Throw(function() { cambg.midpointTo('paris'); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
-        test('int.point (fail)',    () => should.Throw(function() { cambg.intermediatePointTo('paris', 0.5); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
-        test('int.point.ch (fail)', () => should.Throw(function() { cambg.intermediatePointOnChordTo('paris', 0.5); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
+        test('distance (fail p)',   () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('distance (fail r)',   () => should.Throw(function() { cambg.distanceTo(paris, 'xxx'); }, TypeError, 'invalid radius ‘xxx’'));
+        test('init brng (fail)',    () => should.Throw(function() { cambg.initialBearingTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('final brng (fail)',   () => should.Throw(function() { cambg.finalBearingTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('midpoint (fail)',     () => should.Throw(function() { cambg.midpointTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('int.point (fail)',    () => should.Throw(function() { cambg.intermediatePointTo('paris', 0.5); }, TypeError, 'invalid point ‘paris’'));
+        test('int.point.ch (fail)', () => should.Throw(function() { cambg.intermediatePointOnChordTo('paris', 0.5); }, TypeError, 'invalid point ‘paris’'));
     });
 
     describe('intersection', function() {
@@ -160,11 +160,11 @@ describe('latlon-nvector-spherical', function() {
         const stn = new LatLon(51.8853, 0.2545), cdg = new LatLon(49.0034, 2.5735);
         test('stn-cdg-bxl',                   () => LatLon.intersection(stn, 108.547, cdg, 32.435).toString().should.equal('50.9078°N, 004.5084°E'));
 
-        test('int’n (fail 1)',                () => should.Throw(function() { LatLon.intersection(null, 'n', null, 's'); }, TypeError, '‘path1start’ is not LatLon object'));
-        test('int’n (fail 2)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', null, 's'); }, TypeError, '‘path2start’ is not LatLon object'));
-        test('int’n (fail 3)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, '‘path1brngEnd’ is not LatLon object'));
-        test('int’n (fail 4)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, '‘path1brngEnd’ is not LatLon object'));
-        test('int’n (fail 5)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, '‘path2brngEnd’ is not LatLon object'));
+        test('int’n (fail 1)',                () => should.Throw(function() { LatLon.intersection(null, 'n', null, 's'); }, TypeError, 'invalid path1start ‘null’'));
+        test('int’n (fail 2)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', null, 's'); }, TypeError, 'invalid path2start ‘null’'));
+        test('int’n (fail 3)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, 'invalid path1brngEnd ‘n’'));
+        test('int’n (fail 4)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, 'invalid path1brngEnd ‘n’'));
+        test('int’n (fail 5)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, 'invalid path2brngEnd ‘s’'));
     });
 
     describe('cross-track / along-track', function() {
@@ -191,10 +191,10 @@ describe('latlon-nvector-spherical', function() {
         test('cross-track brng e-w', () => new LatLon(1, 0).crossTrackDistanceTo(new LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+5'));
 
         test('cross-track coinc',    () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(10, 0), 0).should.be.NaN);
-        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(null, 0); }, TypeError, '‘pathStart’ is not (NvectorSpherical) LatLon object'));
-        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, '‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number'));
-        test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(null, 0); }, TypeError, '‘pathStart’ is not (NvectorSpherical) LatLon object'));
-        test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, '‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number'));
+        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(null, 0); }, TypeError, 'invalid pathStart ‘null’'));
+        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, 'invalid pathBrngEnd ‘x’'));
+        test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(null, 0); }, TypeError, 'invalid pathStart ‘null’'));
+        test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, 'invalid pathBrngEnd ‘x’'));
     });
 
     describe('trilaterate', function() { // http://gis.stackexchange.com/a/415/41129
@@ -227,7 +227,7 @@ describe('latlon-nvector-spherical', function() {
     describe('misc', function() {
         test('equals true',  () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
         test('equals false', () => new LatLon(52.206, 0.119).equals(new LatLon(52.205, 0.119)).should.be.false);
-        test('equals (fail)', () => should.Throw(function() { new LatLon(52.205, 0.119).equals('cambg'); }, TypeError, '‘point’ is not (NvectorSpherical) LatLon object'));
+        test('equals (fail)', () => should.Throw(function() { new LatLon(52.205, 0.119).equals('cambg'); }, TypeError, 'invalid point ‘cambg’'));
         test('toGeoJSON',    () => new LatLon(52.205, 0.119).toGeoJSON().should.deep.equal({ type: 'Point', coordinates: [ 0.119, 52.205 ] }));
     });
 });

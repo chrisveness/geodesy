@@ -25,8 +25,8 @@ describe('latlon-ellipsoidal-datum', function() {
     });
 
     describe('valid datum', function() {
-        test('constructor', () => should.Throw(function() { new LatLon(0, 0, 0, null); }, TypeError, 'Unrecognised datum ‘null’'));
-        test('parse',       () => should.Throw(function() { LatLon.parse('0, 0', 0, null); }, TypeError, 'Unrecognised datum ‘null’'));
+        test('constructor', () => should.Throw(function() { new LatLon(0, 0, 0, null); }, TypeError, 'unrecognised datum ‘null’'));
+        test('parse',       () => should.Throw(function() { LatLon.parse('0, 0', 0, null); }, TypeError, 'unrecognised datum ‘null’'));
     });
 
     describe('getter', function() {
@@ -39,7 +39,7 @@ describe('latlon-ellipsoidal-datum', function() {
         // greenwichOSGB36.height = 0;
         test('convert WGS84 -> OSGB36', () => greenwichOSGB36.toString('d', 6).should.equal('51.477364°N, 000.000150°E')); // TODO: huh? should be 0°E? out by c. 10 metres / 0.5″! am I missing something?
         test('convert round-trip',      () => greenwichOSGB36.convertDatum(LatLon.datums.WGS84).toString('d', 5).should.equal('51.47788°N, 000.00147°W'));
-        test('convert fails',           () => should.Throw(function() { new LatLon(51, 0).convertDatum(null); }, TypeError, 'Unrecognised datum'));
+        test('convert fails',           () => should.Throw(function() { new LatLon(51, 0).convertDatum(null); }, TypeError, 'unrecognised datum ‘null’'));
     });
 
     describe('convert datum (Petroleum Operations Notices)', function() {
@@ -59,7 +59,7 @@ describe('latlon-ellipsoidal-datum', function() {
         test('LL neq (lon)',    () => p1.equals(new LatLon(51.47788, 0, 1, LatLon.datums.WGS84)).should.equal(false));
         test('LL neq (height)', () => p1.equals(new LatLon(51.47788, -0.00147, 99, LatLon.datums.WGS84)).should.equal(false));
         test('LL neq (datum)',  () => p1.equals(new LatLon(51.47788, -0.00147, 1, LatLon.datums.Irl1975)).should.be.false);
-        test('equals (fail)',   () => should.Throw(function() { p1.equals(null); }, TypeError, '‘point’ is not LatLon object'));
+        test('equals (fail)',   () => should.Throw(function() { p1.equals(null); }, TypeError, 'invalid point ‘null’'));
     });
 
     describe('cartesian', function() {
@@ -67,7 +67,7 @@ describe('latlon-ellipsoidal-datum', function() {
         test('toCartesian', () => p.toCartesian().toString().should.equal('[3194419,3194419,4487348]'));
         const c = new Cartesian(3194419, 3194419, 4487348);
         test('toLatLon', () => c.toLatLon().toString().should.equal('45.0000°N, 045.0000°E'));
-        test('toLatLon fail', () => should.Throw(function() { c.toLatLon(null); }, TypeError, 'Unrecognised datum'));
-        test('toLatLon fail', () => should.Throw(function() { c.toLatLon('xx'); }, TypeError, 'Unrecognised datum ‘xx’'));
+        test('toLatLon fail', () => should.Throw(function() { c.toLatLon(null); }, TypeError, 'unrecognised datum ‘null’'));
+        test('toLatLon fail', () => should.Throw(function() { c.toLatLon('xx'); }, TypeError, 'unrecognised datum ‘xx’'));
     });
 });

@@ -112,8 +112,8 @@ class LatLonEllipsoidal_ReferenceFrame extends LatLonEllipsoidal {
      *   const p = new LatLon(51.47788, -0.00147, 0, LatLon.referenceFrames.ITRF2000);
      */
     constructor(lat, lon, height=0, referenceFrame=referenceFrames.ITRF2014, epoch=undefined) {
-        if (!referenceFrame || referenceFrame.epoch==undefined) throw new TypeError('Unrecognised reference frame');
-        if (epoch != undefined && isNaN(Number(epoch))) throw new TypeError(`Invalid epoch ’${epoch}’`);
+        if (!referenceFrame || referenceFrame.epoch==undefined) throw new TypeError('unrecognised reference frame');
+        if (epoch != undefined && isNaN(Number(epoch))) throw new TypeError(`invalid epoch ’${epoch}’`);
 
         super(lat, lon, height);
 
@@ -206,7 +206,7 @@ class LatLonEllipsoidal_ReferenceFrame extends LatLonEllipsoidal {
      *   const p3 = LatLon.parse({ lat: 52.205, lon: 0.119 }, 17, LatLon.referenceFrames.ETRF2000); // { lat, lon } object numeric
      */
     static parse(...args) {
-        if (args.length == 0) throw new TypeError('Invalid (empty) coordinate');
+        if (args.length == 0) throw new TypeError('invalid (empty) point');
 
         let referenceFrame = null, epoch = null;
 
@@ -220,7 +220,7 @@ class LatLonEllipsoidal_ReferenceFrame extends LatLonEllipsoidal {
             [ epoch ] = args.splice(3, 1);
         }
 
-        if (!referenceFrame || referenceFrame.epoch==undefined) throw new TypeError('Unrecognised reference frame');
+        if (!referenceFrame || referenceFrame.epoch==undefined) throw new TypeError('unrecognised reference frame');
 
         // args is now lat, lon, height or latlon, height as taken by LatLonEllipsoidal .parse()
 
@@ -245,7 +245,7 @@ class LatLonEllipsoidal_ReferenceFrame extends LatLonEllipsoidal {
      *   const pItrf = pEtrf.convertReferenceFrame(LatLon.referenceFrames.ETRF2000); // 51.47787826°N, 000.00147125°W
      */
     convertReferenceFrame(toReferenceFrame) {
-        if (!toReferenceFrame || toReferenceFrame.epoch == undefined) throw new TypeError('Unrecognised reference frame');
+        if (!toReferenceFrame || toReferenceFrame.epoch == undefined) throw new TypeError('unrecognised reference frame');
 
         const oldCartesian = this.toCartesian();                                   // convert geodetic to cartesian
         const newCartesian = oldCartesian.convertReferenceFrame(toReferenceFrame); // convert TRF
@@ -328,8 +328,8 @@ class Cartesian_ReferenceFrame extends Cartesian {
      *   const coord = new Cartesian(3980581.210, -111.159, 4966824.522);
      */
     constructor(x, y, z, referenceFrame=undefined, epoch=undefined) {
-        if (referenceFrame!=undefined && referenceFrame.epoch==undefined) throw new TypeError('Unrecognised reference frame');
-        if (epoch!=undefined && isNaN(Number(epoch))) throw new TypeError(`Invalid epoch ’${epoch}’`);
+        if (referenceFrame!=undefined && referenceFrame.epoch==undefined) throw new TypeError('unrecognised reference frame');
+        if (epoch!=undefined && isNaN(Number(epoch))) throw new TypeError(`invalid epoch ’${epoch}’`);
 
         super(x, y, z);
 
@@ -345,7 +345,7 @@ class Cartesian_ReferenceFrame extends Cartesian {
         return this._referenceFrame;
     }
     set referenceFrame(referenceFrame) {
-        if (!referenceFrame || referenceFrame.epoch==undefined) throw new TypeError('Unrecognised reference frame');
+        if (!referenceFrame || referenceFrame.epoch==undefined) throw new TypeError('unrecognised reference frame');
         this._referenceFrame = referenceFrame;
     }
 
@@ -356,7 +356,7 @@ class Cartesian_ReferenceFrame extends Cartesian {
         return this._epoch ? this._epoch : (this._referenceFrame ? this._referenceFrame.epoch : undefined);
     }
     set epoch(epoch) {
-        if (isNaN(Number(epoch))) throw new TypeError(`Invalid epoch ’${epoch}’`);
+        if (isNaN(Number(epoch))) throw new TypeError(`invalid epoch ’${epoch}’`);
         if (this._epoch != this._referenceFrame.epoch) this._epoch = Number(epoch);
     }
 
@@ -376,7 +376,7 @@ class Cartesian_ReferenceFrame extends Cartesian {
      *   const p = new Cartesian(4027893.924, 307041.993, 4919474.294, LatLon.referenceFrames.ITRF2000).toLatLon();
      */
     toLatLon() {
-        if (!this.referenceFrame) throw new Error('Cartesian reference frame not defined');
+        if (!this.referenceFrame) throw new Error('cartesian reference frame not defined');
 
         const latLon = super.toLatLon(this.referenceFrame.ellipsoid);
         const point = new LatLonEllipsoidal_ReferenceFrame(latLon.lat, latLon.lon, latLon.height, this.referenceFrame);
@@ -401,8 +401,8 @@ class Cartesian_ReferenceFrame extends Cartesian {
      *   c.convertReferenceFrame(LatLon.referenceFrames.ETRF2000); // [3980574.395,-102.214,4966829.941](ETRF2000@1997.0)
      */
     convertReferenceFrame(toReferenceFrame) {
-        if (!toReferenceFrame || toReferenceFrame.epoch == undefined) throw new TypeError('Unrecognised reference frame');
-        if (!this.referenceFrame) throw new TypeError('Cartesian coordinate has no reference frame');
+        if (!toReferenceFrame || toReferenceFrame.epoch == undefined) throw new TypeError('unrecognised reference frame');
+        if (!this.referenceFrame) throw new TypeError('cartesian coordinate has no reference frame');
 
         if (this.referenceFrame.name == toReferenceFrame.name) return this; // no-op!
 

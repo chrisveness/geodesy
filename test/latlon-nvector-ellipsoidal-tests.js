@@ -134,7 +134,7 @@ describe('latlon-nvector-ellipsoidal', function() {
 
         test('from delta',             () => Ned.fromDistanceBearingElevation(δ.length, δ.bearing, δ.elevation).toString().should.equal('[N:-86126,E:-78900,D:1069]'));
 
-        test('fail',                   () => should.Throw(function() { new LatLon(0, 0).deltaTo(null); }, TypeError, '‘point’ is not (Ellipsoidal) LatLon object'));
+        test('fail',                   () => should.Throw(function() { new LatLon(0, 0).deltaTo(null); }, TypeError, 'invalid point ‘null’'));
     });
 
     describe('destinationPoint', function() {

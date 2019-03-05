@@ -17,8 +17,8 @@ describe('latlon-ellipsoidal-referenceframe', function() {
 
     describe('constructor', function() {
         test('TRF',            () => new LatLon(0, 0, 0, LatLon.referenceFrames.ITRF2014, 2000.0).toString().should.equal('00.0000°N, 000.0000°E'));
-        test('bad TRF fail',   () => should.Throw(function() { new LatLon(0, 0, 0, null); }, TypeError, 'Unrecognised reference frame'));
-        test('bad epoch fail', () => should.Throw(function() { new LatLon(0, 0, 0, LatLon.referenceFrames.ITRF2014, 'xxx'); }, TypeError, 'Invalid epoch ’xxx’'));
+        test('bad TRF fail',   () => should.Throw(function() { new LatLon(0, 0, 0, null); }, TypeError, 'unrecognised reference frame'));
+        test('bad epoch fail', () => should.Throw(function() { new LatLon(0, 0, 0, LatLon.referenceFrames.ITRF2014, 'xxx'); }, TypeError, 'invalid epoch ’xxx’'));
     });
 
     describe('@examples', function() {
@@ -51,30 +51,30 @@ describe('latlon-ellipsoidal-referenceframe', function() {
     });
 
     describe('parse fail', function() {
-        test('empty', () => should.Throw(function() { LatLon.parse(); }, TypeError, 'Invalid (empty) coordinate'));
-        test('l,l bad TRF', () => should.Throw(function() { LatLon.parse(0, 0, 0, 0); }, TypeError, 'Unrecognised reference frame'));
-        test('l,l bad TRF', () => should.Throw(function() { LatLon.parse(0, 0, 0, null); }, TypeError, 'Unrecognised reference frame'));
-        test('l/l bad TRF', () => should.Throw(function() { LatLon.parse('0, 0', 0, 0); }, TypeError, 'Unrecognised reference frame'));
-        test('l/l bad TRF', () => should.Throw(function() { LatLon.parse('0, 0', 0, null); }, TypeError, 'Unrecognised reference frame'));
+        test('empty', () => should.Throw(function() { LatLon.parse(); }, TypeError, 'invalid (empty) point'));
+        test('l,l bad TRF', () => should.Throw(function() { LatLon.parse(0, 0, 0, 0); }, TypeError, 'unrecognised reference frame'));
+        test('l,l bad TRF', () => should.Throw(function() { LatLon.parse(0, 0, 0, null); }, TypeError, 'unrecognised reference frame'));
+        test('l/l bad TRF', () => should.Throw(function() { LatLon.parse('0, 0', 0, 0); }, TypeError, 'unrecognised reference frame'));
+        test('l/l bad TRF', () => should.Throw(function() { LatLon.parse('0, 0', 0, null); }, TypeError, 'unrecognised reference frame'));
     });
 
     describe('convertReferenceFrame fail', function() {
-        test('no TRF', () => should.Throw(function() { new LatLon(0, 0).convertReferenceFrame('ITRF2014'); }, TypeError, 'Unrecognised reference frame'));
-        test('no TRF', () => should.Throw(function() { new Cartesian(1, 2, 3).convertReferenceFrame('ITRF2014'); }, TypeError, 'Unrecognised reference frame'));
+        test('no TRF', () => should.Throw(function() { new LatLon(0, 0).convertReferenceFrame('ITRF2014'); }, TypeError, 'unrecognised reference frame'));
+        test('no TRF', () => should.Throw(function() { new Cartesian(1, 2, 3).convertReferenceFrame('ITRF2014'); }, TypeError, 'unrecognised reference frame'));
     });
 
     describe('Cartesian constructor fail', function() {
-        test('empty', () => should.Throw(function() { new Cartesian(4027893.924, 307041.993, 4919474.294, 'ITRF2000'); }, Error, 'Unrecognised reference frame'));
-        test('empty', () => should.Throw(function() { new Cartesian(4027893.924, 307041.993, 4919474.294, LatLon.referenceFrames.ITRF2000, 'last year'); }, Error, 'Invalid epoch ’last year’'));
+        test('empty', () => should.Throw(function() { new Cartesian(4027893.924, 307041.993, 4919474.294, 'ITRF2000'); }, Error, 'unrecognised reference frame'));
+        test('empty', () => should.Throw(function() { new Cartesian(4027893.924, 307041.993, 4919474.294, LatLon.referenceFrames.ITRF2000, 'last year'); }, Error, 'invalid epoch ’last year’'));
     });
 
     describe('Cartesian setter fail', function() {
-        test('bad TRF',   () => should.Throw(function() { new Cartesian(1, 2, 3).referenceFrame = 'ITRF2014'; }, TypeError, 'Unrecognised reference frame'));
-        test('bad epoch', () => should.Throw(function() { new Cartesian(1, 2, 3).epoch = 'last year'; }, TypeError, 'Invalid epoch ’last year’'));
+        test('bad TRF',   () => should.Throw(function() { new Cartesian(1, 2, 3).referenceFrame = 'ITRF2014'; }, TypeError, 'unrecognised reference frame'));
+        test('bad epoch', () => should.Throw(function() { new Cartesian(1, 2, 3).epoch = 'last year'; }, TypeError, 'invalid epoch ’last year’'));
     });
 
     describe('Cartesian.toLatLon fail', function() {
-        test('empty', () => should.Throw(function() { new Cartesian(4027893.924, 307041.993, 4919474.294).toLatLon(null); }, Error, 'Cartesian reference frame not defined'));
+        test('empty', () => should.Throw(function() { new Cartesian(4027893.924, 307041.993, 4919474.294).toLatLon(null); }, Error, 'cartesian reference frame not defined'));
     });
 
     describe('convertReferenceFrame', function() {

@@ -51,11 +51,11 @@ class Utm {
      *   const utmCoord = new Utm(31, 'N', 448251, 5411932);
      */
     constructor(zone, hemisphere, easting, northing, datum=LatLonEllipsoidal.datums.WGS84, convergence=null, scale=null) {
-        if (!(1<=zone && zone<=60)) throw new RangeError(`Invalid UTM zone ‘${zone}’`);
-        if (!hemisphere.match(/[NS]/i)) throw new RangeError(`Invalid UTM hemisphere ‘${hemisphere}’`);
-        if (!(0<=easting && easting<=1000e3)) throw new RangeError(`Invalid UTM easting ‘${easting}’`);
-        if (hemisphere=='N' && !(0<=northing && northing<9328094)) throw new RangeError(`Invalid UTM northing ‘${northing}’`);
-        if (hemisphere=='S' && !(1118414<northing && northing<=10000e3)) throw new RangeError(`Invalid UTM northing ‘${northing}’`);
+        if (!(1<=zone && zone<=60)) throw new RangeError(`invalid UTM zone ‘${zone}’`);
+        if (!hemisphere.match(/[NS]/i)) throw new RangeError(`invalid UTM hemisphere ‘${hemisphere}’`);
+        if (!(0<=easting && easting<=1000e3)) throw new RangeError(`invalid UTM easting ‘${easting}’`);
+        if (hemisphere=='N' && !(0<=northing && northing<9328094)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
+        if (hemisphere=='S' && !(1118414<northing && northing<=10000e3)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
 
         this.zone = Number(zone);
         this.hemisphere = hemisphere.toUpperCase();
@@ -197,7 +197,7 @@ class Utm {
         // match separate elements (separated by whitespace)
         utmCoord = utmCoord.trim().match(/\S+/g);
 
-        if (utmCoord==null || utmCoord.length!=4) throw new Error(`Invalid UTM coordinate ‘${utmCoord}’`);
+        if (utmCoord==null || utmCoord.length!=4) throw new Error(`invalid UTM coordinate ‘${utmCoord}’`);
 
         const zone = utmCoord[0], hemisphere = utmCoord[1], easting = utmCoord[2], northing = utmCoord[3];
 
@@ -256,7 +256,7 @@ class LatLon_Utm extends LatLonEllipsoidal {
      *   const utmCoord = latlong.toUtm(); // 31 N 448252 5411933
      */
     toUtm() {
-        if (!(-80<=this.lat && this.lat<=84)) throw new RangeError('Latitude outside UTM limits');
+        if (!(-80<=this.lat && this.lat<=84)) throw new RangeError(`latitude ‘${this.lat}’ outside UTM limits`);
 
         const falseEasting = 500e3, falseNorthing = 10000e3;
 

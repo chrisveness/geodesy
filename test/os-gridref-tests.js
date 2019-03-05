@@ -29,19 +29,19 @@ describe('os-gridref', function() {
     });
 
     describe('constructor fail', function() {
-        test('Invalid northing', () => should.Throw(function() { new OsGridRef(0, 1301e3); }, Error, 'Invalid northing ‘1301000’'));
-        test('Invalid easting',  () => should.Throw(function() { new OsGridRef(701e3, 0); }, Error, 'Invalid easting ‘701000’'));
-        test('texts',            () => should.Throw(function() { new OsGridRef('e', 'n'); }, Error, 'Invalid easting ‘e’'));
+        test('Invalid northing', () => should.Throw(function() { new OsGridRef(0, 1301e3); }, Error, 'invalid northing ‘1301000’'));
+        test('Invalid easting',  () => should.Throw(function() { new OsGridRef(701e3, 0); }, Error, 'invalid easting ‘701000’'));
+        test('texts',            () => should.Throw(function() { new OsGridRef('e', 'n'); }, Error, 'invalid easting ‘e’'));
     });
 
     describe('parse fail', function() {
-        test('text',                () => should.Throw(function() { OsGridRef.parse('Cambridge'); }, Error, 'Invalid grid reference ‘Cambridge’'));
-        test('outside range',       () => should.Throw(function() { OsGridRef.parse('AA 1 2'); }, Error, 'Invalid grid reference ‘AA 1 2’'));
-        test('unbalanced numerics', () => should.Throw(function() { OsGridRef.parse('SV 1 20'); }, Error, 'Invalid grid reference ‘SV 1 20’'));
+        test('text',                () => should.Throw(function() { OsGridRef.parse('Cambridge'); }, Error, 'invalid grid reference ‘Cambridge’'));
+        test('outside range',       () => should.Throw(function() { OsGridRef.parse('AA 1 2'); }, Error, 'invalid grid reference ‘AA 1 2’'));
+        test('unbalanced numerics', () => should.Throw(function() { OsGridRef.parse('SV 1 20'); }, Error, 'invalid grid reference ‘SV 1 20’'));
     });
 
     describe('toString fail', function() {
-        test('1bad precision', () => should.Throw(function() { new OsGridRef(651409, 313177).toString(20); }, Error, 'Invalid precision ‘20’'));
+        test('1bad precision', () => should.Throw(function() { new OsGridRef(651409, 313177).toString(20); }, Error, 'invalid precision ‘20’'));
     });
 
     describe('Caister water tower', function() {

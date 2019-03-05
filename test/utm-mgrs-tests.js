@@ -38,38 +38,38 @@ describe('utm/mgrs', function() {
     });
 
     describe('UTM constructor fail', function() {
-        test('zone fail',       () => should.Throw(function() { new Utm(0, 'N', 0, 0); }, RangeError, 'Invalid UTM zone ‘0’'));
-        test('zone fail',       () => should.Throw(function() { new Utm(61, 'N', 0, 0); }, RangeError, 'Invalid UTM zone ‘61’'));
-        test('hemisphere fail', () => should.Throw(function() { new Utm(1, 'E', 0, 0); }, RangeError, 'Invalid UTM hemisphere ‘E’'));
-        test('easting fail',    () => should.Throw(function() { new Utm(1, 'N', 1001e3, 0); }, RangeError, 'Invalid UTM easting ‘1001000’'));
-        test('northing N fail', () => should.Throw(function() { new Utm(1, 'N', 0, 9329e3); }, RangeError, 'Invalid UTM northing ‘9329000’'));
-        test('northing S fail', () => should.Throw(function() { new Utm(1, 'S', 0, 1118e3); }, RangeError, 'Invalid UTM northing ‘1118000’'));
+        test('zone fail',       () => should.Throw(function() { new Utm(0, 'N', 0, 0); }, RangeError, 'invalid UTM zone ‘0’'));
+        test('zone fail',       () => should.Throw(function() { new Utm(61, 'N', 0, 0); }, RangeError, 'invalid UTM zone ‘61’'));
+        test('hemisphere fail', () => should.Throw(function() { new Utm(1, 'E', 0, 0); }, RangeError, 'invalid UTM hemisphere ‘E’'));
+        test('easting fail',    () => should.Throw(function() { new Utm(1, 'N', 1001e3, 0); }, RangeError, 'invalid UTM easting ‘1001000’'));
+        test('northing N fail', () => should.Throw(function() { new Utm(1, 'N', 0, 9329e3); }, RangeError, 'invalid UTM northing ‘9329000’'));
+        test('northing S fail', () => should.Throw(function() { new Utm(1, 'S', 0, 1118e3); }, RangeError, 'invalid UTM northing ‘1118000’'));
     });
 
     describe('MGRS constructor fail', function() {
         test('bad zone',             () => should.Throw(function() { new Mgrs(0, 'C', 'A', 'A', 0, 0); }, RangeError, 'MGRS zone ‘0’ out of range'));
-        test('bad band',             () => should.Throw(function() { new Mgrs(1, 'A', 'A', 'A', 0, 0); }, RangeError, 'Invalid MGRS band ‘A’'));
-        test('bad grid sq easting',  () => should.Throw(function() { new Mgrs(1, 'C', 'I', 'A', 0, 0); }, RangeError, 'Invalid MGRS 100km grid square column ‘I’ for zone 1'));
-        test('bad grid sq northing', () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'I', 0, 0); }, RangeError, 'Invalid MGRS 100km grid square row ‘I’'));
-        test('invalid grid sq e',    () => should.Throw(function() { new Mgrs(2, 'C', 'A', 'A', 0, 0); }, RangeError, 'Invalid MGRS 100km grid square column ‘A’ for zone 2'));
-        test('bad easting',          () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 'x', 0); }, RangeError, 'Invalid MGRS easting ‘x’'));
-        test('bad northing',         () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'Invalid MGRS northing ‘x’'));
-        test('too far north',        () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'Invalid MGRS northing ‘x’'));
-        test('bad multiples',        () => should.Throw(function() { new Mgrs(1, 'A', 'A', 'I', 0, 0); }, RangeError, 'Invalid MGRS band ‘A’, Invalid MGRS 100km grid square row ‘I’'));
+        test('bad band',             () => should.Throw(function() { new Mgrs(1, 'A', 'A', 'A', 0, 0); }, RangeError, 'invalid MGRS band ‘A’'));
+        test('bad grid sq easting',  () => should.Throw(function() { new Mgrs(1, 'C', 'I', 'A', 0, 0); }, RangeError, 'invalid MGRS 100km grid square column ‘I’ for zone 1'));
+        test('bad grid sq northing', () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'I', 0, 0); }, RangeError, 'invalid MGRS 100km grid square row ‘I’'));
+        test('invalid grid sq e',    () => should.Throw(function() { new Mgrs(2, 'C', 'A', 'A', 0, 0); }, RangeError, 'invalid MGRS 100km grid square column ‘A’ for zone 2'));
+        test('bad easting',          () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 'x', 0); }, RangeError, 'invalid MGRS easting ‘x’'));
+        test('bad northing',         () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'invalid MGRS northing ‘x’'));
+        test('too far north',        () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'invalid MGRS northing ‘x’'));
+        test('bad multiples',        () => should.Throw(function() { new Mgrs(1, 'A', 'A', 'I', 0, 0); }, RangeError, 'invalid MGRS band ‘A’, invalid MGRS 100km grid square row ‘I’'));
     });
 
     describe('UTM parse', function() {
-        test('parse fail', () => should.Throw(function() { Utm.parse('Cambridge'); }, Error, 'Invalid UTM coordinate ‘Cambridge’'));
+        test('parse fail', () => should.Throw(function() { Utm.parse('Cambridge'); }, Error, 'invalid UTM coordinate ‘Cambridge’'));
     });
 
     describe('toString', function() {
-        test('toString fail', () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 0).toString(3); }, Error, 'Invalid precision ‘3’'));
+        test('toString fail', () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 0).toString(3); }, Error, 'invalid precision ‘3’'));
     });
 
     describe('MGRS parse', function() {
-        test('parse fail 1', () => should.Throw(function() { Mgrs.parse(null); }, Error, 'Invalid MGRS grid reference ‘null’'));
-        test('parse fail 2', () => should.Throw(function() { Mgrs.parse('Cambridge'); }, Error, 'Invalid MGRS grid reference ‘Cambridge’'));
-        test('parse fail 3', () => should.Throw(function() { Mgrs.parse('New York'); }, Error, 'Invalid MGRS grid reference ‘New York’'));
+        test('parse fail 1', () => should.Throw(function() { Mgrs.parse(null); }, Error, 'invalid MGRS grid reference ‘null’'));
+        test('parse fail 2', () => should.Throw(function() { Mgrs.parse('Cambridge'); }, Error, 'invalid MGRS grid reference ‘Cambridge’'));
+        test('parse fail 3', () => should.Throw(function() { Mgrs.parse('New York'); }, Error, 'invalid MGRS grid reference ‘New York’'));
     });
 
     describe('latitude/longitude -> UTM', function() {
@@ -154,7 +154,7 @@ describe('utm/mgrs', function() {
     });
 
     describe('UTM fail', function() {
-        test('zone fail', () => should.Throw(function() { new LatLon(85, 0).toUtm(); }, RangeError, 'Latitude outside UTM limits'));
+        test('zone fail', () => should.Throw(function() { new LatLon(85, 0).toUtm(); }, RangeError, 'latitude ‘85’ outside UTM limits'));
     });
 
     describe('Norway/Svalbard adjustment', function() {

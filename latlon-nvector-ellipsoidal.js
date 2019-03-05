@@ -44,7 +44,8 @@ class LatLon_NvectorEllipsoidal extends LatLonEllipsoidal {
      * Points need not be defined on the same datum.
      *
      * @param   {LatLon} point - Point delta is to be determined to.
-     * @returns {Ned}    Delta from ‘this’ point to supplied point in local tangent plane of this point.
+     * @returns {Ned} Delta from ‘this’ point to supplied point in local tangent plane of this point.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const a = new LatLon(49.66618, 3.45063, 99);
@@ -55,7 +56,7 @@ class LatLon_NvectorEllipsoidal extends LatLonEllipsoidal {
      *   const elev = delta.elevation; //  -0.5416°
      */
     deltaTo(point) {
-        if (!(point instanceof LatLonEllipsoidal)) throw new TypeError('‘point’ is not (Ellipsoidal) LatLon object');
+        if (!(point instanceof LatLonEllipsoidal)) throw new TypeError(`invalid point ‘${point}’`);
 
         // get delta in cartesian frame
         const c1 = this.toCartesian();

@@ -17,9 +17,9 @@ describe('latlon-ellipsoidal', function() {
 
     describe('constructor', function() {
         test('@example',                () => new LatLon(51.47788, -0.00147, 17).toString('d', 4, 2).should.equal('51.4779°N, 000.0015°W +17.00m'));
-        test('non-numeric lat fail',    () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'Invalid lat ‘x’'));
-        test('non-numeric lon fail',    () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'Invalid lon ‘x’'));
-        test('non-numeric height fail', () => should.Throw(function() { new LatLon(0, 0, 'x'); }, TypeError, 'Invalid height ‘x’'));
+        test('non-numeric lat fail',    () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
+        test('non-numeric lon fail',    () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));
+        test('non-numeric height fail', () => should.Throw(function() { new LatLon(0, 0, 'x'); }, TypeError, 'invalid height ‘x’'));
     });
 
     describe('parse', function() {
@@ -53,16 +53,16 @@ describe('latlon-ellipsoidal', function() {
     });
 
     describe('parse fail', function() {
-        test('empty',                 () => should.Throw(function() { LatLon.parse(); }, TypeError, 'Invalid (empty) coordinate'));
-        test('single arg num',        () => should.Throw(function() { LatLon.parse(1); }, TypeError, 'Invalid coordinate ‘1’'));
-        test('single arg str',        () => should.Throw(function() { LatLon.parse('London'); }, TypeError, 'Invalid coordinate ‘London’'));
-        test('single arg str + h',    () => should.Throw(function() { LatLon.parse('London', 99); }, TypeError, 'Invalid coordinate ‘London,99’'));
-        test('invalid comma arg',     () => should.Throw(function() { LatLon.parse('London,UK'); }, TypeError, 'Invalid coordinate ‘London,UK’'));
-        test('invalid comma arg + h', () => should.Throw(function() { LatLon.parse('London,UK', 99); }, TypeError, 'Invalid coordinate ‘London,UK’'));
-        test('empty object',          () => should.Throw(function() { LatLon.parse({}); }, TypeError, 'Invalid coordinate ‘{}’'));
-        test('invalid object 1',      () => should.Throw(function() { LatLon.parse({ y: 51.47788, x: -0.00147 }); }, TypeError, 'Invalid coordinate ‘{"y":51.47788,"x":-0.00147}’'));
-        test('invalid object 2',      () => should.Throw(function() { LatLon.parse({ lat: 'y', lon: 'x' }); }, TypeError, 'Invalid coordinate ‘{"lat":"y","lon":"x"}’'));
-        test('invalid lat,lon',       () => should.Throw(function() { LatLon.parse(null, null); }, TypeError, 'Invalid coordinate ‘,’'));
+        test('empty',                 () => should.Throw(function() { LatLon.parse(); }, TypeError, 'invalid (empty) point'));
+        test('single arg num',        () => should.Throw(function() { LatLon.parse(1); }, TypeError, 'invalid point ‘1’'));
+        test('single arg str',        () => should.Throw(function() { LatLon.parse('London'); }, TypeError, 'invalid point ‘London’'));
+        test('single arg str + h',    () => should.Throw(function() { LatLon.parse('London', 99); }, TypeError, 'invalid point ‘London,99’'));
+        test('invalid comma arg',     () => should.Throw(function() { LatLon.parse('London,UK'); }, TypeError, 'invalid point ‘London,UK’'));
+        test('invalid comma arg + h', () => should.Throw(function() { LatLon.parse('London,UK', 99); }, TypeError, 'invalid point ‘London,UK’'));
+        test('empty object',          () => should.Throw(function() { LatLon.parse({}); }, TypeError, 'invalid point ‘{}’'));
+        test('invalid object 1',      () => should.Throw(function() { LatLon.parse({ y: 51.47788, x: -0.00147 }); }, TypeError, 'invalid point ‘{"y":51.47788,"x":-0.00147}’'));
+        test('invalid object 2',      () => should.Throw(function() { LatLon.parse({ lat: 'y', lon: 'x' }); }, TypeError, 'invalid point ‘{"lat":"y","lon":"x"}’'));
+        test('invalid lat,lon',       () => should.Throw(function() { LatLon.parse(null, null); }, TypeError, 'invalid point ‘,’'));
     });
 
     describe('toString', function() {
@@ -105,12 +105,12 @@ describe('latlon-ellipsoidal', function() {
         test('set longitude',      () => { p.longitude = 2.2945; p.longitude.should.equal(2.2945); });
         test('set height',         () => { p.height = 9; p.height.should.equal(9); });
         test('get ellipsoids',     () => LatLon.ellipsoids.should.deep.equal({ WGS84: { a: 6378137, b: 6356752.314245, f: 1/298.257223563 } }));
-        test('set lat fail',       () => should.Throw(function() { p.lat = 'x'; }, TypeError, 'Invalid lat ‘x’'));
-        test('set latitude fail',  () => should.Throw(function() { p.latitude = 'x'; }, TypeError, 'Invalid latitude ‘x’'));
-        test('set lon fail',       () => should.Throw(function() { p.lon = 'x'; }, TypeError, 'Invalid lon ‘x’'));
-        test('set lng fail',       () => should.Throw(function() { p.lng = 'x'; }, TypeError, 'Invalid lng ‘x’'));
-        test('set longitude fail', () => should.Throw(function() { p.longitude = 'x'; }, TypeError, 'Invalid longitude ‘x’'));
-        test('set height fail',    () => should.Throw(function() { p.height = 'x'; }, TypeError, 'Invalid height ‘x’'));
+        test('set lat fail',       () => should.Throw(function() { p.lat = 'x'; }, TypeError, 'invalid lat ‘x’'));
+        test('set latitude fail',  () => should.Throw(function() { p.latitude = 'x'; }, TypeError, 'invalid latitude ‘x’'));
+        test('set lon fail',       () => should.Throw(function() { p.lon = 'x'; }, TypeError, 'invalid lon ‘x’'));
+        test('set lng fail',       () => should.Throw(function() { p.lng = 'x'; }, TypeError, 'invalid lng ‘x’'));
+        test('set longitude fail', () => should.Throw(function() { p.longitude = 'x'; }, TypeError, 'invalid longitude ‘x’'));
+        test('set height fail',    () => should.Throw(function() { p.height = 'x'; }, TypeError, 'invalid height ‘x’'));
     });
 
     describe('equals', function() {
@@ -121,7 +121,7 @@ describe('latlon-ellipsoidal', function() {
         test('LL neq lat',  () => (p1.equals(new LatLon(0, -0.00147))).should.equal(false));
         test('LL neq lon',  () => (p1.equals(new LatLon(51.47788, 0))).should.equal(false));
         test('LL neq h',    () => (p1.equals(new LatLon(51.47788, -0.00147, 99))).should.equal(false));
-        test('equals fail', () => should.Throw(function() { p1.equals(null); }, TypeError, '‘point’ is not LatLon object'));
+        test('equals fail', () => should.Throw(function() { p1.equals(null); }, TypeError, 'invalid point ‘null’'));
     });
 
     describe('cartesian', function() {
@@ -129,6 +129,6 @@ describe('latlon-ellipsoidal', function() {
         test('toCartesian',   () => p.toCartesian().toString().should.equal('[3194419,3194419,4487348]'));
         const c = new Cartesian(3194419, 3194419, 4487348);
         test('toLatLon',      () => c.toLatLon().toString().should.equal('45.0000°N, 045.0000°E'));
-        test('toLatLon fail', () => should.Throw(function() { c.toLatLon(null); }, TypeError, 'Invalid ellipsoid'));
+        test('toLatLon fail', () => should.Throw(function() { c.toLatLon(null); }, TypeError, 'invalid ellipsoid'));
     });
 });

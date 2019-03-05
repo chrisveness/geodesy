@@ -267,7 +267,7 @@ class Dms {
      *   const point = Dms.compassPoint(24, 1); // point = 'N'
      */
     static compassPoint(bearing, precision=3) {
-        if (![ 1,2,3 ].includes(Number(precision))) throw new RangeError('‘precision’ must be 1, 2 or 3'); // eslint-disable-line comma-spacing
+        if (![ 1, 2, 3 ].includes(Number(precision))) throw new RangeError(`invalid precision ‘${precision}’`);
         // note precision could be extended to 4 for quarter-winds (eg NbNW), but I think they are little used
 
         bearing = Dms.wrap360(bearing); // normalise to range 0..360°

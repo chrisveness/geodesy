@@ -24,9 +24,9 @@ describe('latlon-ellipsoidal-vincenty', function() {
         test('inverse final bearing',     () => le.finalBearingTo(jog).should.equal(brngFinal));
         test('direct destination',        () => le.destinationPoint(dist, brngInit).toString('d').should.equal(jog.toString('d')));
         test('direct final bearing',      () => le.finalBearingOn(dist, brngInit).should.equal(brngFinal));
-        test('inverse distance (fail)',   () => should.Throw(function() { le.distanceTo(null); }, TypeError, '‘point’ is not (Ellipsoidal) LatLon object'));
-        test('inverse init brng (fail)',  () => should.Throw(function() { le.initialBearingTo(null); }, TypeError, '‘point’ is not (Ellipsoidal) LatLon object'));
-        test('inverse final brng (fail)', () => should.Throw(function() { le.finalBearingTo(null); }, TypeError, '‘point’ is not (Ellipsoidal) LatLon object'));
+        test('inverse distance (fail)',   () => should.Throw(function() { le.distanceTo(null); }, TypeError, 'invalid point ‘null’'));
+        test('inverse init brng (fail)',  () => should.Throw(function() { le.initialBearingTo(null); }, TypeError, 'invalid point ‘null’'));
+        test('inverse final brng (fail)', () => should.Throw(function() { le.finalBearingTo(null); }, TypeError, 'invalid point ‘null’'));
     });
 
     describe('Geoscience Australia', function() {
@@ -82,11 +82,11 @@ describe('latlon-ellipsoidal-vincenty', function() {
 
     describe('surface only', function() {
         const le = new LatLon(50.06632, -5.71475, 1), jog = new LatLon(58.64402, -3.07009);
-        test('distanceTo (fail)',       () => should.Throw(function() { le.distanceTo(jog); }, RangeError, 'Point must be on the surface of the ellipsoid'));
-        test('initialBearingTo (fail)', () => should.Throw(function() { le.initialBearingTo(jog); }, RangeError, 'Point must be on the surface of the ellipsoid'));
-        test('finalBearingTo (fail)',   () => should.Throw(function() { le.finalBearingTo(jog); }, RangeError, 'Point must be on the surface of the ellipsoid'));
-        test('destinationPoint (fail)', () => should.Throw(function() { le.destinationPoint(0, 0); }, RangeError, 'Point must be on the surface of the ellipsoid'));
-        test('finalBearingOn (fail)',   () => should.Throw(function() { le.finalBearingOn(0, 0); }, RangeError, 'Point must be on the surface of the ellipsoid'));
+        test('distanceTo (fail)',       () => should.Throw(function() { le.distanceTo(jog); }, RangeError, 'point must be on the surface of the ellipsoid'));
+        test('initialBearingTo (fail)', () => should.Throw(function() { le.initialBearingTo(jog); }, RangeError, 'point must be on the surface of the ellipsoid'));
+        test('finalBearingTo (fail)',   () => should.Throw(function() { le.finalBearingTo(jog); }, RangeError, 'point must be on the surface of the ellipsoid'));
+        test('destinationPoint (fail)', () => should.Throw(function() { le.destinationPoint(0, 0); }, RangeError, 'point must be on the surface of the ellipsoid'));
+        test('finalBearingOn (fail)',   () => should.Throw(function() { le.finalBearingOn(0, 0); }, RangeError, 'point must be on the surface of the ellipsoid'));
     });
 
     describe('convergence', function() {

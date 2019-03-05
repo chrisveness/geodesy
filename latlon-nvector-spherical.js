@@ -42,15 +42,15 @@ class LatLonNvectorSpherical {
      *
      * @param  {number} lat - Latitude (in degrees).
      * @param  {number} lon - Longitude (in degrees).
-     * @throws {TypeError} Non-numeric lat/lon.
+     * @throws {TypeError} Invalid lat/lon.
      *
      * @example
      *   import LatLon from '/js/geodesy/latlon-nvector-spherical.js';
      *   const p = new LatLon(52.205, 0.119);
      */
     constructor(lat, lon) {
-        if (isNaN(lat)) throw new TypeError(`Invalid lat ‘${lat}’`);
-        if (isNaN(lon)) throw new TypeError(`Invalid lon ‘${lon}’`);
+        if (isNaN(lat)) throw new TypeError(`invalid lat ‘${lat}’`);
+        if (isNaN(lon)) throw new TypeError(`invalid lon ‘${lon}’`);
 
         this._lat = Dms.wrap90(Number(lat));
         this._lon = Dms.wrap180(Number(lon));
@@ -65,11 +65,11 @@ class LatLonNvectorSpherical {
     get latitude()  { return this._lat; }
     set lat(lat) {
         this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(Number(lat));
-        if (isNaN(this._lat)) throw new TypeError(`Invalid lat ‘${lat}’`);
+        if (isNaN(this._lat)) throw new TypeError(`invalid lat ‘${lat}’`);
     }
     set latitude(lat) {
         this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(Number(lat));
-        if (isNaN(this._lat)) throw new TypeError(`Invalid latitude ‘${lat}’`);
+        if (isNaN(this._lat)) throw new TypeError(`invalid latitude ‘${lat}’`);
     }
 
     /**
@@ -81,15 +81,15 @@ class LatLonNvectorSpherical {
     get longitude() { return this._lon; }
     set lon(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
-        if (isNaN(this._lon)) throw new TypeError(`Invalid lon ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid lon ‘${lon}’`);
     }
     set lng(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
-        if (isNaN(this._lon)) throw new TypeError(`Invalid lng ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid lng ‘${lon}’`);
     }
     set longitude(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
-        if (isNaN(this._lon)) throw new TypeError(`Invalid longitude ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid longitude ‘${lon}’`);
     }
 
 
@@ -162,7 +162,7 @@ class LatLonNvectorSpherical {
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @param   {number}    [radius=6371e3] - Radius of earth (defaults to mean radius in metres).
      * @returns {number}    Distance between this point and destination point, in same units as radius.
-     * @throws  {TypeError} Point is not LatLon object, Radius is not a number.
+     * @throws  {TypeError} Invalid point/radius.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -170,8 +170,8 @@ class LatLonNvectorSpherical {
      *   const d = p1.distanceTo(p2);          // 404.3 km
      */
     distanceTo(point, radius=6371e3) {
-        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
-        if (isNaN(radius)) throw new TypeError('Radius is not a number');
+        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
+        if (isNaN(radius)) throw new TypeError(`invalid radius ‘${radius}’`);
 
         const R = Number(radius);
 
@@ -191,7 +191,7 @@ class LatLonNvectorSpherical {
      *
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @returns {number}    Initial bearing in degrees from north (0°..360°).
-     * @throws  {TypeError} Point is not LatLon object.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -199,7 +199,7 @@ class LatLonNvectorSpherical {
      *   const b1 = p1.initialBearingTo(p2);   // 156.2°
      */
     initialBearingTo(point) {
-        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
+        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
         if (this.equals(point)) return NaN; // coincident points
 
         const p1 = this.toNvector();
@@ -222,7 +222,7 @@ class LatLonNvectorSpherical {
      *
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @returns {number}    Final bearing in degrees from north (0°..360°).
-     * @throws  {TypeError} Point is not LatLon object.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -230,7 +230,7 @@ class LatLonNvectorSpherical {
      *   const b2 = p1.finalBearingTo(p2); // 157.9°
      */
     finalBearingTo(point) {
-        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
+        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
 
         // get initial bearing from destination point to this point & reverse it by adding 180°
         return Dms.wrap360(point.initialBearingTo(this) + 180);
@@ -242,7 +242,7 @@ class LatLonNvectorSpherical {
      *
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @returns {LatLon}    Midpoint between this point and destination point.
-     * @throws  {TypeError} Point is not LatLon object.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -250,7 +250,7 @@ class LatLonNvectorSpherical {
      *   const pMid = p1.midpointTo(p2);       // 50.5363°N, 001.2746°E
      */
     midpointTo(point) {
-        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
+        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
 
         const n1 = this.toNvector();
         const n2 = point.toNvector();
@@ -267,7 +267,7 @@ class LatLonNvectorSpherical {
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @param   {number}    fraction - Fraction between the two points (0 = this point, 1 = specified point).
      * @returns {LatLon}    Intermediate point between this point and destination point.
-     * @throws  {TypeError} Point is not LatLon object.
+     * @throws  {TypeError} Invalid point/fraction.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -275,7 +275,8 @@ class LatLonNvectorSpherical {
      *   const pInt = p1.intermediatePointTo(p2, 0.25); // 51.3723°N, 000.7072°E
      */
     intermediatePointTo(point, fraction) {
-        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
+        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
+        if (isNaN(fraction)) throw new TypeError(`invalid fraction ‘${fraction}’`);
 
         // angular distance between points; tanδ = |n₁×n₂| / n₁⋅n₂
         const n1 = this.toNvector();
@@ -306,7 +307,7 @@ class LatLonNvectorSpherical {
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @param   {number}    fraction - Fraction between the two points (0 = this point, 1 = specified point).
      * @returns {LatLon}    Intermediate point between this point and destination point.
-     * @throws  {TypeError} Point is not LatLon object.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -314,7 +315,7 @@ class LatLonNvectorSpherical {
      *   const pInt = p1.intermediatePointTo(p2, 0.25); // 51.3723°N, 000.7072°E
      */
     intermediatePointOnChordTo(point, fraction) {
-        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
+        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
 
         const n1 = this.toNvector();
         const n2 = point.toNvector();
@@ -372,7 +373,7 @@ class LatLonNvectorSpherical {
      * @param   {LatLon}        path2start - Start point of second path.
      * @param   {LatLon|number} path2brngEnd - End point of second path or initial bearing from second start point.
      * @returns {LatLon}        Destination point (null if no unique intersection defined)
-     * @throws  {TypeError}     Parameter is not LatLon object.
+     * @throws  {TypeError}     Invalid parameter.
      *
      * @example
      *   const p1 = new LatLon(51.8853, 0.2545), brng1 = 108.55;
@@ -380,10 +381,10 @@ class LatLonNvectorSpherical {
      *   const pInt = LatLon.intersection(p1, brng1, p2, brng2); // 50.9076°N, 004.5086°E
      */
     static intersection(path1start, path1brngEnd, path2start, path2brngEnd) {
-        if (!(path1start instanceof LatLonNvectorSpherical)) throw new TypeError('‘path1start’ is not LatLon object');
-        if (!(path2start instanceof LatLonNvectorSpherical)) throw new TypeError('‘path2start’ is not LatLon object');
-        if (!(path1brngEnd instanceof LatLonNvectorSpherical) && isNaN(path1brngEnd)) throw new TypeError('‘path1brngEnd’ is not LatLon object or bearing');
-        if (!(path2brngEnd instanceof LatLonNvectorSpherical) && isNaN(path2brngEnd)) throw new TypeError('‘path2brngEnd’ is not LatLon object or bearing');
+        if (!(path1start instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid path1start ‘${path1start}’`);
+        if (!(path2start instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid path2start ‘${path2start}’`);
+        if (!(path1brngEnd instanceof LatLonNvectorSpherical) && isNaN(path1brngEnd)) throw new TypeError(`invalid path1brngEnd ‘${path1brngEnd}’`);
+        if (!(path2brngEnd instanceof LatLonNvectorSpherical) && isNaN(path2brngEnd)) throw new TypeError(`invalid path2brngEnd ‘${path2brngEnd}’`);
 
         if (path1start.equals(path2start)) return new LatLonNvectorSpherical(path1start.lat, path2start.lon); // coincident points
 
@@ -465,7 +466,7 @@ class LatLonNvectorSpherical {
      * @param   {LatLon|number} pathBrngEnd - End point of great circle path or initial bearing from great circle start point.
      * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
      * @returns {number}        Distance to great circle (-ve if to left, +ve if to right of path).
-     * @throws  {TypeError}     Parameter is not LatLon object.
+     * @throws  {TypeError}     Invalid parameter.
      *
      * @example
      *   const pCurrent = new LatLon(53.2611, -0.7972);
@@ -477,8 +478,8 @@ class LatLonNvectorSpherical {
      *   const d = pCurrent.crossTrackDistanceTo(p1, p2);   // Number(d.toPrecision(4)): -307.5
      */
     crossTrackDistanceTo(pathStart, pathBrngEnd, radius=6371e3) {
-        if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError('‘pathStart’ is not (NvectorSpherical) LatLon object');
-        if (!(pathBrngEnd instanceof LatLonNvectorSpherical || !isNaN(pathBrngEnd))) throw new TypeError('‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number');
+        if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid pathStart ‘${pathStart}’`);
+        if (!(pathBrngEnd instanceof LatLonNvectorSpherical || !isNaN(pathBrngEnd))) throw new TypeError(`invalid pathBrngEnd ‘${pathBrngEnd}’`);
 
         if (this.equals(pathStart)) return NaN; // coincident points
 
@@ -513,8 +514,8 @@ class LatLonNvectorSpherical {
      *   const d = pCurrent.alongTrackDistanceTo(p1, p2);  // 62.331 km
      */
     alongTrackDistanceTo(pathStart, pathBrngEnd, radius=6371e3) {
-        if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError('‘pathStart’ is not (NvectorSpherical) LatLon object');
-        if (!(pathBrngEnd instanceof LatLonNvectorSpherical || !isNaN(pathBrngEnd))) throw new TypeError('‘pathBrngEnd’ is not (NvectorSpherical) LatLon object or number');
+        if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid pathStart ‘${pathStart}’`);
+        if (!(pathBrngEnd instanceof LatLonNvectorSpherical || !isNaN(pathBrngEnd))) throw new TypeError(`invalid pathBrngEnd ‘${pathBrngEnd}’`);
 
         const p = this.toNvector();
         const R = Number(radius);
@@ -811,7 +812,7 @@ class LatLonNvectorSpherical {
      *
      * @param   {LatLon}    point - Point to be compared against this point.
      * @returns {bool}      True if points have identical latitude and longitude values.
-     * @throws  {TypeError} Point is not LatLon object.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -819,7 +820,7 @@ class LatLonNvectorSpherical {
      *   const equal = p1.equals(p2); // true
      */
     equals(point) {
-        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError('‘point’ is not (NvectorSpherical) LatLon object');
+        if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
 
         if (Math.abs(this.lat - point.lat) > Number.EPSILON) return false;
         if (Math.abs(this.lon - point.lon) > Number.EPSILON) return false;
@@ -854,7 +855,7 @@ class LatLonNvectorSpherical {
      */
     toString(format='d', dp=undefined) {
         // note: explicitly set dp to undefined for passing through to toLat/toLon
-        if (![ 'd', 'dm', 'dms', 'n' ].includes(format)) throw new RangeError(`Invalid format ‘${format}’`);
+        if (![ 'd', 'dm', 'dms', 'n' ].includes(format)) throw new RangeError(`invalid format ‘${format}’`);
 
         if (format == 'n') { // signed numeric degrees
             if (dp == undefined) dp = 4;

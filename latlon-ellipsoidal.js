@@ -73,9 +73,9 @@ class LatLonEllipsoidal {
      *   const p = new LatLon(51.47788, -0.00147, 17);
      */
     constructor(lat, lon, height=0) {
-        if (isNaN(lat)) throw new TypeError(`Invalid lat ‘${lat}’`);
-        if (isNaN(lon)) throw new TypeError(`Invalid lon ‘${lon}’`);
-        if (isNaN(height)) throw new TypeError(`Invalid height ‘${height}’`);
+        if (isNaN(lat)) throw new TypeError(`invalid lat ‘${lat}’`);
+        if (isNaN(lon)) throw new TypeError(`invalid lon ‘${lon}’`);
+        if (isNaN(height)) throw new TypeError(`invalid height ‘${height}’`);
 
         this._lat = Dms.wrap90(Number(lat));
         this._lon = Dms.wrap180(Number(lon));
@@ -91,11 +91,11 @@ class LatLonEllipsoidal {
     get latitude()  { return this._lat; }
     set lat(lat) {
         this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(Number(lat));
-        if (isNaN(this._lat)) throw new TypeError(`Invalid lat ‘${lat}’`);
+        if (isNaN(this._lat)) throw new TypeError(`invalid lat ‘${lat}’`);
     }
     set latitude(lat) {
         this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(Number(lat));
-        if (isNaN(this._lat)) throw new TypeError(`Invalid latitude ‘${lat}’`);
+        if (isNaN(this._lat)) throw new TypeError(`invalid latitude ‘${lat}’`);
     }
 
     /**
@@ -107,22 +107,22 @@ class LatLonEllipsoidal {
     get longitude() { return this._lon; }
     set lon(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
-        if (isNaN(this._lon)) throw new TypeError(`Invalid lon ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid lon ‘${lon}’`);
     }
     set lng(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
-        if (isNaN(this._lon)) throw new TypeError(`Invalid lng ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid lng ‘${lon}’`);
     }
     set longitude(lon) {
         this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
-        if (isNaN(this._lon)) throw new TypeError(`Invalid longitude ‘${lon}’`);
+        if (isNaN(this._lon)) throw new TypeError(`invalid longitude ‘${lon}’`);
     }
 
     /**
      * Height in metres above ellipsoid.
      */
     get height()       { return this._height; }
-    set height(height) { this._height = Number(height); if (isNaN(this._height)) throw new TypeError(`Invalid height ‘${height}’`); }
+    set height(height) { this._height = Number(height); if (isNaN(this._height)) throw new TypeError(`invalid height ‘${height}’`); }
 
 
     /**
@@ -185,7 +185,7 @@ class LatLonEllipsoidal {
      *   const p3 = LatLon.parse({ lat: 52.205, lon: 0.119 }, 17); // { lat, lon } object numeric + height
      */
     static parse(...args) {
-        if (args.length == 0) throw new TypeError('Invalid (empty) coordinate');
+        if (args.length == 0) throw new TypeError('invalid (empty) point');
 
         let lat=undefined, lon=undefined, height=undefined;
 
@@ -206,7 +206,7 @@ class LatLonEllipsoidal {
                 lon = Dms.wrap180(Dms.parse(lon));
             }
             if (args[1] != undefined) height = args[1];
-            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`Invalid coordinate ‘${JSON.stringify(args[0])}’`);
+            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`invalid point ‘${JSON.stringify(args[0])}’`);
         }
 
         // single comma-separated lat/lon
@@ -215,7 +215,7 @@ class LatLonEllipsoidal {
             lat = Dms.wrap90(Dms.parse(lat));
             lon = Dms.wrap180(Dms.parse(lon));
             height = args[1] || 0;
-            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`Invalid coordinate ‘${args[0]}’`);
+            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`invalid point ‘${args[0]}’`);
         }
 
         // regular (lat, lon) arguments
@@ -224,7 +224,7 @@ class LatLonEllipsoidal {
             lat = Dms.wrap90(Dms.parse(lat));
             lon = Dms.wrap180(Dms.parse(lon));
             height = args[2] || 0;
-            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`Invalid coordinate ‘${args.toString()}’`);
+            if (isNaN(lat) || isNaN(lon)) throw new TypeError(`invalid point ‘${args.toString()}’`);
         }
 
         return new this(lat, lon, height); // 'new this' as may return subclassed types
@@ -268,7 +268,7 @@ class LatLonEllipsoidal {
      *
      * @param   {LatLon} point - Point to be compared against this point.
      * @returns {bool} True if points have identical latitude, longitude, height, and datum/referenceFrame.
-     * @throws  {TypeError} Point is not LatLon object.
+     * @throws  {TypeError} Invalid point.
      *
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
@@ -276,7 +276,7 @@ class LatLonEllipsoidal {
      *   const equal = p1.equals(p2); // true
      */
     equals(point) {
-        if (!(point instanceof LatLonEllipsoidal)) throw new TypeError('‘point’ is not LatLon object');
+        if (!(point instanceof LatLonEllipsoidal)) throw new TypeError(`invalid point ‘${point}’`);
 
         if (Math.abs(this.lat - point.lat) > Number.EPSILON) return false;
         if (Math.abs(this.lon - point.lon) > Number.EPSILON) return false;
@@ -308,7 +308,7 @@ class LatLonEllipsoidal {
      */
     toString(format='d', dp=undefined, dpHeight=null) {
         // note: explicitly set dp to undefined for passing through to toLat/toLon
-        if (![ 'd', 'dm', 'dms', 'n' ].includes(format)) throw new RangeError(`Invalid format ‘${format}’`);
+        if (![ 'd', 'dm', 'dms', 'n' ].includes(format)) throw new RangeError(`invalid format ‘${format}’`);
 
         const height = (this.height>=0 ? ' +' : ' ') + this.height.toFixed(dpHeight) + 'm';
         if (format == 'n') { // signed numeric degrees
@@ -370,7 +370,7 @@ class Cartesian extends Vector3d {
      */
     toLatLon(ellipsoid=ellipsoids.WGS84) {
         // note ellipsoid is available as a parameter for when toLatLon gets subclassed.
-        if (!ellipsoid || !ellipsoid.a) throw new TypeError('Invalid ellipsoid');
+        if (!ellipsoid || !ellipsoid.a) throw new TypeError('invalid ellipsoid');
 
         const { x, y, z } = this;
         const { a, b, f } = ellipsoid;

@@ -51,20 +51,20 @@ describe('latlon-spherical', function() {
     });
 
     describe('constructor fail', function() {
-        test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'Invalid lat ‘x’'));
-        test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'Invalid lon ‘x’'));
+        test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
+        test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));
     });
 
     describe('parse fail', function() {
-        test('empty',             () => should.Throw(function() { LatLon.parse(); }, TypeError, 'Invalid (empty) coordinate'));
-        test('single arg num',    () => should.Throw(function() { LatLon.parse(1); }, TypeError, 'Invalid coordinate ‘1’'));
-        test('invalid comma arg', () => should.Throw(function() { LatLon.parse('cam', 'bridge'); }, TypeError, 'Invalid coordinate ‘cam,bridge’'));
-        test('single arg str',    () => should.Throw(function() { LatLon.parse('cambridge'); }, TypeError, 'Invalid coordinate ‘cambridge’'));
-        test('invalid object 1',  () => should.Throw(function() { LatLon.parse({ y: 51.47788, x: -0.00147 }); }, TypeError, 'Invalid coordinate ‘{"y":51.47788,"x":-0.00147}’'));
-        test('invalid object 2',  () => should.Throw(function() { LatLon.parse({ lat: 'y', lon: 'x' }); }, TypeError, 'Invalid coordinate ‘{"lat":"y","lon":"x"}’'));
-        test('null 1',            () => should.Throw(function() { LatLon.parse(null); }, TypeError, 'Invalid (null) coordinate'));
-        test('null 2',            () => should.Throw(function() { LatLon.parse(null, null); }, TypeError, 'Invalid (null) coordinate'));
-        test('null 3',            () => should.Throw(function() { LatLon.parse(1.23, null); }, TypeError, 'Invalid (null) coordinate'));
+        test('empty',             () => should.Throw(function() { LatLon.parse(); }, TypeError, 'invalid (empty) point'));
+        test('single arg num',    () => should.Throw(function() { LatLon.parse(1); }, TypeError, 'invalid point ‘1’'));
+        test('invalid comma arg', () => should.Throw(function() { LatLon.parse('cam', 'bridge'); }, TypeError, 'invalid point ‘cam,bridge’'));
+        test('single arg str',    () => should.Throw(function() { LatLon.parse('cambridge'); }, TypeError, 'invalid point ‘cambridge’'));
+        test('invalid object 1',  () => should.Throw(function() { LatLon.parse({ y: 51.47788, x: -0.00147 }); }, TypeError, 'invalid point ‘{"y":51.47788,"x":-0.00147}’'));
+        test('invalid object 2',  () => should.Throw(function() { LatLon.parse({ lat: 'y', lon: 'x' }); }, TypeError, 'invalid point ‘{"lat":"y","lon":"x"}’'));
+        test('null 1',            () => should.Throw(function() { LatLon.parse(null); }, TypeError, 'invalid (null) point'));
+        test('null 2',            () => should.Throw(function() { LatLon.parse(null, null); }, TypeError, 'invalid (null) point'));
+        test('null 3',            () => should.Throw(function() { LatLon.parse(1.23, null); }, TypeError, 'invalid (null) point'));
     });
 
     describe('toString', function() {
@@ -75,7 +75,7 @@ describe('latlon-spherical', function() {
         test('dms,2',   () => btTower.toString('dms', 2).should.equal('51°31′17.29″N, 000°08′19.80″W'));
         test('n',       () => btTower.toString('n').should.equal('51.5215,-0.1388'));
         test('n,6',     () => btTower.toString('n', 6).should.equal('51.521470,-0.138833'));
-        test('bad fmt', () => should.Throw(function() { btTower.toString('x', 6); }, RangeError, 'Invalid format ‘x’'));
+        test('bad fmt', () => should.Throw(function() { btTower.toString('x', 6); }, RangeError, 'invalid format ‘x’'));
     });
 
     describe('getters/setters', function() {
@@ -101,11 +101,11 @@ describe('latlon-spherical', function() {
 
     describe('setters (fail)', function() {
         const camb = new LatLon(0, 0);
-        test('lat',       () => should.Throw(function() { camb.lat = 'xxx'; }, TypeError, 'Invalid lat ‘xxx’'));
-        test('latitude',  () => should.Throw(function() { camb.latitude = 'xxx'; }, TypeError, 'Invalid latitude ‘xxx’'));
-        test('lon',       () => should.Throw(function() { camb.lon = 'xxx'; }, TypeError, 'Invalid lon ‘xxx’'));
-        test('lgn',       () => should.Throw(function() { camb.lng = 'xxx'; }, TypeError, 'Invalid lng ‘xxx’'));
-        test('longitude', () => should.Throw(function() { camb.longitude = 'xxx'; }, TypeError, 'Invalid longitude ‘xxx’'));
+        test('lat',       () => should.Throw(function() { camb.lat = 'xxx'; }, TypeError, 'invalid lat ‘xxx’'));
+        test('latitude',  () => should.Throw(function() { camb.latitude = 'xxx'; }, TypeError, 'invalid latitude ‘xxx’'));
+        test('lon',       () => should.Throw(function() { camb.lon = 'xxx'; }, TypeError, 'invalid lon ‘xxx’'));
+        test('lgn',       () => should.Throw(function() { camb.lng = 'xxx'; }, TypeError, 'invalid lng ‘xxx’'));
+        test('longitude', () => should.Throw(function() { camb.longitude = 'xxx'; }, TypeError, 'invalid longitude ‘xxx’'));
     });
 
     describe('alternate formats', function() {
@@ -113,7 +113,7 @@ describe('latlon-spherical', function() {
         test('distance {lat,lon}',            () => cambg.distanceTo({ lat: 48.857, lon: 2.351 }).toPrecision(4).should.equal('4.043e+5'));
         test('distance {lat,lng}',            () => cambg.distanceTo({ lat: 48.857, lng: 2.351 }).toPrecision(4).should.equal('4.043e+5'));
         test('distance {latitude,longitude}', () => cambg.distanceTo({ latitude: 48.857, longitude: 2.351 }).toPrecision(4).should.equal('4.043e+5'));
-        test('distance {x,y} fails',          () => should.Throw(function() { cambg.distanceTo(({ x: 48.857, y: 2.351 })); }, TypeError, 'Invalid coordinate ‘{"x":48.857,"y":2.351}’'));
+        test('distance {x,y} fails',          () => should.Throw(function() { cambg.distanceTo(({ x: 48.857, y: 2.351 })); }, TypeError, 'invalid point ‘{"x":48.857,"y":2.351}’'));
     });
 
     describe('geodesics', function() {
@@ -128,12 +128,13 @@ describe('latlon-spherical', function() {
         test('midpoint',           () => cambg.midpointTo(paris).toString().should.equal('50.5363°N, 001.2746°E'));
         test('int.point',          () => cambg.intermediatePointTo(paris, 0.25).toString().should.equal('51.3721°N, 000.7073°E'));
         test('int.point coinc',    () => cambg.intermediatePointTo(cambg, 0.25).toString().should.equal('52.2050°N, 000.1190°E'));
-        test('distance (fail)',    () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, 'Invalid coordinate ‘paris’'));
-        test('distance (fail)',    () => should.Throw(function() { cambg.distanceTo(paris, 'xxx'); }, TypeError, 'Radius is not a number'));
-        test('init brng (fail)',   () => should.Throw(function() { cambg.initialBearingTo('paris'); }, TypeError, 'Invalid coordinate ‘paris’'));
-        test('final brng (fail)',  () => should.Throw(function() { cambg.finalBearingTo('paris'); }, TypeError, 'Invalid coordinate ‘paris’'));
-        test('midpoint (fail)',    () => should.Throw(function() { cambg.midpointTo('paris'); }, TypeError, 'Invalid coordinate ‘paris’'));
-        test('int.point (fail)',   () => should.Throw(function() { cambg.intermediatePointTo('paris', 0.5); }, TypeError, 'Invalid coordinate ‘paris’'));
+        test('distance (fail)',    () => should.Throw(function() { cambg.distanceTo({}); }, TypeError, 'invalid point ‘{}’'));
+        test('distance (fail)',    () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('distance (fail)',    () => should.Throw(function() { cambg.distanceTo(paris, 'xxx'); }, TypeError, 'invalid radius ‘xxx’'));
+        test('init brng (fail)',   () => should.Throw(function() { cambg.initialBearingTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('final brng (fail)',  () => should.Throw(function() { cambg.finalBearingTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('midpoint (fail)',    () => should.Throw(function() { cambg.midpointTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('int.point (fail)',   () => should.Throw(function() { cambg.intermediatePointTo('paris', 0.5); }, TypeError, 'invalid point ‘paris’'));
 
         const greenwich = new LatLon(51.47788, -0.00147), dist = 7794, brng = 300.7;
         test('dest’n',             () => greenwich.destinationPoint(dist, brng).toString().should.equal('51.5136°N, 000.0983°W'));
@@ -145,8 +146,8 @@ describe('latlon-spherical', function() {
         const bradwell = new LatLon(53.3206, -1.7297);
         test('cross-track',        () => new LatLon(53.2611, -0.7972).crossTrackDistanceTo(bradwell, new LatLon(53.1887,  0.1334)).toPrecision(4).should.equal('-307.5'));
         test('cross-track p',      () => new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'));
-        test('cross-track (fail)', () => should.Throw(function() { new LatLon(10, 1).crossTrackDistanceTo(null, new LatLon(0, 2)); }, TypeError, 'Invalid (null) coordinate'));
-        test('cross-track (fail)', () => should.Throw(function() { new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), null); }, TypeError, 'Invalid (null) coordinate'));
+        test('cross-track (fail)', () => should.Throw(function() { new LatLon(10, 1).crossTrackDistanceTo(null, new LatLon(0, 2)); }, TypeError, 'invalid (null) point'));
+        test('cross-track (fail)', () => should.Throw(function() { new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), null); }, TypeError, 'invalid (null) point'));
         test('along-track',        () => new LatLon(53.2611, -0.7972).alongTrackDistanceTo(bradwell, new LatLon(53.1887,  0.1334)).toPrecision(4).should.equal('6.233e+4'));
         test('along-track',        () => new LatLon(53.2611, -0.7972).alongTrackDistanceTo('53.3206, -1.7297', '53.1887,  0.1334').toPrecision(4).should.equal('6.233e+4'));
 
@@ -189,8 +190,8 @@ describe('latlon-spherical', function() {
         const stn = new LatLon(51.8853, 0.2545), cdg = new LatLon(49.0034, 2.5735);
         test('stn-cdg-bxl',            () => LatLon.intersection(stn, 108.547, cdg, 32.435).toString('d').should.equal('50.9078°N, 004.5084°E'));
 
-        test('bad point 1',            () => should.Throw(function() { LatLon.intersection(false, N, new LatLon(1, 0), E); }, TypeError, 'Invalid coordinate ‘false’'));
-        test('bad point 2',            () => should.Throw(function() { LatLon.intersection(new LatLon(0, 1), N, false, E); }, TypeError, 'Invalid coordinate ‘false’'));
+        test('bad point 1',            () => should.Throw(function() { LatLon.intersection(false, N, new LatLon(1, 0), E); }, TypeError, 'invalid point ‘false’'));
+        test('bad point 2',            () => should.Throw(function() { LatLon.intersection(new LatLon(0, 1), N, false, E); }, TypeError, 'invalid point ‘false’'));
         test('coincident points',      () => LatLon.intersection(new LatLon(0, 1), W, new LatLon(0, 1), S).toString('d').should.equal('00.0000°N, 001.0000°E'));
         test('rounding errors',        () => LatLon.intersection(new LatLon(51, 0), 120, new LatLon(50, 0), 60).toString('d').should.equal('50.4921°N, 001.3612°E'));
     });
@@ -219,12 +220,12 @@ describe('latlon-spherical', function() {
         test('distance',              () => dov.rhumbDistanceTo(cal).toPrecision(4).should.equal('4.031e+4'));
         test('distance r',            () => dov.rhumbDistanceTo(cal, 6371e3).toPrecision(4).should.equal('4.031e+4'));
         test('distance dateline E-W', () => new LatLon(1, -179).rhumbDistanceTo(new LatLon(1, 179)).toFixed(6).should.equal(new LatLon(1, 1).rhumbDistanceTo(new LatLon(1, -1)).toFixed(6)));
-        test('distance err',          () => should.Throw(function() { dov.rhumbDistanceTo(false); }, TypeError, 'Invalid coordinate ‘false’'));
+        test('distance err',          () => should.Throw(function() { dov.rhumbDistanceTo(false); }, TypeError, 'invalid point ‘false’'));
         test('bearing',               () => dov.rhumbBearingTo(cal).toFixed(1).should.equal('116.7'));
         test('bearing dateline',      () => new LatLon(1, -179).rhumbBearingTo(new LatLon(1, 179)).should.equal(270));
         test('bearing dateline',      () => new LatLon(1, 179).rhumbBearingTo(new LatLon(1, -179)).should.equal(90));
         test('bearing coincident',    () => dov.rhumbBearingTo(dov).should.be.NaN);
-        test('bearing err',           () => should.Throw(function() { dov.rhumbBearingTo(false); }, TypeError, 'Invalid coordinate ‘false’'));
+        test('bearing err',           () => should.Throw(function() { dov.rhumbBearingTo(false); }, TypeError, 'invalid point ‘false’'));
         test('dest’n',                () => dov.rhumbDestinationPoint(40310, 116.7).toString('d').should.equal('50.9641°N, 001.8531°E'));
         test('dest’n',                () => dov.rhumbDestinationPoint(40310, 116.7, 6371e3).toString('d').should.equal('50.9641°N, 001.8531°E'));
         test('dest’n',                () => new LatLon(1, 1).rhumbDestinationPoint(111178, 90).toString('d').should.equal('01.0000°N, 002.0000°E'));
@@ -232,21 +233,21 @@ describe('latlon-spherical', function() {
         test('dest’n dateline',       () => new LatLon(1, -179).rhumbDestinationPoint(222356, 270).toString('d').should.equal('01.0000°N, 179.0000°E'));
         test('midpoint',              () => dov.rhumbMidpointTo(cal).toString('d').should.equal('51.0455°N, 001.5957°E'));
         test('midpoint dateline',     () => new LatLon(1, -179).rhumbMidpointTo(new LatLon(1, 178)).toString('d').should.equal('01.0000°N, 179.5000°E'));
-        test('midpoint err',          () => should.Throw(function() { dov.rhumbMidpointTo(false); }, TypeError, 'Invalid coordinate ‘false’'));
+        test('midpoint err',          () => should.Throw(function() { dov.rhumbMidpointTo(false); }, TypeError, 'invalid point ‘false’'));
     });
 
     describe('point param as literal', function() { // is this being over-flexible?
         const cambg = new LatLon(52.205, 0.119);
         test('string',        () => cambg.distanceTo('48.857, 2.351').toPrecision(4).should.equal('4.043e+5'));
         test('object',        () => cambg.distanceTo({ lat: 48.857, lon: 2.351 }).toPrecision(4).should.equal('4.043e+5'));
-        test('string (fail)', () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, 'Invalid coordinate ‘paris’'));
-        test('object (fail)', () => should.Throw(function() { cambg.distanceTo({ x: 48.857, y: 2.351 }); }, TypeError, 'Invalid coordinate ‘{"x":48.857,"y":2.351}’'));
+        test('string (fail)', () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, 'invalid point ‘paris’'));
+        test('object (fail)', () => should.Throw(function() { cambg.distanceTo({ x: 48.857, y: 2.351 }); }, TypeError, 'invalid point ‘{"x":48.857,"y":2.351}’'));
     });
 
     describe('misc', function() {
         test('equals true',  () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
         test('equals false', () => new LatLon(52.206, 0.119).equals(new LatLon(52.205, 0.119)).should.be.false);
-        test('equals error', () => should.Throw(function() { new LatLon(52.206, 0.119).equals(false); }, TypeError, 'Invalid coordinate ‘false’'));
+        test('equals error', () => should.Throw(function() { new LatLon(52.206, 0.119).equals(false); }, TypeError, 'invalid point ‘false’'));
         test('toGeoJSON',    () => new LatLon(52.205, 0.119).toGeoJSON().should.deep.equal({ type: 'Point', coordinates: [ 0.119, 52.205 ] }));
     });
 

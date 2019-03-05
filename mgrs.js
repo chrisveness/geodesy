@@ -70,11 +70,11 @@ class Mgrs {
     constructor(zone, band, e100k, n100k, easting, northing, datum=LatLonEllipsoidal.datums.WGS84) {
         if (!(1<=Number(zone) && Number(zone)<=60)) throw new RangeError(`MGRS zone ‘${zone}’ out of range`);
         const errors = []; // check & report all other possible errors rather than reporting one-by-one
-        if (band.length!=1 || latBands.indexOf(band) == -1) errors.push(`Invalid MGRS band ‘${band}’`);
-        if (e100k.length!=1 || e100kLetters[(zone-1)%3].indexOf(e100k) == -1) errors.push(`Invalid MGRS 100km grid square column ‘${e100k}’ for zone ${zone}`);
-        if (n100k.length!=1 || n100kLetters[0].indexOf(n100k) == -1) errors.push(`Invalid MGRS 100km grid square row ‘${n100k}’`);
-        if (isNaN(Number(easting))) errors.push(`Invalid MGRS easting ‘${easting}’`);
-        if (isNaN(Number(northing))) errors.push(`Invalid MGRS northing ‘${northing}’`);
+        if (band.length!=1 || latBands.indexOf(band) == -1) errors.push(`invalid MGRS band ‘${band}’`);
+        if (e100k.length!=1 || e100kLetters[(zone-1)%3].indexOf(e100k) == -1) errors.push(`invalid MGRS 100km grid square column ‘${e100k}’ for zone ${zone}`);
+        if (n100k.length!=1 || n100kLetters[0].indexOf(n100k) == -1) errors.push(`invalid MGRS 100km grid square row ‘${n100k}’`);
+        if (isNaN(Number(easting))) errors.push(`invalid MGRS easting ‘${easting}’`);
+        if (isNaN(Number(northing))) errors.push(`invalid MGRS northing ‘${northing}’`);
         if (errors.length > 0) throw new RangeError(errors.join(', '));
 
         this.zone = Number(zone);
@@ -145,11 +145,11 @@ class Mgrs {
      *   //  mgrsRef: { zone:31, band:'U', e100k:'D', n100k:'Q', easting:48251, northing:11932 }
      */
     static parse(mgrsGridRef) {
-        if (!mgrsGridRef) throw new Error(`Invalid MGRS grid reference ‘${mgrsGridRef}’`);
+        if (!mgrsGridRef) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
         // check for military-style grid reference with no separators
         if (!mgrsGridRef.trim().match(/\s/)) {
-            if (!Number(mgrsGridRef.slice(0, 2))) throw new Error(`Invalid MGRS grid reference ‘${mgrsGridRef}’`);
+            if (!Number(mgrsGridRef.slice(0, 2))) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
             let en = mgrsGridRef.trim().slice(5); // get easting/northing following zone/band/100ksq
             en = en.slice(0, en.length/2)+' '+en.slice(-en.length/2); // separate easting/northing
             mgrsGridRef = mgrsGridRef.slice(0, 3)+' '+mgrsGridRef.slice(3, 5)+' '+en; // insert spaces
@@ -158,7 +158,7 @@ class Mgrs {
         // match separate elements (separated by whitespace)
         const ref = mgrsGridRef.match(/\S+/g);
 
-        if (ref==null || ref.length!=4) throw new Error(`Invalid MGRS grid reference ‘${mgrsGridRef}’`);
+        if (ref==null || ref.length!=4) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
         // split gzd into zone/band
         const gzd = ref[0];
@@ -203,7 +203,7 @@ class Mgrs {
      *   const mgrsStr = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932).toString(); // 31U DQ 48251 11932
      */
     toString(digits=10) {
-        if (![ 2, 4, 6, 8, 10 ].includes(Number(digits))) throw new RangeError(`Invalid precision ‘${digits}’`);
+        if (![ 2, 4, 6, 8, 10 ].includes(Number(digits))) throw new RangeError(`invalid precision ‘${digits}’`);
 
         const { zone, band, e100k, n100k, easting, northing } = this;
 

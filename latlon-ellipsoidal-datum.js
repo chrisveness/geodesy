@@ -115,7 +115,7 @@ class LatLonEllipsoidal_Datum extends LatLonEllipsoidal {
      *   const p = new LatLon(53.3444, -6.2577, 17, LatLon.datums.Irl1975);
      */
     constructor(lat, lon, height=0, datum=datums.WGS84) {
-        if (!datum || datum.transform==undefined) throw new TypeError(`Unrecognised datum ‘${datum}’`);
+        if (!datum || datum.ellipsoid==undefined) throw new TypeError(`unrecognised datum ‘${datum}’`);
 
         super(lat, lon, height);
 
@@ -197,7 +197,7 @@ class LatLonEllipsoidal_Datum extends LatLonEllipsoidal {
         // if the last argument is a datum, use that, otherwise use default WGS-84
         if (args.length==4 || (args.length==3 && typeof args[2] == 'object')) datum = args.pop();
 
-        if (!datum || datum.transform==undefined) throw new TypeError(`Unrecognised datum ‘${datum}’`);
+        if (!datum || datum.ellipsoid==undefined) throw new TypeError(`unrecognised datum ‘${datum}’`);
 
         const point = super.parse(...args);
 
@@ -219,7 +219,7 @@ class LatLonEllipsoidal_Datum extends LatLonEllipsoidal {
      *   const pOSGB = pWGS84.convertDatum(LatLon.datums.OSGB36); // 51.4773°N, 000.0001°E
      */
     convertDatum(toDatum) {
-        if (toDatum == undefined || toDatum.transform == undefined) throw new TypeError('Unrecognised datum');
+        if (!toDatum || toDatum.ellipsoid==undefined) throw new TypeError(`unrecognised datum ‘${toDatum}’`);
 
         let oldLatLon = this;
         let transform = null;
@@ -288,7 +288,7 @@ class Cartesian_Datum extends Cartesian {
      *   const p = c.toLatLon().convertDatum(LatLon.datums.OSGB36); // 50.7971°N, 004.3612°E
      */
     toLatLon(datum=datums.WGS84) {
-        if (!datum) throw new TypeError('Unrecognised datum');
+        if (!datum || datum.ellipsoid==undefined) throw new TypeError(`unrecognised datum ‘${datum}’`);
         const latLon = super.toLatLon(datum.ellipsoid);
         return new LatLonEllipsoidal_Datum(latLon.lat, latLon.lon, latLon.height, datum);
     }

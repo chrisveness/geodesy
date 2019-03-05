@@ -53,8 +53,8 @@ class OsGridRef {
         this.easting = Number(easting);
         this.northing = Number(northing);
 
-        if (isNaN(easting)  || this.easting<0  || this.easting>700e3) throw new RangeError(`Invalid easting ‘${easting}’`);
-        if (isNaN(northing) || this.northing<0 || this.northing>1300e3) throw new RangeError(`Invalid northing ‘${northing}’`);
+        if (isNaN(easting)  || this.easting<0  || this.easting>700e3) throw new RangeError(`invalid easting ‘${easting}’`);
+        if (isNaN(northing) || this.northing<0 || this.northing>1300e3) throw new RangeError(`invalid northing ‘${northing}’`);
     }
 
 
@@ -158,7 +158,7 @@ class OsGridRef {
 
         // validate format
         match = gridref.match(/^[A-Z]{2}\s*[0-9]+\s*[0-9]+$/i);
-        if (!match) throw new Error(`Invalid grid reference ‘${gridref}’`);
+        if (!match) throw new Error(`invalid grid reference ‘${gridref}’`);
 
         // get numeric values of letter references, mapping A->0, B->1, C->2, etc:
         let l1 = gridref.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0);
@@ -168,7 +168,7 @@ class OsGridRef {
         if (l2 > 7) l2--;
 
         // sanity check
-        if (l1<8 || l1 > 18) throw new Error(`Invalid grid reference ‘${gridref}’`);
+        if (l1<8 || l1 > 18) throw new Error(`invalid grid reference ‘${gridref}’`);
 
         // convert grid letters into 100km-square indexes from false origin (grid square SV):
         const e100km = ((l1 - 2) % 5) * 5 + (l2 % 5);
@@ -180,7 +180,7 @@ class OsGridRef {
         if (en.length == 1) en = [ en[0].slice(0, en[0].length / 2), en[0].slice(en[0].length / 2) ];
 
         // validation
-        if (en[0].length != en[1].length) throw new Error(`Invalid grid reference ‘${gridref}’`);
+        if (en[0].length != en[1].length) throw new Error(`invalid grid reference ‘${gridref}’`);
 
         // standardise to 10-digit refs (metres)
         en[0] = en[0].padEnd(5, '0');
@@ -205,7 +205,7 @@ class OsGridRef {
      *   const gridref = new OsGridRef(651409, 313177).toString(0); // '651409,313177'
      */
     toString(digits=10) {
-        if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`Invalid precision ‘${digits}’`); // eslint-disable-line comma-spacing
+        if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision ‘${digits}’`); // eslint-disable-line comma-spacing
 
         let { easting: e, northing: n } = this;
 
