@@ -544,7 +544,8 @@ class LatLonNvectorSpherical {
      * Returns whether this point is within the extent of a line segment joining point 1 & point 2.
      *
      * If this point is not on the great circle defined by point1 & point 2, returns whether it is
-     * within the area bound by perpendiculars to the great circle at each point.
+     * within the area bound by perpendiculars to the great circle at each point (in the same
+     * hemisphere).
      *
      * @param   {LatLon}  point1 - First point defining segment.
      * @param   {LatLon}  point2 - Second point defining segment.
@@ -568,7 +569,9 @@ class LatLonNvectorSpherical {
         const extent1 = δ10.dot(δ12);
         const extent2 = δ20.dot(δ21);
 
-        return extent1>=0 && extent2>=0;
+        const isSameHemisphere = n0.dot(n1)>=0 && n0.dot(n2)>=0;
+
+        return extent1>=0 && extent2>=0 && isSameHemisphere;
     }
 
 

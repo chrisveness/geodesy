@@ -15,36 +15,37 @@ describe('latlon-nvector-spherical', function() {
     Dms.separator = ''; // tests are easier without any DMS separator
 
     describe('@examples', function() {
-        test('constructor',                () => new LatLon(52.205, 0.119).toString().should.equal('52.2050°N, 000.1190°E'));
-        test('toNvector',                  () => new LatLon(45, 45).toNvector().toString().should.equal('[0.500,0.500,0.707]'));
-        test('greatCircle',                () => new LatLon(53.3206, -1.7297).greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'));
-        test('distanceTo d',               () => new LatLon(52.205, 0.119).distanceTo(new LatLon(48.857, 2.351)).toFixed().should.equal('404279'));
-        test('distanceTo m',               () => new LatLon(52.205, 0.119).distanceTo(new LatLon(48.857, 2.351), 3959).toFixed(1).should.equal('251.2'));
-        test('initialBearingTo',           () => new LatLon(52.205, 0.119).initialBearingTo(new LatLon(48.857, 2.351)).toFixed(1).should.equal('156.2'));
-        test('finalBearingTo',             () => new LatLon(52.205, 0.119).finalBearingTo(new LatLon(48.857, 2.351)).toFixed(1).should.equal('157.9'));
-        test('midpointTo',                 () => new LatLon(52.205, 0.119).midpointTo(new LatLon(48.857, 2.351)).toString().should.equal('50.5363°N, 001.2746°E'));
-        test('intermediatePointTo',        () => new LatLon(52.205, 0.119).intermediatePointTo(new LatLon(48.857, 2.351), 0.25).toString().should.equal('51.3721°N, 000.7073°E'));
-        test('intermediatePointOnChordTo', () => new LatLon(52.205, 0.119).intermediatePointOnChordTo(new LatLon(48.857, 2.351), 0.25).toString().should.equal('51.3723°N, 000.7072°E'));
-        test('destinationPoint',           () => new LatLon(51.47788, -0.00147).destinationPoint(7794, 300.7).toString().should.equal('51.5136°N, 000.0983°W'));
-        test('intersection',               () => LatLon.intersection(new LatLon(51.8853, 0.2545), 108.547, new LatLon(49.0034, 2.5735), 32.435).toString().should.equal('50.9078°N, 004.5084°E'));
-        test('crossTrackDistanceTo',       () => new LatLon(53.2611, -0.7972).crossTrackDistanceTo(new LatLon(53.3206, -1.7297), new LatLon(53.1887, 0.1334)).toFixed(1).should.equal('-307.5'));
-        test('nearestPointOnSegment 1',    () => new LatLon(51.0, 1.9).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0004°N, 001.9000°E'));
-        test('nearestPointOnSegment 2',    () => new LatLon(51.0, 2.1).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0000°N, 002.0000°E'));
-        test('isWithinExtent 1',           () => new LatLon(52, 1).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.true);
-        test('isWithinExtent 2',           () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.false);
-        test('isWithinExtent coincident',  () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(51, 1)).should.be.false);
-        test('triangulate',                () => LatLon.triangulate(new LatLon(50.7175, 1.65139), 333.3508, new LatLon(50.9250, 1.7094), 310.1414).toString().should.equal('51.1297°N, 001.3214°E'));
-        test('trilaterate',                () => LatLon.trilaterate(new LatLon(0, 0), 157e3, new LatLon(0, 1), 111e3, new LatLon(1, 0), 111e3).toString().should.equal('00.9985°N, 000.9986°E'));
+        test('constructor',                 () => new LatLon(52.205, 0.119).toString().should.equal('52.2050°N, 000.1190°E'));
+        test('toNvector',                   () => new LatLon(45, 45).toNvector().toString().should.equal('[0.500,0.500,0.707]'));
+        test('greatCircle',                 () => new LatLon(53.3206, -1.7297).greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'));
+        test('distanceTo d',                () => new LatLon(52.205, 0.119).distanceTo(new LatLon(48.857, 2.351)).toFixed().should.equal('404279'));
+        test('distanceTo m',                () => new LatLon(52.205, 0.119).distanceTo(new LatLon(48.857, 2.351), 3959).toFixed(1).should.equal('251.2'));
+        test('initialBearingTo',            () => new LatLon(52.205, 0.119).initialBearingTo(new LatLon(48.857, 2.351)).toFixed(1).should.equal('156.2'));
+        test('finalBearingTo',              () => new LatLon(52.205, 0.119).finalBearingTo(new LatLon(48.857, 2.351)).toFixed(1).should.equal('157.9'));
+        test('midpointTo',                  () => new LatLon(52.205, 0.119).midpointTo(new LatLon(48.857, 2.351)).toString().should.equal('50.5363°N, 001.2746°E'));
+        test('intermediatePointTo',         () => new LatLon(52.205, 0.119).intermediatePointTo(new LatLon(48.857, 2.351), 0.25).toString().should.equal('51.3721°N, 000.7073°E'));
+        test('intermediatePointOnChordTo',  () => new LatLon(52.205, 0.119).intermediatePointOnChordTo(new LatLon(48.857, 2.351), 0.25).toString().should.equal('51.3723°N, 000.7072°E'));
+        test('destinationPoint',            () => new LatLon(51.47788, -0.00147).destinationPoint(7794, 300.7).toString().should.equal('51.5136°N, 000.0983°W'));
+        test('intersection',                () => LatLon.intersection(new LatLon(51.8853, 0.2545), 108.547, new LatLon(49.0034, 2.5735), 32.435).toString().should.equal('50.9078°N, 004.5084°E'));
+        test('crossTrackDistanceTo',        () => new LatLon(53.2611, -0.7972).crossTrackDistanceTo(new LatLon(53.3206, -1.7297), new LatLon(53.1887, 0.1334)).toFixed(1).should.equal('-307.5'));
+        test('nearestPointOnSegment 1',     () => new LatLon(51.0, 1.9).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0004°N, 001.9000°E'));
+        test('nearestPointOnSegment 2',     () => new LatLon(51.0, 2.1).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0000°N, 002.0000°E'));
+        test('nearestPointOnSegment antip', () => new LatLon(10, -140).nearestPointOnSegment(new LatLon(0, 20), new LatLon(0, 40)).toString().should.equal('00.0000°N, 020.0000°E'));
+        test('isWithinExtent 1',            () => new LatLon(52, 1).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.true);
+        test('isWithinExtent 2',            () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.false);
+        test('isWithinExtent coincident',   () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(51, 1)).should.be.false);
+        test('triangulate',                 () => LatLon.triangulate(new LatLon(50.7175, 1.65139), 333.3508, new LatLon(50.9250, 1.7094), 310.1414).toString().should.equal('51.1297°N, 001.3214°E'));
+        test('trilaterate',                 () => LatLon.trilaterate(new LatLon(0, 0), 157e3, new LatLon(0, 1), 111e3, new LatLon(1, 0), 111e3).toString().should.equal('00.9985°N, 000.9986°E'));
         const bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
-        test('isEnclosedBy',               () => new LatLon(45.1, 1.1).isEnclosedBy(bounds).should.be.true);
+        test('isEnclosedBy',                () => new LatLon(45.1, 1.1).isEnclosedBy(bounds).should.be.true);
         const polygon = [ new LatLon(0, 0), new LatLon(1, 0), new LatLon(0, 1) ];
-        test('areaOf',                     () => LatLon.areaOf(polygon).toExponential(2).should.equal('6.18e+9'));
-        test('meanOf',                     () => LatLon.meanOf([ new LatLon(1, 1), new LatLon(4, 2), new LatLon(1, 3) ]).toString().should.equal('02.0001°N, 002.0000°E'));
-        test('equals',                     () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
+        test('areaOf',                      () => LatLon.areaOf(polygon).toExponential(2).should.equal('6.18e+9'));
+        test('meanOf',                      () => LatLon.meanOf([ new LatLon(1, 1), new LatLon(4, 2), new LatLon(1, 3) ]).toString().should.equal('02.0001°N, 002.0000°E'));
+        test('equals',                      () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
         const greenwich = new LatLon(51.47788, -0.00147);
-        test('toString d',                 () => greenwich.toString().should.equal('51.4779°N, 000.0015°W'));
-        test('toString dms',               () => greenwich.toString('dms').should.equal('51°28′40″N, 000°00′05″W'));
-        test('toString lat,lon',           () => greenwich.toString('n').split(',').should.deep.equal([ '51.4779', '-0.0015' ]));
+        test('toString d',                  () => greenwich.toString().should.equal('51.4779°N, 000.0015°W'));
+        test('toString dms',                () => greenwich.toString('dms').should.equal('51°28′40″N, 000°00′05″W'));
+        test('toString lat,lon',            () => greenwich.toString('n').split(',').should.deep.equal([ '51.4779', '-0.0015' ]));
     });
 
     describe('@examples (NvectorSpherical)', function() {
