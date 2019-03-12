@@ -35,6 +35,9 @@ describe('os-gridref', function() {
         test('length',       () => v123.length.should.equal(3.7416573867739413));
         test('unit',         () => v123.unit().toString().should.equal('[0.267,0.535,0.802]'));
         test('angleTo',      () => v123.angleTo(v321).toDegrees().toFixed(3).should.equal('44.415'));
+        test('angleTo +',    () => v123.angleTo(v321, v123.cross(v321)).toDegrees().toFixed(3).should.equal('44.415'));
+        test('angleTo -',    () => v123.angleTo(v321, v321.cross(v123)).toDegrees().toFixed(3).should.equal('-44.415'));
+        test('angleTo 0',    () => v123.angleTo(v321, v123).toDegrees().toFixed(3).should.equal('44.415'));
         test('rotateAround', () => v123.rotateAround(new Vector3d(0, 0, 1), 90).toString().should.equal('[-0.535,0.267,0.802]'));
         test('toString',     () => v123.toString().should.equal('[1.000,2.000,3.000]'));
         test('toString',     () => v123.toString(6).should.equal('[1.000000,2.000000,3.000000]'));

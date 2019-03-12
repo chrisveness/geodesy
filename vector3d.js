@@ -167,18 +167,25 @@ class Vector3d {
 
 
     /**
-     * Calculates the angle between ‘this’ vector and supplied vector atan2(|p₁×p₂|, p₁·p₂).
+     * Calculates the angle between ‘this’ vector and supplied vector atan2(|p₁×p₂|, p₁·p₂) (or if
+     * (extra-planar) ‘n’ supplied then atan2(n·p₁×p₂, p₁·p₂).
      *
-     * @param   {Vector3d} v
-     * @param   {Vector3d} [n] - Plane normal: if supplied, angle is -π..+π, signed +ve if this->v is
-     *     clockwise looking along n, -ve in opposite direction (if not supplied, angle is always 0..π).
-     * @returns {number}   Angle (in radians) between this vector and supplied vector.
+     * @param   {Vector3d} v - Vector whose angle is to be determined from ‘this’ vector.
+     * @param   {Vector3d} [n] - Plane normal: if supplied, angle is signed +ve if this->v is
+     *                     clockwise looking along n, -ve in opposite direction.
+     * @returns {number}   Angle (in radians) between this vector and supplied vector (in range 0..π
+     *                     if n not supplied, range -π..+π if n supplied).
      */
     angleTo(v, n=undefined) {
         if (!(v instanceof Vector3d)) throw new TypeError('v is not Vector3d object');
         if (!(n instanceof Vector3d || n == undefined)) throw new TypeError('n is not Vector3d object');
 
-        const sign = n==undefined ? 1 : Math.sign(this.cross(v).dot(n));
+        // q.v. stackoverflow.com/questions/14066933#answer-16544330, but n·p₁×p₂ is numerically
+        // ill-conditioned, so just calculate sign to apply to |p₁×p₂|
+
+        // if n·p₁×p₂ is -ve, negate |p₁×p₂|
+        const sign = n==undefined || this.cross(v).dot(n)>=0 ? 1 : -1;
+
         const sinθ = this.cross(v).length * sign;
         const cosθ = this.dot(v);
 
