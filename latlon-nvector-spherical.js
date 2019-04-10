@@ -739,6 +739,8 @@ class LatLonNvectorSpherical {
      * Calculates the area of a spherical polygon where the sides of the polygon are great circle
      * arcs joining the vertices.
      *
+     * Uses Girard’s theorem: A = [Σθᵢ − (n−2)·π]·R²
+     *
      * @param   {LatLon[]} polygon - Array of points defining vertices of the polygon.
      * @param   {number}   [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
      * @returns {number}   The area of the polygon in the same units as radius.
@@ -748,8 +750,6 @@ class LatLonNvectorSpherical {
      *   const area = LatLon.areaOf(polygon); // 6.18e9 m²
      */
     static areaOf(polygon, radius=6371e3) {
-        // uses Girard’s theorem: A = [Σθᵢ − (n−2)·π]·R²
-
         const R = Number(radius);
 
         // close the polygon so that the last point equals the first point
@@ -758,7 +758,7 @@ class LatLonNvectorSpherical {
 
         const n = polygon.length - 1; // number of vertices
 
-        // get great-circle vector for each vertex
+        // get great-circle vector for each segment
         const c = [];
         for (let v=0; v<n; v++) {
             const i = polygon[v].toNvector();
@@ -775,6 +775,10 @@ class LatLonNvectorSpherical {
         let Σα = 0;
         for (let v=0; v<n; v++) Σα += c[v].angleTo(c[v+1], n1);
         const Σθ = n*π - Math.abs(Σα);
+
+        // note: angle between two sides of a spherical triangle is acos(c₁·c₂) where cₙ is the
+        // plane normal vector to the great circle representing the triangle side - use this instead
+        // of angleTo()?
 
         const E = (Σθ - (n-2)*π); // spherical excess (in steradians)
         const A = E * R*R;        // area in units of R²
@@ -850,7 +854,7 @@ class LatLonNvectorSpherical {
      * @example
      *   const greenwich = new LatLon(51.47788, -0.00147);
      *   const d = greenwich.toString();                        // 51.4778°N, 000.0015°W
-     *   const dms = greenwich.toString('dms', 2);              // 51°28′40″N, 000°00′05″W
+     *   const dms = greenwich.toString('dms', 2);              // 51°28′40.37″N, 000°00′05.29″W
      *   const [lat, lon] = greenwich.toString('n').split(','); // 51.4778, -0.0015
      */
     toString(format='d', dp=undefined) {

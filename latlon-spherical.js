@@ -394,6 +394,8 @@ class LatLonSpherical {
     static intersection(p1, brng1, p2, brng2) {
         if (!(p1 instanceof LatLonSpherical)) p1 = LatLonSpherical.parse(p1); // allow literal forms
         if (!(p2 instanceof LatLonSpherical)) p2 = LatLonSpherical.parse(p2); // allow literal forms
+        if (isNaN(brng1)) throw new TypeError(`invalid brng1 ‘${brng1}’`);
+        if (isNaN(brng2)) throw new TypeError(`invalid brng2 ‘${brng2}’`);
 
         // see www.edwilliams.org/avform.htm#Intersection
 
@@ -420,7 +422,7 @@ class LatLonSpherical {
         const α2 = θ21 - θ23; // angle 1-2-3
 
         if (Math.sin(α1) == 0 && Math.sin(α2) == 0) return null; // infinite intersections
-        if (Math.sin(α1) * Math.sin(α2) < 0) return null;        // ambiguous intersection
+        if (Math.sin(α1) * Math.sin(α2) < 0) return null;        // ambiguous intersection (antipodal?)
 
         const cosα3 = -Math.cos(α1)*Math.cos(α2) + Math.sin(α1)*Math.sin(α2)*Math.cos(δ12);
 
@@ -711,7 +713,7 @@ class LatLonSpherical {
     }
 
 
-    /* Area - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* Area - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
     /**
@@ -728,8 +730,9 @@ class LatLonSpherical {
      */
     static areaOf(polygon, radius=6371e3) {
         // uses method due to Karney: osgeo-org.1560.x6.nabble.com/Area-of-a-spherical-polygon-td3841625.html;
-        // for each edge of the polygon, tan(E/2) = tan(Δλ/2)·(tan(φ1/2) + tan(φ2/2)) / (1 + tan(φ1/2)·tan(φ2/2))
+        // for each edge of the polygon, tan(E/2) = tan(Δλ/2)·(tan(φ₁/2)+tan(φ₂/2)) / (1+tan(φ₁/2)·tan(φ₂/2))
         // where E is the spherical excess of the trapezium obtained by extending the edge to the equator
+        // (Karney's method is probably more efficient than the more widely known L’Huilier’s Theorem)
 
         const R = radius;
 
