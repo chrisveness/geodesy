@@ -10,9 +10,13 @@ if (typeof window == 'undefined') { // node
     window.should = chai.should();
 }
 
+
 describe('latlon-nvector-spherical', function() {
     const test = it;    // just an alias
     Dms.separator = ''; // tests are easier without any DMS separator
+    const R = 6371e3;
+    const π = Math.PI;
+    const ε = Number.EPSILON;
 
     describe('@examples', function() {
         test('constructor',                 () => new LatLon(52.205, 0.119).toString().should.equal('52.2050°N, 000.1190°E'));
@@ -39,13 +43,13 @@ describe('latlon-nvector-spherical', function() {
         test('trilaterate',                 () => LatLon.trilaterate(new LatLon(0, 0), 157e3, new LatLon(0, 1), 111e3, new LatLon(1, 0), 111e3).toString().should.equal('00.9985°N, 000.9986°E'));
         const bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
         test('isEnclosedBy',                () => new LatLon(45.1, 1.1).isEnclosedBy(bounds).should.be.true);
-        const polygon = [ new LatLon(0, 0), new LatLon(1, 0), new LatLon(0, 1) ];
-        test('areaOf',                      () => LatLon.areaOf(polygon).toExponential(2).should.equal('6.18e+9'));
+        test('areaOf cw',                   () => LatLon.areaOf([ new LatLon(0, 0), new LatLon(1, 0), new LatLon(0, 1) ]).toExponential(2).should.equal('6.18e+9'));
+        test('areaOf ccw',                  () => LatLon.areaOf([ new LatLon(0, 0), new LatLon(0, 1), new LatLon(1, 0) ]).toExponential(2).should.equal('6.18e+9'));
         test('meanOf',                      () => LatLon.meanOf([ new LatLon(1, 1), new LatLon(4, 2), new LatLon(1, 3) ]).toString().should.equal('02.0001°N, 002.0000°E'));
         test('equals',                      () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
         const greenwich = new LatLon(51.47788, -0.00147);
         test('toString d',                  () => greenwich.toString().should.equal('51.4779°N, 000.0015°W'));
-        test('toString dms',                () => greenwich.toString('dms').should.equal('51°28′40″N, 000°00′05″W'));
+        test('toString dms',                () => greenwich.toString('dms', 2).should.equal('51°28′40.37″N, 000°00′05.29″W'));
         test('toString lat,lon',            () => greenwich.toString('n').split(',').should.deep.equal([ '51.4779', '-0.0015' ]));
     });
 
@@ -54,10 +58,6 @@ describe('latlon-nvector-spherical', function() {
         test('toLatLon',             () => new Nvector(0.5000, 0.5000, 0.7071).toLatLon().toString('d', 1).should.equal('45.0°N, 045.0°E'));
     });
 
-    describe('constructor fail', function() {
-        test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
-        test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));
-    });
     describe('constructor fail', function() {
         test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
         test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));
@@ -109,21 +109,28 @@ describe('latlon-nvector-spherical', function() {
         test('gc from vector',    () => new LatLon(53.3206, -1.7297).toNvector().greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'));
     });
 
-    describe('geodesics', function() {
+    describe('dist/brng/dest', function() {
         const cambg = new LatLon(52.205, 0.119), paris = new LatLon(48.857, 2.351);
         test('distance',           () => cambg.distanceTo(paris).toPrecision(4).should.equal('4.043e+5'));
         test('distance (miles)',   () => cambg.distanceTo(paris, 3959).toPrecision(4).should.equal('251.2'));
         test('initial bearing',    () => cambg.initialBearingTo(paris).toFixed(1).should.equal('156.2'));
-        test('initial brng coinc', () => cambg.initialBearingTo(cambg).should.be.NaN);
         test('final bearing',      () => cambg.finalBearingTo(paris).toFixed(1).should.equal('157.9'));
+        test('initial brng coinc', () => cambg.initialBearingTo(cambg).should.be.NaN);
+        test('final brng coinc',   () => cambg.finalBearingTo(cambg).should.be.NaN);
         test('bearing (reverse)',  () => paris.initialBearingTo(cambg).toFixed(1).should.equal('337.9'));
         test('midpoint',           () => cambg.midpointTo(paris).toString().should.equal('50.5363°N, 001.2746°E'));
         test('int.point',          () => cambg.intermediatePointTo(paris, 0.25).toString().should.equal('51.3721°N, 000.7073°E'));
-        test('destination',        () => new LatLon(51.47788, -0.00147).destinationPoint(7794, 300.7).toString().should.equal('51.5136°N, 000.0983°W'));
+        test('int.point coinc',    () => cambg.intermediatePointTo(cambg, 0.25).toString().should.equal('52.2050°N, 000.1190°E'));
+        test('int.pt',             () => new LatLon(90, 0).intermediatePointTo(new LatLon(0, 90), 0.75).toString().should.equal('22.5000°N, 090.0000°E'));
+        test('int.pt chord',       () => new LatLon(90, 0).intermediatePointOnChordTo(new LatLon(0, 90), 0.75).toString().should.equal('18.4349°N, 090.0000°E'));
+        const greenwich = new LatLon(51.47788, -0.00147), dist = 7794, brng = 300.7;
+        test('destination',        () => greenwich.destinationPoint(dist, brng).toString().should.equal('51.5136°N, 000.0983°W'));
+        test('destination r',      () => greenwich.destinationPoint(dist, brng, 6371e3).toString().should.equal('51.5136°N, 000.0983°W'));
     });
 
-    describe('geodesics fails', function() {
+    describe('dist/brng/dest fails', function() {
         const cambg = new LatLon(52.205, 0.119), paris = new LatLon(48.857, 2.351);
+        test('distance (fail p)',   () => should.Throw(function() { cambg.distanceTo({}); }, TypeError, 'invalid point ‘[object Object]’'));
         test('distance (fail p)',   () => should.Throw(function() { cambg.distanceTo('paris'); }, TypeError, 'invalid point ‘paris’'));
         test('distance (fail r)',   () => should.Throw(function() { cambg.distanceTo(paris, 'xxx'); }, TypeError, 'invalid radius ‘xxx’'));
         test('init brng (fail)',    () => should.Throw(function() { cambg.initialBearingTo('paris'); }, TypeError, 'invalid point ‘paris’'));
@@ -155,37 +162,40 @@ describe('latlon-nvector-spherical', function() {
 
         test('end+end',                       () => LatLon.intersection(new LatLon(1, 1), new LatLon(2, 2), new LatLon(1, 4), new LatLon(2, 3)).toString().should.equal('02.4994°N, 002.5000°E'));
 
-        test('coincident',                    () => LatLon.intersection(new LatLon(1, 1), 0, new LatLon(1, 1), 90).toString().should.equal('01.0000°N, 001.0000°E'));
+        test('coincident',                    () => LatLon.intersection(new LatLon(1, 1), N, new LatLon(1, 1), E).toString().should.equal('01.0000°N, 001.0000°E'));
 
         const stn = new LatLon(51.8853, 0.2545), cdg = new LatLon(49.0034, 2.5735);
         test('stn-cdg-bxl',                   () => LatLon.intersection(stn, 108.547, cdg, 32.435).toString().should.equal('50.9078°N, 004.5084°E'));
 
+        test('bad point 1',                   () => should.Throw(function() { LatLon.intersection(false, N, new LatLon(1, 0), E); }, TypeError, 'invalid path1start ‘false’'));
+        test('bad point 2',                   () => should.Throw(function() { LatLon.intersection(new LatLon(0, 1), N, false, E); }, TypeError, 'invalid path2start ‘false’'));
         test('int’n (fail 1)',                () => should.Throw(function() { LatLon.intersection(null, 'n', null, 's'); }, TypeError, 'invalid path1start ‘null’'));
         test('int’n (fail 2)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', null, 's'); }, TypeError, 'invalid path2start ‘null’'));
         test('int’n (fail 3)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, 'invalid path1brngEnd ‘n’'));
-        test('int’n (fail 4)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, 'invalid path1brngEnd ‘n’'));
-        test('int’n (fail 5)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, 'invalid path2brngEnd ‘s’'));
+        test('int’n (fail 4)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, 'invalid path2brngEnd ‘s’'));
+        test('rounding errors',               () => LatLon.intersection(new LatLon(51, 0), 120, new LatLon(50, 0), 60).toString().should.equal('50.4921°N, 001.3612°E'));
     });
 
     describe('cross-track / along-track', function() {
-        test('cross-track b',       () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+6'));
-        test('cross-track p',       () => new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'));
+        test('cross-track end-p',   () => new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+6'));
+        test('cross-track brng',    () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+6'));
         test('cross-track -',       () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+6'));
 
         const bradwell = new LatLon(53.3206, -1.7297), dunham = new LatLon(53.2611, -0.7972), partney = new LatLon(53.1887,  0.1334);
         test('cross-track',          () => dunham.crossTrackDistanceTo(bradwell, partney).toPrecision(4).should.equal('-307.5'));
-        test('along-track brng',     () => dunham.alongTrackDistanceTo(bradwell, 96.0).toPrecision(4).should.equal('6.233e+4'));
+        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(10, 1).crossTrackDistanceTo(null, new LatLon(0, 2)); }, TypeError, 'invalid pathStart ‘null’'));
+        test('cross-track (fail)',   () => should.Throw(function() { new LatLon(10, 1).crossTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, 'invalid pathBrngEnd ‘x’'));
         test('along-track end-p',    () => dunham.alongTrackDistanceTo(bradwell, partney).toPrecision(4).should.equal('6.233e+4'));
+        test('along-track brng',     () => dunham.alongTrackDistanceTo(bradwell, 96.0).toPrecision(4).should.equal('6.233e+4'));
 
         test('cross-track NE',       () => new LatLon(1, 1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
         test('cross-track SE',       () => new LatLon(-1,  1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
         test('cross-track SW?',      () => new LatLon(-1, -1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
-        test('cross-track NW?',      () => new LatLon( 1, -1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
-
-        test('along-track NE',       () => new LatLon( 1,  1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
+        test('cross-track NW?',      () => new LatLon( 1, -1).crossTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5')); // eslint-disable-line space-in-parens
+        test('along-track NE',       () => new LatLon( 1,  1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5')); // eslint-disable-line space-in-parens
         test('along-track SE',       () => new LatLon(-1,  1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('1.112e+5'));
         test('along-track SW',       () => new LatLon(-1, -1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
-        test('along-track NW',       () => new LatLon( 1, -1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
+        test('along-track NW',       () => new LatLon( 1, -1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5')); // eslint-disable-line space-in-parens
 
         test('cross-track brng w-e', () => new LatLon(1, 0).crossTrackDistanceTo(new LatLon(0, 0), 90).toPrecision(4).should.equal('-1.112e+5'));
         test('cross-track brng e-w', () => new LatLon(1, 0).crossTrackDistanceTo(new LatLon(0, 0), 270).toPrecision(4).should.equal('1.112e+5'));
@@ -197,6 +207,10 @@ describe('latlon-nvector-spherical', function() {
         test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, 'invalid pathBrngEnd ‘x’'));
     });
 
+    describe('triangulate', function() {
+        // TODO
+    });
+
     describe('trilaterate', function() { // http://gis.stackexchange.com/a/415/41129
         const p1 = new LatLon(37.418436, -121.963477), d1 = 265.710701754;
         const p2 = new LatLon(37.417243, -121.961889), d2 = 234.592423446;
@@ -205,23 +219,55 @@ describe('latlon-nvector-spherical', function() {
         test('coincident', () => should.equal(LatLon.trilaterate(p1, d1, p1, d2, p1, d3), null));
     });
 
-    describe('area', function() {
-        const polyHemi = [ new LatLon(0, 1), new LatLon(45, 0), new LatLon(89, 90), new LatLon(45, 180), new LatLon(0, 179), new LatLon(-45, 180), new LatLon(-89, 90), new LatLon(-45, 0) ];
+    describe('area / enclosed (polygon-based)', function() {
+        const polyTriangle = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(1, 2) ];
+        const polySquareCw = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(2, 2), new LatLon(1, 2) ];
+        const polySquareCcw = [ new LatLon(1, 1), new LatLon(1, 2), new LatLon(2, 2), new LatLon(2, 1) ];
+        const polyOctant = [ new LatLon(0, ε), new LatLon(90, 0), new LatLon(0, 90-ε) ];
+        const polyOctantS = [ new LatLon(-ε, ε), new LatLon(90, 0), new LatLon(-ε, 90-ε) ];
+        // const polyQuadrant = [ new LatLon(ε, ε), new LatLon(90, ε), new LatLon(ε, 180-ε), new LatLon(ε, 90) ];
+        const polyHemiE = [ new LatLon(ε, ε), new LatLon(90-ε, 0), new LatLon(90-ε, 180), new LatLon(ε, 180), new LatLon(-ε, 180), new LatLon(-90+ε, 180), new LatLon(-90+ε, 0), new LatLon(-ε, ε) ];
         const polyGc = [ new LatLon(10, 0), new LatLon(10, 90), new LatLon(0, 45) ];
         const polyPole = [ new LatLon(89, 0), new LatLon(89, 120), new LatLon(89, -120) ];
         const polyPoleEdge = [ new LatLon(85, 90), new LatLon(85, 0), new LatLon(85, -90) ];
         const polyConcave = [ new LatLon(1, 1), new LatLon(5, 1), new LatLon(5, 3), new LatLon(1, 3), new LatLon(3, 2) ];
-        test('hemisphere enclosed y', () => new LatLon(22.5, 0.59).isEnclosedBy(polyHemi).should.be.true);
-        test('hemisphere enclosed n', () => new LatLon(22.5, 0.58).isEnclosedBy(polyHemi).should.be.false);
+
+        test('triangle area',         () => LatLon.areaOf(polyTriangle).toFixed(0).should.equal('6181527888'));
+        test('triangle area radius',  () => LatLon.areaOf(polyTriangle, 6371e3).toFixed(0).should.equal('6181527888'));
+        test('triangle area closed',  () => LatLon.areaOf(polyTriangle.concat(polyTriangle[0])).toFixed(0).should.equal('6181527888'));
+        test('square cw area',        () => LatLon.areaOf(polySquareCw).toFixed(0).should.equal('12360230987'));
+        test('square ccw area',       () => LatLon.areaOf(polySquareCcw).toFixed(0).should.equal('12360230987'));
+        test('octant area',           () => LatLon.areaOf(polyOctant).should.equal(π*R*R/2));
+        test('super-octant area',     () => LatLon.areaOf(polyOctantS).should.equal(π*R*R/2));
+        // TODO: fails: test('quadrant area', () => LatLon.areaOf(polyQuadrant).should.equal(π*R*R));
+        test('hemisphere area',       () => LatLon.areaOf(polyHemiE).toFixed(1).should.equal((2*π*R*R).toFixed(1)));
+        test('pole area',             () => LatLon.areaOf(polyPole).toFixed(0).should.equal('16063139192'));
+        test('concave area',          () => LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'));
+
+        test('hemisphere enclosed y', () => new LatLon(45, 1).isEnclosedBy(polyHemiE).should.be.true);
+        // TODO: fails: test('hemisphere enclosed n', () => new LatLon(45, -1).isEnclosedBy(polyHemiE).should.be.false);
         test('gc enclosed y',         () => new LatLon(14, 45).isEnclosedBy(polyGc).should.be.true);
         test('gc enclosed n',         () => new LatLon(15, 45).isEnclosedBy(polyGc).should.be.false);
         test('pole enclosed',         () => new LatLon(90, 0).isEnclosedBy(polyPole).should.be.true);
         test('polar edge enclosed',   () => new LatLon(90, 0).isEnclosedBy(polyPoleEdge).should.be.true);
         test('concave enclosed y',    () => new LatLon(4, 2).isEnclosedBy(polyConcave).should.be.true);
         test('concave enclosed n',    () => new LatLon(2, 2).isEnclosedBy(polyConcave).should.be.false);
+    });
 
-        test('int.pt normal', () => new LatLon(90, 0).intermediatePointTo(new LatLon(0, 90), 0.75).toString().should.equal('22.5000°N, 090.0000°E'));
-        test('int.pt direct', () => new LatLon(90, 0).intermediatePointOnChordTo(new LatLon(0, 90), 0.75).toString().should.equal('18.4349°N, 090.0000°E'));
+    describe('Ed Williams', function() { // www.edwilliams.org/avform.htm
+        const lax = new LatLon(Dms.parse('33° 57′N'), Dms.parse('118° 24′W'));
+        const jfk = new LatLon(Dms.parse('40° 38′N'), Dms.parse('073° 47′W'));
+        const r = 180*60/π; // earth radius in nautical miles
+        test('distance nm',   () => lax.distanceTo(jfk, r).toPrecision(4).should.equal('2144'));
+        test('bearing',       () => lax.initialBearingTo(jfk).toPrecision(2).should.equal('66'));
+        test('intermediate',  () => lax.intermediatePointTo(jfk, 100/2144).toString('dm', 0).should.equal('34°37′N, 116°33′W'));
+        const d = new LatLon(Dms.parse('34:30N'), Dms.parse('116:30W'));
+        test('cross-track',   () => d.crossTrackDistanceTo(lax, jfk, r).toPrecision(5).should.equal('7.4523'));
+        test('along-track',   () => d.alongTrackDistanceTo(lax, jfk, r).toPrecision(5).should.equal('99.588'));
+        test('intermediate',  () => lax.intermediatePointTo(jfk, 0.4).toString('dm', 3).should.equal('38°40.167′N, 101°37.570′W'));
+        const reo = new LatLon(Dms.parse('42.600N'), Dms.parse('117.866W'));
+        const bke = new LatLon(Dms.parse('44.840N'), Dms.parse('117.806W'));
+        test('intersection',  () => LatLon.intersection(reo, 51, bke, 137).toString('d', 3).should.equal('43.572°N, 116.189°W'));
     });
 
     describe('misc', function() {
