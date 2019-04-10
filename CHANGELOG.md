@@ -1,10 +1,18 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.1] - 2019-04-10
 
 ### Fixed
 
-- LatLon object returned by Utm.toLatLon() was missing a .toUtm() method
+- Add missing n-vector spherical alongTrackDistanceTo() method
+- Add missing .toUtm() method to LatLon object returned by Utm.toLatLon()
+- Fix n-vector spherical isWithinExtent() for point in different hemisphere
+- Fix vector3d angleTo() for case where plane normal n is in the plane
+- Rationalise/harmonise exception messages
+
+### Added
+
+- README ‘docs’ badge with link to documentation
 
 ## [2.0.0] - 2019-02-14
 

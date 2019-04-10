@@ -1,8 +1,8 @@
 Geodesy functions
 =================
 
-[![Build Status](https://travis-ci.org/chrisveness/geodesy.svg?branch=v2.0.0)](https://travis-ci.org/chrisveness/geodesy)
-[![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/badge.svg?branch=2.0.0)](https://coveralls.io/github/chrisveness/geodesy?branch=2.0.0)
+[![Build Status](https://travis-ci.org/chrisveness/geodesy.svg?branch=master)](https://travis-ci.org/chrisveness/geodesy)
+[![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/badge.svg?branch=master)](https://coveralls.io/github/chrisveness/geodesy?branch=master)
 [![Documentation](https://img.shields.io/badge/docs-www.movable--type.co.uk%2Fscripts%2Fgeodesy--library.html-lightgrey.svg)](https://www.movable-type.co.uk/scripts/geodesy-library.html)
 
 These libraries started life (a long time ago) as simple ‘latitude/longitude’ code fragments
@@ -94,7 +94,7 @@ example,
 ```html
 <!doctype html><title>geodesy example</title><meta charset="utf-8">
 <script type="module">
-    import LatLon from 'https://cdn.jsdelivr.net/gh/chrisveness/geodesy@2.0.0/latlon-spherical.min.js';
+    import LatLon from 'https://cdn.jsdelivr.net/gh/chrisveness/geodesy@2.0.1/latlon-spherical.min.js';
 
     const p1 = new LatLon(50.06632, -5.71475);
     const p2 = new LatLon(58.64402, -3.07009);
