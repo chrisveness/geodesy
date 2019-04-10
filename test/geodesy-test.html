@@ -4,22 +4,22 @@
     <title>Geodesy Library Tests</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mocha/5.2.0/mocha.css">
-    <script defer src="//cdnjs.cloudflare.com/ajax/libs/mocha/5.2.0/mocha.min.js"></script>
-    <script defer src="//cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.2/mocha.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.2/mocha.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.min.js"></script>
     <script type="module">mocha.setup('bdd')</script>
-    <script type="module" src="./dms-tests.js"></script>
-    <script type="module" src="./latlon-ellipsoidal-tests.js"></script>
-    <script type="module" src="./latlon-ellipsoidal-datum-tests.js"></script>
-    <script type="module" src="./latlon-ellipsoidal-referenceframe-tests.js"></script>
-    <script type="module" src="./latlon-ellipsoidal-vincenty-tests.js"></script>
-    <script type="module" src="./latlon-nvector-spherical-tests.js"></script>
-    <script type="module" src="./latlon-nvector-ellipsoidal-tests.js"></script>
-    <script type="module" src="./latlon-spherical-tests.js"></script>
-    <script type="module" src="./utm-mgrs-tests.js"></script>
-    <script type="module" src="./os-gridref-tests.js"></script>
-    <script type="module" src="./vector3d-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/dms-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/latlon-ellipsoidal-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/latlon-ellipsoidal-datum-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/latlon-ellipsoidal-referenceframe-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/latlon-ellipsoidal-vincenty-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/latlon-nvector-spherical-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/latlon-nvector-ellipsoidal-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/latlon-spherical-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/utm-mgrs-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/os-gridref-tests.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/chrisveness/geodesy@latest/test/vector3d-tests.js"></script>
     <script type="module">document.body.style.cursor='wait'; mocha.run().on('end', e => document.body.style.cursor='default');</script>
     <style>
         body { font: 20px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 0 1em; }
@@ -30,16 +30,17 @@
 </head>
 
 <body>
-    <h1>Geodesy Library Tests</h1>
-    <ul>
-        <li>www.movable-type.co.uk/scripts/<a href="https://www.movable-type.co.uk/scripts/latlong.html">latlong.html</a>,
-            <a href="https://www.movable-type.co.uk/scripts/latlong-vincenty.html">latlong-vincenty.html</a>,
-            <a href="https://www.movable-type.co.uk/scripts/latlong-vectors.html">latlong-vectors.html</a>,
-            <a href="https://www.movable-type.co.uk/scripts/latlong-os-gridref.html">latlong-os-gridref.html</a>,
-            <a href="https://www.movable-type.co.uk/scripts/latlong-utm-mgrs.html">latlong-utm-mgrs.html</a></li>
-        <li>github.com/chrisveness/geodesy/blob/master/<a href="https://github.com/chrisveness/geodesy/blob/master/test/">test</a></li>
-    </ul>
-    <div id="mocha"></div>
+<h1>Geodesy Library Tests</h1>
+<ul>
+    <li>www.movable-type.co.uk/scripts/<a href="https://www.movable-type.co.uk/scripts/latlong.html">latlong.html</a>,
+        <a href="https://www.movable-type.co.uk/scripts/latlong-vincenty.html">latlong-vincenty.html</a>,
+        <a href="https://www.movable-type.co.uk/scripts/latlong-vectors.html">latlong-vectors.html</a>,
+        <a href="https://www.movable-type.co.uk/scripts/latlong-os-gridref.html">latlong-os-gridref.html</a>,
+        <a href="https://www.movable-type.co.uk/scripts/latlong-utm-mgrs.html">latlong-utm-mgrs.html</a></li>
+    <li>www.movable-type.co.uk/scripts/<a href="https://www.movable-type.co.uk/scripts/geodesy-library.html">geodesy-library.html</a></li>
+    <li>github.com/chrisveness/geodesy/<a href="https://github.com/chrisveness/geodesy/tree/master/test">test</a></li>
+</ul>
+<div id="mocha"></div>
 </body>
 
 </html>
