@@ -224,7 +224,8 @@ class LatLonSpherical {
         // tanθ = sinΔλ⋅cosφ2 / cosφ1⋅sinφ2 − sinφ1⋅cosφ2⋅cosΔλ
         // see mathforum.org/library/drmath/view/55417.html for derivation
 
-        const φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
+        const φ1 = this.lat.toRadians();
+        const φ2 = point.lat.toRadians();
         const Δλ = (point.lon - this.lon).toRadians();
 
         const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
@@ -278,7 +279,8 @@ class LatLonSpherical {
         // λm = λ1 + atan2(cosφ2⋅sinΔλ, cosφ1 + cosφ2⋅cosΔλ)
         // see mathforum.org/library/drmath/view/51822.html for derivation
 
-        const φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
+        const φ1 = this.lat.toRadians();
+        const λ1 = this.lon.toRadians();
         const φ2 = point.lat.toRadians();
         const Δλ = (point.lon - this.lon).toRadians();
 
@@ -585,12 +587,13 @@ class LatLonSpherical {
      *   const d = p1.distanceTo(p2); //  40.31 km
      */
     rhumbDistanceTo(point, radius=6371e3) {
-        // see www.edwilliams.org/avform.htm#Rhumb
-
         if (!(point instanceof LatLonSpherical)) point = LatLonSpherical.parse(point); // allow literal forms
 
+        // see www.edwilliams.org/avform.htm#Rhumb
+
         const R = radius;
-        const φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
+        const φ1 = this.lat.toRadians();
+        const φ2 = point.lat.toRadians();
         const Δφ = φ2 - φ1;
         let Δλ = Math.abs(point.lon - this.lon).toRadians();
         // if dLon over 180° take shorter rhumb line across the anti-meridian:
@@ -601,8 +604,8 @@ class LatLonSpherical {
         const Δψ = Math.log(Math.tan(φ2 / 2 + π / 4) / Math.tan(φ1 / 2 + π / 4));
         const q = Math.abs(Δψ) > 10e-12 ? Δφ / Δψ : Math.cos(φ1);
 
-        // distance is pythagoras on 'stretched' Mercator projection
-        const δ = Math.sqrt(Δφ * Δφ + q * q * Δλ * Δλ); // angular distance in radians
+        // distance is pythagoras on 'stretched' Mercator projection, √(Δφ² + q²·Δλ²)
+        const δ = Math.sqrt(Δφ*Δφ + q*q * Δλ*Δλ); // angular distance in radians
         const d = δ * R;
 
         return d;
@@ -624,7 +627,8 @@ class LatLonSpherical {
         if (!(point instanceof LatLonSpherical)) point = LatLonSpherical.parse(point); // allow literal forms
         if (this.equals(point)) return NaN; // coincident points
 
-        const φ1 = this.lat.toRadians(), φ2 = point.lat.toRadians();
+        const φ1 = this.lat.toRadians();
+        const φ2 = point.lat.toRadians();
         let Δλ = (point.lon - this.lon).toRadians();
         // if dLon over 180° take shorter rhumb line across the anti-meridian:
         if (Math.abs(Δλ) > π) Δλ = Δλ > 0 ? -(2 * π - Δλ) : (2 * π + Δλ);
