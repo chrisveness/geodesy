@@ -275,26 +275,27 @@ class LatLonSpherical {
     midpointTo(point) {
         if (!(point instanceof LatLonSpherical)) point = LatLonSpherical.parse(point); // allow literal forms
 
-        // φm = atan2( sinφ1 + sinφ2, √( (cosφ1 + cosφ2⋅cosΔλ) ⋅ (cosφ1 + cosφ2⋅cosΔλ) ) + cos²φ2⋅sin²Δλ )
+        // φm = atan2( sinφ1 + sinφ2, √( (cosφ1 + cosφ2⋅cosΔλ)² + cos²φ2⋅sin²Δλ ) )
         // λm = λ1 + atan2(cosφ2⋅sinΔλ, cosφ1 + cosφ2⋅cosΔλ)
-        // see mathforum.org/library/drmath/view/51822.html for derivation
+        // midpoint is sum of vectors to two points: mathforum.org/library/drmath/view/51822.html
 
         const φ1 = this.lat.toRadians();
         const λ1 = this.lon.toRadians();
         const φ2 = point.lat.toRadians();
         const Δλ = (point.lon - this.lon).toRadians();
 
-        const Bx = Math.cos(φ2) * Math.cos(Δλ);
-        const By = Math.cos(φ2) * Math.sin(Δλ);
+        // get cartesian coordinates for the two points
+        const A = { x: Math.cos(φ1), y: 0, z: Math.sin(φ1) }; // place point A on prime meridian y=0
+        const B = { x: Math.cos(φ2)*Math.cos(Δλ), y: Math.cos(φ2)*Math.sin(Δλ), z: Math.sin(φ2) };
 
-        const x = Math.sqrt((Math.cos(φ1) + Bx) * (Math.cos(φ1) + Bx) + By * By);
-        const y = Math.sin(φ1) + Math.sin(φ2);
-        const φ3 = Math.atan2(y, x);
+        // vector to midpoint is sum of vectors to two points (no need to normalise)
+        const C = { x: A.x + B.x, y: A.y + B.y, z: A.z + B.z };
 
-        const λ3 = λ1 + Math.atan2(By, Math.cos(φ1) + Bx);
+        const φm = Math.atan2(C.z, Math.sqrt(C.x*C.x + C.y*C.y));
+        const λm = λ1 + Math.atan2(C.y, C.x);
 
-        const lat = φ3.toDegrees();
-        const lon = λ3.toDegrees();
+        const lat = φm.toDegrees();
+        const lon = λm.toDegrees();
 
         return new LatLonSpherical(lat, lon);
     }
