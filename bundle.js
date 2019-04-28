@@ -5,7 +5,9 @@ import Utm,{LatLon as LatLon_Utm} from './utm.js';
 
 import LatLonEllipsoidal_Datum , {Cartesian as Cartesian_Datum, datums} from './latlon-ellipsoidal-datum.js';
 import LatLonEllipsoidal_Vincenty from './latlon-ellipsoidal-vincenty.js';
+import OsGridRef, {LatLon as LatLonOsGridRef} from './osgridref.js';
 
+//to rename the moduls under the geodesy bundle
 export { 
     LatLon,
     Dms,
@@ -14,5 +16,7 @@ export {
     LatLonEllipsoidal_Vincenty as LatLonVincenty,
     Utm,
     LatLon_Utm as LatLonUtm,
-    Mgrs
+    Mgrs,
+    OsGridRef,
+    LatLonOsGridRef
 };
