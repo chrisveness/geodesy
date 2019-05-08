@@ -1,7 +1,7 @@
 {
   "name": "geodesy",
   "description": "Libraries of geodesy functions",
-  "homepage": "http://www.movable-type.co.uk/scripts/latlong.html",
+  "homepage": "http://www.movable-type.co.uk/scripts/geodesy-library.html",
   "repository": {
     "type": "git",
     "url": "https://github.com/chrisveness/geodesy"
