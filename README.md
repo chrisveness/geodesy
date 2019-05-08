@@ -88,13 +88,13 @@ either client-side in-browser, or with Node.js.
 
 ### Usage in browser
 
-The library can be used in the browser by taking a local copy, or loading it from jsDelivr: for
-example,
+The library can be used in the browser by taking a local copy, or loading it from
+    [jsDelivr](https://www.jsdelivr.com/package/npm/geodesy): for example,
 
 ```html
 <!doctype html><title>geodesy example</title><meta charset="utf-8">
 <script type="module">
-    import LatLon from 'https://cdn.jsdelivr.net/gh/chrisveness/geodesy@2.0.1/latlon-spherical.min.js';
+    import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.0.1/latlon-spherical.min.js';
 
     const p1 = new LatLon(50.06632, -5.71475);
     const p2 = new LatLon(58.64402, -3.07009);
@@ -112,7 +112,7 @@ example,
 The library can be used in a Node.js app from [npm](https://www.npmjs.com/package/geodesy):
 
 ```shell
-$ npm install geodesy
+$ npm install geodesy esm
 $ node -r esm
 > import LatLon from 'geodesy/latlon-spherical';
 > const p1 = new LatLon(50.06632, -5.71475);
