@@ -50,8 +50,10 @@ legibility over the minor inconvenience in typing.
 This version 2 of the library uses JavaScript ES classes and modules to organise the 
 interdependencies; this makes the code both more immediately readable than previously, and also more 
 accessible to non-JavaScript readers (always  bearing in mind JavaScript uses prototype-based 
-classes rather than classical inheritance-based classes). For older browsers, 
-[v1.1.3](https://github.com/chrisveness/geodesy/tree/v1.1.3) is ES5-based.
+classes rather than classical inheritance-based classes). For older browsers (or Node.js <8.0.0), 
+[v1.1.3](https://github.com/chrisveness/geodesy/tree/v1.1.3) is ES5-based. Note that there are 
+[breaking changes](https://www.movable-type.co.uk/scripts/geodesy-library-migrating-from-v1.html) 
+in moving from version 1 to version 2. 
 
 While some aspects of the library are quite complex to understand and use, basic usage is simple –
 for instance:
