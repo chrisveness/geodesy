@@ -111,7 +111,8 @@ The library can be used in the browser by taking a local copy, or loading it fro
 
 ### Usage in Node.js
 
-The library can be used in a Node.js app from [npm](https://www.npmjs.com/package/geodesy):
+The library can be used in a Node.js app from [npm](https://www.npmjs.com/package/geodesy) 
+(currently the [esm](https://www.npmjs.com/package/esm) package is required to load ES-modules):
 
 ```shell
 $ npm install geodesy esm
