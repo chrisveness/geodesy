@@ -117,7 +117,7 @@ The library can be used in a Node.js app from [npm](https://www.npmjs.com/packag
 ```shell
 $ npm install geodesy esm
 $ node -r esm
-> import LatLon from 'geodesy/latlon-spherical';
+> import LatLon from 'geodesy/latlon-spherical.js';
 > const p1 = new LatLon(50.06632, -5.71475);
 > const p2 = new LatLon(58.64402, -3.07009);
 > const d = p1.distanceTo(p2);
