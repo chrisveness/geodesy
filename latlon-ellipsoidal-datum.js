@@ -255,8 +255,8 @@ class LatLonEllipsoidal_Datum extends LatLonEllipsoidal {
      */
     toCartesian() {
         const cartesian = super.toCartesian();
-        const cartesianDatums = new Cartesian_Datum(cartesian.x, cartesian.y, cartesian.z);
-        return cartesianDatums;
+        const cartesianDatum = new Cartesian_Datum(cartesian.x, cartesian.y, cartesian.z);
+        return cartesianDatum;
     }
 
 }

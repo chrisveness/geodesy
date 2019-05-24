@@ -241,8 +241,9 @@ class LatLonEllipsoidal {
     toCartesian() {
         // x = (ν+h)⋅cosφ⋅cosλ, y = (ν+h)⋅cosφ⋅sinλ, z = (ν⋅(1-e²)+h)⋅sinφ
         // where ν = a/√(1−e²⋅sinφ⋅sinφ), e² = (a²-b²)/a² or (better conditioned) 2⋅f-f²
-        const ellipsoid = this.datum ? this.datum.ellipsoid :
-            this.referenceFrame ? this.referenceFrame.ellipsoid : ellipsoids.WGS84;
+        const ellipsoid = this.datum
+            ? this.datum.ellipsoid
+            : this.referenceFrame ? this.referenceFrame.ellipsoid : ellipsoids.WGS84;
 
         const φ = this.lat.toRadians();
         const λ = this.lon.toRadians();
@@ -367,8 +368,13 @@ class Cartesian extends Vector3d {
      *
      * @example
      *   const p = new Cartesian(4027893.924, 307041.993, 4919474.294).toLatLon(); // 50.7978°N, 004.3592°E
+     *
+     * FORTHCOMING CHANGE NOTICE: Cartesian is not normally imported directly from latlon-ellipsoidal.js
+     * (rather from latlon-ellipsoidal-datum.js), but if it is, the toLatLon() method takes an
+     * ellipsoid as a parameter rather than a datum. This will be corrected in the next semver-major
+     * release.
      */
-    toLatLon(ellipsoid=ellipsoids.WGS84) {
+    toLatLon(ellipsoid=ellipsoids.WGS84) { // TODO: make parameter datum for consistency with Cartesian_Datum.toLatLon()
         // note ellipsoid is available as a parameter for when toLatLon gets subclassed.
         if (!ellipsoid || !ellipsoid.a) throw new TypeError('invalid ellipsoid');
 

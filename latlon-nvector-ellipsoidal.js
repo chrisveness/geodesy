@@ -6,9 +6,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
-import LatLonEllipsoidal, { Cartesian } from './latlon-ellipsoidal.js';
-import Vector3d                         from './vector3d.js';
-import Dms                              from './dms.js'; // just passing through
+import LatLonEllipsoidal, { Cartesian, Vector3d, Dms } from './latlon-ellipsoidal.js';
 
 
 /**
