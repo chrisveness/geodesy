@@ -75,6 +75,7 @@ class Mgrs {
         if (n100k.length!=1 || n100kLetters[0].indexOf(n100k) == -1) errors.push(`invalid MGRS 100km grid square row ‘${n100k}’`);
         if (isNaN(Number(easting))) errors.push(`invalid MGRS easting ‘${easting}’`);
         if (isNaN(Number(northing))) errors.push(`invalid MGRS northing ‘${northing}’`);
+        if (!datum || datum.ellipsoid==undefined) errors.push(`unrecognised datum ‘${datum}’`);
         if (errors.length > 0) throw new RangeError(errors.join(', '));
 
         this.zone = Number(zone);

@@ -52,10 +52,11 @@ class Utm {
      */
     constructor(zone, hemisphere, easting, northing, datum=LatLonEllipsoidal.datums.WGS84, convergence=null, scale=null) {
         if (!(1<=zone && zone<=60)) throw new RangeError(`invalid UTM zone ‘${zone}’`);
-        if (!hemisphere.match(/[NS]/i)) throw new RangeError(`invalid UTM hemisphere ‘${hemisphere}’`);
+        if (typeof hemisphere != 'string' || !hemisphere.match(/[NS]/i)) throw new RangeError(`invalid UTM hemisphere ‘${hemisphere}’`);
         if (!(0<=easting && easting<=1000e3)) throw new RangeError(`invalid UTM easting ‘${easting}’`);
-        if (hemisphere=='N' && !(0<=northing && northing<9328094)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
-        if (hemisphere=='S' && !(1118414<northing && northing<=10000e3)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
+        if (hemisphere.toUpperCase()=='N' && !(0<=northing && northing<9328094)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
+        if (hemisphere.toUpperCase()=='S' && !(1118414<northing && northing<=10000e3)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
+        if (!datum || datum.ellipsoid==undefined) throw new TypeError(`unrecognised datum ‘${datum}’`);
 
         this.zone = Number(zone);
         this.hemisphere = hemisphere.toUpperCase();
