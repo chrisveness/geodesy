@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0] - 2019-06-03
+
+### Added
+
+- Latlon-ellipsoidal-datum.js:Cartesian_Datum.convertDatum()
+
+### Deprecated
+
+- datum parameter to latlon-ellipsoidal-datum.js:Cartesian_Datum.toLatLon()
+
 ## [2.0.1] - 2019-04-10
 
 ### Fixed

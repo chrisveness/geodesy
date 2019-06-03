@@ -8,7 +8,7 @@
   },
   "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "destination", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "reference frame", "TRF", "wgs84", "utm", "mgrs" ],
   "author": "Chris Veness",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "license": "MIT",
   "engines": {
     "node": ">=8.0.0"
@@ -21,14 +21,14 @@
     "docs": "jsdoc *.js README.md -d ../../geodesy/docs"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "chai": "^4.2.0",
-    "coveralls": "^3.0.3",
-    "eslint": "^5.16.0",
-    "esm": "^3.2.22",
-    "jsdoc": "^3.5.5",
-    "mocha": "^6.1.2",
-    "nyc": "^13.3.0"
+    "babel-eslint": "^10.0.0",
+    "chai": "^4.0.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^5.0.0",
+    "esm": "^3.0.0",
+    "jsdoc": "^3.0.0",
+    "mocha": "^6.0.0",
+    "nyc": "^14.0.0"
   },
   "eslintConfig": {
     "env": {

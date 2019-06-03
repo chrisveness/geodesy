@@ -96,7 +96,7 @@ The library can be used in the browser by taking a local copy, or loading it fro
 ```html
 <!doctype html><title>geodesy example</title><meta charset="utf-8">
 <script type="module">
-    import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.0.1/latlon-spherical.min.js';
+    import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.1.0/latlon-spherical.min.js';
 
     const p1 = new LatLon(50.06632, -5.71475);
     const p2 = new LatLon(58.64402, -3.07009);
@@ -200,7 +200,7 @@ import LatLon from 'geodesy/latlon-spherical.js';
 Dms.separator = ' '; // full-space separator between degrees-minutes-seconds
 
 const p1 = LatLon.parse({ lat: '50:03:59N', lng: '005:42:53W' });
-const p2 = LatLon.parse({ lat: '58:38:38N', lng: '003:04:12W' });
+const p2 = LatLon.parse('58°38′38″N, 003°04′12″W');
 
 const mid = p1.midpointTo(p2);
 console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 50″ W');
