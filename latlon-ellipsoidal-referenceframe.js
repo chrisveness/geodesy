@@ -267,7 +267,8 @@ class LatLonEllipsoidal_ReferenceFrame extends LatLonEllipsoidal {
      */
     toCartesian() {
         const cartesian = super.toCartesian();
-        return new Cartesian_ReferenceFrame(cartesian.x, cartesian.y, cartesian.z, this.referenceFrame, this.epoch);
+        const cartesianReferenceFrame = new Cartesian_ReferenceFrame(cartesian.x, cartesian.y, cartesian.z, this.referenceFrame, this.epoch);
+        return cartesianReferenceFrame;
     }
 
 
@@ -305,16 +306,17 @@ class LatLonEllipsoidal_ReferenceFrame extends LatLonEllipsoidal {
 
 /**
  * Augments Cartesian with reference frame and observation epoch the cooordinate is based on, and
- * methods to convert between reference frames (using Helmert 14-parameter transforms), and to
- * convert to geodetic latitude/longitude points.
+ * methods to convert between reference frames (using Helmert 14-parameter transforms) and to
+ * convert cartesian to geodetic latitude/longitude point.
  *
  * @extends Cartesian
  */
 class Cartesian_ReferenceFrame extends Cartesian {
 
     /**
-     * Creates cartesian coordinate representing ECEF (earth-centric earth-fixed) point on a given
-     * reference frame.
+     * Creates cartesian coordinate representing ECEF (earth-centric earth-fixed) point, on a given
+     * reference frame. The reference frame will identify the primary meridian (for the x-coordinate),
+     * and is also useful in transforming to/from geodetic (lat/lon) coordinates.
      *
      * @param  {number} x - X coordinate in metres (=> 0°N,0°E).
      * @param  {number} y - Y coordinate in metres (=> 0°N,90°E).
@@ -324,7 +326,7 @@ class Cartesian_ReferenceFrame extends Cartesian {
      * @throws {TypeError} Unrecognised reference frame, Invalid epoch.
      *
      * @example
-     *   import { Cartesian } from '/js/geodesy/latlon-ellipsoidal.js';
+     *   import { Cartesian } from '/js/geodesy/latlon-ellipsoidal-referenceframe.js';
      *   const coord = new Cartesian(3980581.210, -111.159, 4966824.522);
      */
     constructor(x, y, z, referenceFrame=undefined, epoch=undefined) {
@@ -363,24 +365,23 @@ class Cartesian_ReferenceFrame extends Cartesian {
 
     /**
      * Converts ‘this’ (geocentric) cartesian (x/y/z) coordinate to (geodetic) latitude/longitude
-     * point.
+     * point (based on the same reference frame).
      *
-     * Shadow of Cartesian.toLatLon(), returning LatLon augmented with
-     * LatLonEllipsoidal_ReferenceFrame methods.
+     * Shadow of Cartesian.toLatLon(), returning LatLon augmented with LatLonEllipsoidal_ReferenceFrame
+     * methods convertReferenceFrame, toCartesian, etc.
      *
-     * @param   {LatLon.referenceFrames} [referenceFrame] - Reference frame to use when converting point.
      * @returns {LatLon} Latitude/longitude point defined by cartesian coordinates, in given reference frame.
      * @throws  {Error} No reference frame defined.
      *
      * @example
-     *   const p = new Cartesian(4027893.924, 307041.993, 4919474.294, LatLon.referenceFrames.ITRF2000).toLatLon();
+     *   const c = new Cartesian(4027893.924, 307041.993, 4919474.294, LatLon.referenceFrames.ITRF2000);
+     *   const p = c.toLatLon(); // 50.7978°N, 004.3592°E
      */
     toLatLon() {
         if (!this.referenceFrame) throw new Error('cartesian reference frame not defined');
 
         const latLon = super.toLatLon(this.referenceFrame.ellipsoid);
-        const point = new LatLonEllipsoidal_ReferenceFrame(latLon.lat, latLon.lon, latLon.height, this.referenceFrame);
-        if (this.epoch) point._epoch = this.epoch;
+        const point = new LatLonEllipsoidal_ReferenceFrame(latLon.lat, latLon.lon, latLon.height, this.referenceFrame, this.epoch);
         return point;
     }
 
@@ -390,7 +391,7 @@ class Cartesian_ReferenceFrame extends Cartesian {
      * transformation. The observation epoch is unchanged.
      *
      * Note that different conversions have different tolerences; refer to the literature if
-     * tolerances are singnificant.
+     * tolerances are significant.
      *
      * @param   {LatLon.referenceFrames} toReferenceFrame - Reference frame this coordinate is to be converted to.
      * @returns {Cartesian} This point converted to new reference frame.

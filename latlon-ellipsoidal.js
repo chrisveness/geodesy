@@ -29,6 +29,8 @@ import Vector3d from './vector3d.js';
 
 /*
  * Ellipsoid parameters; exposed through static getter below.
+ *
+ * The only ellipsoid defined is WGS84, for use in utm/mgrs, vincenty, nvector.
  */
 const ellipsoids = {
     WGS84: { a: 6378137, b: 6356752.314245, f: 1/298.257223563 },
@@ -37,6 +39,8 @@ const ellipsoids = {
 
 /*
  * Datums; exposed through static getter below.
+ *
+ * The only datum defined is WGS84, for use in utm/mgrs, vincenty, nvector.
  */
 const datums = {
     WGS84: { ellipsoid: ellipsoids.WGS84 },
@@ -332,8 +336,7 @@ class LatLonEllipsoidal {
 
 
 /**
- * Converts ECEF (earth-centered earth-fixed) geocentric cartesian coordinates to latitude/longitude
- * points, applies Helmert transformations.
+ * ECEF (earth-centered earth-fixed) geocentric cartesian coordinates.
  *
  * @extends Vector3d
  */
@@ -364,19 +367,16 @@ class Cartesian extends Vector3d {
      *
      * @param   {LatLon.ellipsoids} [ellipsoid=WGS84] - Ellipsoid to use when converting point.
      * @returns {LatLon} Latitude/longitude point defined by cartesian coordinates, on given ellipsoid.
-     * @throws  {TypeError} Invalid ellipsoid
+     * @throws  {TypeError} Invalid ellipsoid.
      *
      * @example
-     *   const p = new Cartesian(4027893.924, 307041.993, 4919474.294).toLatLon(); // 50.7978°N, 004.3592°E
-     *
-     * FORTHCOMING CHANGE NOTICE: Cartesian is not normally imported directly from latlon-ellipsoidal.js
-     * (rather from latlon-ellipsoidal-datum.js), but if it is, the toLatLon() method takes an
-     * ellipsoid as a parameter rather than a datum. This will be corrected in the next semver-major
-     * release.
+     *   const c = new Cartesian(4027893.924, 307041.993, 4919474.294);
+     *   const p = c.toLatLon(); // 50.7978°N, 004.3592°E
      */
-    toLatLon(ellipsoid=ellipsoids.WGS84) { // TODO: make parameter datum for consistency with Cartesian_Datum.toLatLon()
-        // note ellipsoid is available as a parameter for when toLatLon gets subclassed.
-        if (!ellipsoid || !ellipsoid.a) throw new TypeError('invalid ellipsoid');
+    toLatLon(ellipsoid=ellipsoids.WGS84) {
+        // note ellipsoid is available as a parameter for when toLatLon gets subclassed to
+        // Ellipsoidal_Datum / Ellipsoidal_Referenceframe.
+        if (!ellipsoid || !ellipsoid.a) throw new TypeError(`invalid ellipsoid ‘${ellipsoid}’`);
 
         const { x, y, z } = this;
         const { a, b, f } = ellipsoid;

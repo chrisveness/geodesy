@@ -126,9 +126,11 @@ describe('latlon-ellipsoidal', function() {
 
     describe('cartesian', function() {
         const p = new LatLon(45, 45);
-        test('toCartesian',   () => p.toCartesian().toString().should.equal('[3194419,3194419,4487348]'));
+        test('toCartesian',          () => p.toCartesian().toString().should.equal('[3194419,3194419,4487348]'));
         const c = new Cartesian(3194419, 3194419, 4487348);
-        test('toLatLon',      () => c.toLatLon().toString().should.equal('45.0000°N, 045.0000°E'));
-        test('toLatLon fail', () => should.Throw(function() { c.toLatLon(null); }, TypeError, 'invalid ellipsoid'));
+        test('toLatLon',             () => c.toLatLon().toString().should.equal('45.0000°N, 045.0000°E'));
+        test('toLatLon w/ ellipse',  () => c.toLatLon(LatLon.datums.WGS84.ellipsoid).toString().should.equal('45.0000°N, 045.0000°E'));
+        test('toLatLon fail (null)', () => should.Throw(function() { c.toLatLon(null); }, TypeError, 'invalid ellipsoid ‘null’'));
+        test('toLatLon fail (str)',  () => should.Throw(function() { c.toLatLon('WGS84'); }, TypeError, 'invalid ellipsoid ‘WGS84’'));
     });
 });

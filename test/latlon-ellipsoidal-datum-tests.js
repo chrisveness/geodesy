@@ -67,7 +67,6 @@ describe('latlon-ellipsoidal-datum', function() {
         test('toCartesian', () => p.toCartesian().toString().should.equal('[3194419,3194419,4487348]'));
         const c = new Cartesian(3194419, 3194419, 4487348);
         test('toLatLon', () => c.toLatLon().toString().should.equal('45.0000°N, 045.0000°E'));
-        test('toLatLon fail', () => should.Throw(function() { c.toLatLon(null); }, TypeError, 'unrecognised datum ‘null’'));
         test('toLatLon fail', () => should.Throw(function() { c.toLatLon('xx'); }, TypeError, 'unrecognised datum ‘xx’'));
     });
 });
