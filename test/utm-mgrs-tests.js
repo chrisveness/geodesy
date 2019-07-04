@@ -123,6 +123,15 @@ describe('utm/mgrs', function() {
         test('01Q ≡ UTM 01P', () => Mgrs.parse('01Q ET 00000 68935').toUtm().toString().should.equal('01 N 500000 1768935'));
     });
 
+    describe('ED50 conversion', function() {
+        const helmertturm = new Utm(33, 'N', 368381.402, 5805291.614, LatLon.datums.ED50); // epsg.io/23033
+        const llED50 = helmertturm.toLatLon();
+        const llWGS84 = llED50.convertDatum(LatLon.datums.WGS84);
+        // TODO: no llWGS84.toUtm()!
+        test('helmertturm ED50', () => llED50.toString('dms', 3).should.equal('52°22′51.446″N, 013°03′58.741″E')); // earth-info.nga.mil/GandG/coordsys/datums/datumorigins.html
+        test('helmertturm WGS84', () => llWGS84.toString('dms', 3).should.equal('52°22′48.931″N, 013°03′54.824″E'));
+    });
+
     describe('IBM coordconvert', function() {
         // https://www.ibm.com/developerworks/library/j-coordconvert/#listing7 (note UTM/MGRS confusion; UTM is rounded, MGRS is truncated; UPS not included)
         test('#01 UTM->LL',  () => Utm.parse('31 N 166021 0').toLatLon().toString().should.equal('00.0000°N, 000.0000°W'));

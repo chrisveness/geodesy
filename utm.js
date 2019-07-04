@@ -7,7 +7,7 @@
 
 /* eslint-disable indent */
 
-import LatLonEllipsoidal, { Dms } from './latlon-ellipsoidal.js';
+import LatLonEllipsoidal, { Dms } from './latlon-ellipsoidal-datum.js';
 
 
 /**
