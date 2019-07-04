@@ -78,6 +78,7 @@ describe('utm/mgrs', function() {
         test('0,0',                () => new LatLon( 0,  0).toUtm().toString(6).should.equal('31 N 166021.443081 0.000000'));
         test('1,1',                () => new LatLon( 1,  1).toUtm().toString(5).should.equal('31 N 277438.26352 110597.97252'));
         test('-1,-1',              () => new LatLon(-1, -1).toUtm().toString(5).should.equal('30 S 722561.73648 9889402.02748'));
+        test('1,1 Z31',            () => new LatLon( 1,  1).toUtm(30).toString(5).should.equal('30 N 945396.68398 110801.83255'));
         test('eiffel tower',       () => new LatLon( 48.8583,   2.2945).toUtm().toString(3).should.equal('31 N 448251.898 5411943.794'));
         test('sidney o/h',         () => new LatLon(-33.857,  151.215 ).toUtm().toString(3).should.equal('56 S 334873.199 6252266.092'));
         test('white house',        () => new LatLon( 38.8977, -77.0365).toUtm().toString(3).should.equal('18 N 323394.296 4307395.634'));

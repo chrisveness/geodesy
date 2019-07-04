@@ -287,6 +287,10 @@ class Latlon_Utm_Mgrs extends LatLonEllipsoidal {
      *
      * Shadow of LatLon.toUtm, returning Utm augmented with toMgrs() method.
      *
+     * @param   {number} [zoneOverride] - Use specified zone rather than zone within which point lies;
+     *          note overriding the UTM zone has the potential to result in negative eastings, and
+     *          perverse results within Norway/Svalbard exceptions (this is unlikely to be relevant
+     *          for MGRS, but is needed as Mgrs passes through the Utm class).
      * @returns {Utm}   UTM coordinate.
      * @throws  {Error} If point not valid, if point outside latitude range.
      *
@@ -294,8 +298,8 @@ class Latlon_Utm_Mgrs extends LatLonEllipsoidal {
      *   const latlong = new LatLon(48.8582, 2.2945);
      *   const utmCoord = latlong.toUtm(); // 31 N 448252 5411933
      */
-    toUtm() {
-        const utm = super.toUtm();
+    toUtm(zoneOverride=undefined) {
+        const utm = super.toUtm(zoneOverride);
         return new Utm_Mgrs(utm.zone, utm.hemisphere, utm.easting, utm.northing, utm.datum, utm.convergence, utm.scale);
     }
 
