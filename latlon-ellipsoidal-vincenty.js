@@ -182,15 +182,15 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
         const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
 
-        let cos2σM = null, sinσ = null, cosσ = null, Δσ = null;
+        let cos2σₘ = null, sinσ = null, cosσ = null, Δσ = null;
 
         let σ = s / (b*A), σʹ, iterations = 0;
         do {
-            cos2σM = Math.cos(2*σ1 + σ);
+            cos2σₘ = Math.cos(2*σ1 + σ);
             sinσ = Math.sin(σ);
             cosσ = Math.cos(σ);
-            Δσ = B*sinσ*(cos2σM+B/4*(cosσ*(-1+2*cos2σM*cos2σM)-
-                B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
+            Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-
+                B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
             σʹ = σ;
             σ = s / (b*A) + Δσ;
         } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<100);
@@ -200,7 +200,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const φ2 = Math.atan2(sinU1*cosσ + cosU1*sinσ*cosα1, (1-f)*Math.sqrt(sinα*sinα + x*x));
         const λ = Math.atan2(sinσ*sinα1, cosU1*cosσ - sinU1*sinσ*cosα1);
         const C = f/16*cosSqα*(4+f*(4-3*cosSqα));
-        const L = λ - (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
+        const L = λ - (1-C) * f * sinα * (σ + C*sinσ*(cos2σₘ+C*cosσ*(-1+2*cos2σₘ*cos2σₘ)));
         const λ2 = λ1 + L;
 
         const α2 = Math.atan2(sinα, -x);
@@ -244,7 +244,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const tanU2 = (1-f) * Math.tan(φ2), cosU2 = 1 / Math.sqrt((1 + tanU2*tanU2)), sinU2 = tanU2 * cosU2;
 
         let sinλ = null, cosλ = null, sinσ = 0, cosσ = 0, sinα = null;
-        let sinSqσ = null, cosSqα = 0, cos2σM = 0, σ = null, C = null;
+        let sinSqσ = null, cosSqα = 0, cos2σₘ = 0, σ = null, C = null;
 
         let λ = L, λʹ, iterations = 0;
         const antimeridian = Math.abs(L) > π;
@@ -258,10 +258,10 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
             σ = Math.atan2(sinσ, cosσ);
             sinα = cosU1 * cosU2 * sinλ / sinσ;
             cosSqα = 1 - sinα*sinα;
-            cos2σM = (cosSqα != 0) ? (cosσ - 2*sinU1*sinU2/cosSqα) : 0; // on equatorial line cos²α = 0 (§6)
+            cos2σₘ = (cosSqα != 0) ? (cosσ - 2*sinU1*sinU2/cosSqα) : 0; // on equatorial line cos²α = 0 (§6)
             C = f/16*cosSqα*(4+f*(4-3*cosSqα));
             λʹ = λ;
-            λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
+            λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σₘ+C*cosσ*(-1+2*cos2σₘ*cos2σₘ)));
             const iterationCheck = antimeridian ? Math.abs(λ)-π : Math.abs(λ);
             if (iterationCheck > π) throw new EvalError('λ > π');
         } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000);
@@ -270,8 +270,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const uSq = cosSqα * (a*a - b*b) / (b*b);
         const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
         const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
-        const Δσ = B*sinσ*(cos2σM+B/4*(cosσ*(-1+2*cos2σM*cos2σM)-
-            B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
+        const Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-
+            B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
 
         const s = b*A*(σ-Δσ);
 
