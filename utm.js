@@ -34,7 +34,8 @@ import LatLonEllipsoidal, { Dms } from './latlon-ellipsoidal.js';
 class Utm {
 
     /**
-     * Creates a Utm coordinate object.
+     * Creates a Utm coordinate object comprising zone, hemisphere, easting, northing on a given
+     * datum (normally WGS84).
      *
      * @param  {number}        zone - UTM 6° longitudinal zone (1..60 covering 180°W..180°E).
      * @param  {string}        hemisphere - N for northern hemisphere, S for southern hemisphere.
@@ -70,6 +71,9 @@ class Utm {
 
     /**
      * Converts UTM zone/easting/northing coordinate to latitude/longitude.
+     *
+     * Implements Karney’s method, using Krüger series to order n⁶, giving results accurate to 5nm
+     * for distances up to 3900km from the central meridian.
      *
      * @param   {Utm} utmCoord - UTM coordinate to be converted to latitude/longitude.
      * @returns {LatLon} Latitude/longitude of supplied grid reference.
@@ -246,7 +250,7 @@ class LatLon_Utm extends LatLonEllipsoidal {
     /**
      * Converts latitude/longitude to UTM coordinate.
      *
-     * Implements Karney’s method, using Krüger series to order n^6, giving results accurate to 5nm
+     * Implements Karney’s method, using Krüger series to order n⁶, giving results accurate to 5nm
      * for distances up to 3900km from the central meridian.
      *
      * @returns {Utm} UTM coordinate.
