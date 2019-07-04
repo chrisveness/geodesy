@@ -68,7 +68,8 @@ class Mgrs {
      *   const mgrsRef = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932); // 31U DQ 48251 11932
      */
     constructor(zone, band, e100k, n100k, easting, northing, datum=LatLonEllipsoidal.datums.WGS84) {
-        if (!(1<=Number(zone) && Number(zone)<=60)) throw new RangeError(`MGRS zone ‘${zone}’ out of range`);
+        if (!(1<=zone && zone<=60)) throw new RangeError(`invalid MGRS zone ‘${zone}’`);
+        if (zone != parseInt(zone)) throw new RangeError(`invalid MGRS zone ‘${zone}’`);
         const errors = []; // check & report all other possible errors rather than reporting one-by-one
         if (band.length!=1 || latBands.indexOf(band) == -1) errors.push(`invalid MGRS band ‘${band}’`);
         if (e100k.length!=1 || e100kLetters[(zone-1)%3].indexOf(e100k) == -1) errors.push(`invalid MGRS 100km grid square column ‘${e100k}’ for zone ${zone}`);
