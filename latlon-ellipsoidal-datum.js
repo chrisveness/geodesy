@@ -54,7 +54,7 @@ const ellipsoids = {
 const datums = {
     // transforms: t in metres, s in ppm, r in arcseconds              tx       ty        tz       s        rx        ry        rz
     ED50:       { ellipsoid: ellipsoids.Intl1924,      transform: [   89.5,    93.8,    123.1,    -1.2,     0.0,      0.0,      0.156    ] }, // epsg.io/1311
-    // en.wikipedia.org/wiki/European_Terrestrial_Reference_System_1989
+    ETRS89:     { ellipsoid: ellipsoids.GRS80,         transform: [    0,       0,        0,       0,       0,        0,        0        ] }, // epsg.io/1149; @ 1-metre level
     Irl1975:    { ellipsoid: ellipsoids.AiryModified,  transform: [ -482.530, 130.596, -564.557,  -8.150,   1.042,    0.214,    0.631    ] }, // epsg.io/1954
     NAD27:      { ellipsoid: ellipsoids.Clarke1866,    transform: [    8,    -160,     -176,       0,       0,        0,        0        ] },
     NAD83:      { ellipsoid: ellipsoids.GRS80,         transform: [    0.9956, -1.9103,  -0.5215, -0.00062, 0.025915, 0.009426, 0.011599 ] },
