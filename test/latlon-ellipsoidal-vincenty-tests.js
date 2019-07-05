@@ -16,6 +16,9 @@ describe('latlon-ellipsoidal-vincenty', function() {
     const test = it;    // just an alias
     Dms.separator = ''; // tests are easier without any DMS separator
 
+    const circEquatorial = 40075016.686; // eslint-disable-line no-unused-vars
+    const circMeridional = 40007862.918;
+
     describe('UK', function() {
         const le = new LatLon(50.06632, -5.71475), jog = new LatLon(58.64402, -3.07009);
         const dist = 969954.166, brngInit = 9.1418775, brngFinal = 11.2972204;
@@ -41,10 +44,14 @@ describe('latlon-ellipsoidal-vincenty', function() {
     });
 
     describe('antipodal', function() {
-        test('antipodal distance',                   () => new LatLon(0, 0).distanceTo(new LatLon(0.5, 179.5)).should.equal(19936288.579));
+        test('near-antipodal distance',              () => new LatLon(0, 0).distanceTo(new LatLon(0.5, 179.5)).should.equal(19936288.579));
         test('antipodal convergence failure dist',   () => new LatLon(0, 0).distanceTo(new LatLon(0.5, 179.7)).should.be.NaN);
         test('antipodal convergence failure brng i', () => new LatLon(0, 0).initialBearingTo(new LatLon(0.5, 179.7)).should.be.NaN);
         test('antipodal convergence failure brng f', () => new LatLon(0, 0).finalBearingTo(new LatLon(0.5, 179.7)).should.be.NaN);
+        test('antipodal distance equatorial',        () => new LatLon(0, 0).distanceTo(new LatLon(0, 180)).should.equal(circMeridional/2));
+        test('antipodal brng equatorial',            () => new LatLon(0, 0).initialBearingTo(new LatLon(0, 180)).should.equal(0));
+        test('antipodal distance meridional',        () => new LatLon(90, 0).distanceTo(new LatLon(-90, 0)).should.equal(circMeridional/2));
+        test('antipodal brng meridional',            () => new LatLon(90, 0).initialBearingTo(new LatLon(-90, 0)).should.equal(0));
     });
 
     describe('coincident', function() {

@@ -8,6 +8,7 @@
 import LatLonEllipsoidal, { Dms } from './latlon-ellipsoidal.js';
 
 const π = Math.PI;
+const ε = Number.EPSILON;
 
 
 /**
@@ -243,16 +244,17 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const tanU1 = (1-f) * Math.tan(φ1), cosU1 = 1 / Math.sqrt((1 + tanU1*tanU1)), sinU1 = tanU1 * cosU1;
         const tanU2 = (1-f) * Math.tan(φ2), cosU2 = 1 / Math.sqrt((1 + tanU2*tanU2)), sinU2 = tanU2 * cosU2;
 
-        let sinλ = null, cosλ = null, sinσ = 0, cosσ = 0, sinα = null;
-        let sinSqσ = null, cosSqα = 0, cos2σₘ = 0, σ = null, C = null;
+        const antipodal = Math.abs(L) > π/2 || Math.abs(φ2-φ1) > π/2;
 
-        let λ = L, λʹ, iterations = 0;
-        const antimeridian = Math.abs(L) > π;
+        let sinλ = null, cosλ = null, sinσ = 0, cosσ = antipodal ? -1 : 1, sinα = null;
+        let sinSqσ = null, cosSqα = 1, cos2σₘ = 1, σ = antipodal ? π : 0, C = null;
+
+        let λ = L, λʹ = null, iterations = 0;
         do {
             sinλ = Math.sin(λ);
             cosλ = Math.cos(λ);
             sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
-            if (Math.abs(sinSqσ) < Number.EPSILON) break;  // co-incident points
+            if (Math.abs(sinSqσ) < ε) break;  // co-incident/antipodal points (falls back on λ/σ = L)
             sinσ = Math.sqrt(sinSqσ);
             cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
             σ = Math.atan2(sinσ, cosσ);
@@ -262,7 +264,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
             C = f/16*cosSqα*(4+f*(4-3*cosSqα));
             λʹ = λ;
             λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σₘ+C*cosσ*(-1+2*cos2σₘ*cos2σₘ)));
-            const iterationCheck = antimeridian ? Math.abs(λ)-π : Math.abs(λ);
+            const iterationCheck = antipodal ? Math.abs(λ)-π : Math.abs(λ);
             if (iterationCheck > π) throw new EvalError('λ > π');
         } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000);
         if (iterations >= 1000) throw new EvalError('Vincenty formula failed to converge');
@@ -275,13 +277,16 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
 
         const s = b*A*(σ-Δσ);
 
-        const α1 = Math.atan2(cosU2*sinλ,  cosU1*sinU2-sinU1*cosU2*cosλ);
-        const α2 = Math.atan2(cosU1*sinλ, -sinU1*cosU2+cosU1*sinU2*cosλ);
+        // note special handling of exactly antipodal points where sin²σ = 0 (due to discontinuity
+        // atan2(0, 0) = 0 but atan2(ε, 0) = π/2 / 90°) - in which case bearing is always meridional,
+        // due north (or due south!)
+        const α1 = Math.abs(sinSqσ) < ε ? 0 : Math.atan2(cosU2*sinλ,  cosU1*sinU2-sinU1*cosU2*cosλ);
+        const α2 = Math.abs(sinSqσ) < ε ? π : Math.atan2(cosU1*sinλ, -sinU1*cosU2+cosU1*sinU2*cosλ);
 
         return {
             distance:       s,
-            initialBearing: Math.abs(s) < Number.EPSILON ? NaN : Dms.wrap360(α1.toDegrees()),
-            finalBearing:   Math.abs(s) < Number.EPSILON ? NaN : Dms.wrap360(α2.toDegrees()),
+            initialBearing: Math.abs(s) < ε ? NaN : Dms.wrap360(α1.toDegrees()),
+            finalBearing:   Math.abs(s) < ε ? NaN : Dms.wrap360(α2.toDegrees()),
             iterations:     iterations,
         };
     }
