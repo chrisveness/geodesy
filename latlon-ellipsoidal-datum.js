@@ -5,7 +5,6 @@
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal-datum                  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-
 import LatLonEllipsoidal, { Cartesian, Dms } from './latlon-ellipsoidal.js';
 
 
@@ -231,10 +230,13 @@ class LatLonEllipsoidal_Datum extends LatLonEllipsoidal {
 
     /**
      * Converts ‘this’ point from (geodetic) latitude/longitude coordinates to (geocentric) cartesian
-     * (x/y/z) coordinates.
+     * (x/y/z) coordinates, based on the same datum.
+     *
+     * Shadow of LatLonEllipsoidal.toCartesian(), returning Cartesian augmented with
+     * LatLonEllipsoidal_Datum methods/properties.
      *
      * @returns {Cartesian} Cartesian point equivalent to lat/lon point, with x, y, z in metres from
-     *   earth centre.
+     *   earth centre, augmented with reference frame conversion methods and properties.
      */
     toCartesian() {
         const cartesian = super.toCartesian();
