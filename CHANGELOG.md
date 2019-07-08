@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.0] - 2019-07-08
+
+### Fixed
+
+- Fix vincenty inverse calculation for antipodal points
+- Provide convertDatum() method on a LatLon obtained from Utm.toLatLon()
+
+### Added
+
+- Option to override UTM zone in LatLon.toUtm(), option to suppress UTM easting/northing checks
+- ETRS89 datum (≡ WGS84 @ 1m level)
+
 ## [2.1.0] - 2019-06-03
 
 ### Added

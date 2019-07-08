@@ -1,6 +1,5 @@
 {
   "name": "geodesy",
-  "type": "module",
   "description": "Libraries of geodesy functions",
   "homepage": "http://www.movable-type.co.uk/scripts/geodesy-library.html",
   "repository": {
@@ -9,8 +8,9 @@
   },
   "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "destination", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "reference frame", "TRF", "wgs84", "utm", "mgrs" ],
   "author": "Chris Veness",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "license": "MIT",
+  "type": "module",
   "engines": {
     "node": ">=8.0.0"
   },
@@ -25,7 +25,7 @@
     "babel-eslint": "^10.0.0",
     "chai": "^4.0.0",
     "coveralls": "^3.0.0",
-    "eslint": "^5.0.0",
+    "eslint": "^6.0.0",
     "esm": "^3.0.0",
     "jsdoc": "^3.0.0",
     "mocha": "^6.0.0",
