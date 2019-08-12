@@ -172,8 +172,8 @@ class Utm {
         λ += λ0; // move λ from zonal to global coordinates
 
         // round to reasonable precision
-        const lat = Number(φ.toDegrees().toFixed(11)); // nm precision (1nm = 10^-11°)
-        const lon = Number(λ.toDegrees().toFixed(11)); // (strictly lat rounding should be φ⋅cosφ!)
+        const lat = Number(φ.toDegrees().toFixed(14)); // nm precision (1nm = 10^-14°)
+        const lon = Number(λ.toDegrees().toFixed(14)); // (strictly lat rounding should be φ⋅cosφ!)
         const convergence = Number(γ.toDegrees().toFixed(9));
         const scale = Number(k.toFixed(12));
 
@@ -362,8 +362,8 @@ class LatLon_Utm extends LatLonEllipsoidal {
         if (y < 0) y = y + falseNorthing; // make y in southern hemisphere relative to false northing
 
         // round to reasonable precision
-        x = Number(x.toFixed(6)); // nm precision
-        y = Number(y.toFixed(6)); // nm precision
+        x = Number(x.toFixed(9)); // nm precision
+        y = Number(y.toFixed(9)); // nm precision
         const convergence = Number(γ.toDegrees().toFixed(9));
         const scale = Number(k.toFixed(12));
 

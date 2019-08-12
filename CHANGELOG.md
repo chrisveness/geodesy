@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Round UTM to nm rather than (erroneous) μm
+
 ## [2.2.0] - 2019-07-08
 
 ### Fixed
