@@ -312,7 +312,11 @@ class LatLon_OsGridRef extends LatLonEllipsoidal {
         N = Number(N.toFixed(3)); // round to mm precision
         E = Number(E.toFixed(3));
 
-        return new OsGridRef(E, N); // gets truncated to SW corner of 1m grid square
+        try {
+            return new OsGridRef(E, N); // note: gets truncated to SW corner of 1m grid square
+        } catch (e) {
+            throw new Error(`${e.message} from (${point.lat.toFixed(6)},${point.lon.toFixed(6)}).toOsGrid()`);
+        }
     }
 
 }

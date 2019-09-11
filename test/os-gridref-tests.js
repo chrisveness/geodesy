@@ -89,4 +89,9 @@ describe('os-gridref', function() {
             dgWgs.toOsGrid().toString(0).should.equal('544358.997,180653');
         });
     });
+
+    describe('Extra-UK lat/lon fail', function() {
+        test('0,0',    () => should.Throw(function() { new LatLon(0.00, 0.00).toOsGrid(); }, Error, 'invalid northing ‘-5527598.33’ from (-0.004833,0.000890).toOsGrid()'));
+        test('Dublin', () => should.Throw(function() { new LatLon(53.35, 6.26).toOsGrid(); }, Error, 'invalid easting ‘949400.51’ from (53.349579,6.262431).toOsGrid()'));
+    });
 });
