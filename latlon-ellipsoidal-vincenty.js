@@ -249,7 +249,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
 
         let λ = L, sinλ = null, cosλ = null; // λ = difference in longitude on an auxiliary sphere
         let σ = antipodal ? π : 0, sinσ = 0, cosσ = antipodal ? -1 : 1, sinSqσ = null; // σ = angular distance P₁ P₂ on the sphere
-        let cos2σₘ = 1;                      // σM = angular distance on the sphere from the equator to the midpoint of the line
+        let cos2σₘ = 1;                      // σₘ = angular distance on the sphere from the equator to the midpoint of the line
         let sinα = null, cosSqα = 1;         // α = azimuth of the geodesic at the equator
         let C = null;
 
