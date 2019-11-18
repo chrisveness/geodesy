@@ -10,6 +10,7 @@
   "author": "Chris Veness",
   "version": "2.2.0",
   "license": "MIT",
+  "types": "index.d.ts",
   "type": "module",
   "engines": {
     "node": ">=8.0.0"
