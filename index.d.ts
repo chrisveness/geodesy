@@ -1,9 +1,13 @@
+declare module 'geodesy'
+
 type format = 'd' | 'dm' | 'dms'
 type datum = 'ED50'| 'Irl1975'| 'NAD27'| 'NAD83'| 'NTF'| 'OSGB36'| 'Potsdam'| 'TokyoJapan'| 'WGS72'| 'WGS84'
 type hemisphere = 'N' | 'S'
 type ellipsoid = 'WGS84' | 'GRS80' | 'Airy1830' | 'AiryModified' | 'Intl1924' | 'Bessel1841'
 type transform = [number, number, number, number, number, number, number]
 type LatLon = LatLonEllipsoidal
+type dp = 0 | 2 | 4
+type precision = 1 | 2 | 3
 
 interface Datum {
   ellipsoid: Ellipsoid
@@ -46,9 +50,6 @@ declare class Mgrs {
   easting: number
   northing: number
   datum: datum
-  latBands: string
-  e100kLetters: string
-  n100kLetters: string
   constructor(
     zone: number,
     band: string,
@@ -69,8 +70,8 @@ declare class Utm {
   easting: number
   northing: number
   datum: Datum
-  convergence: number
-  scale: number
+  convergence: number|null
+  scale: number|null
   constructor(
     zone: number,
     hemisphere: hemisphere,
@@ -81,22 +82,23 @@ declare class Utm {
     scale?: number
   );
   static parse(utmCoord: string, datum?: datum): Utm
-  toLatLonE(): LatLon
-  toMgrs(): Mgrs
+  toLatLon(): LatLon
   toString(digits?: number): string
 }
 
-declare namespace Dms {
-  export let separator: string
-}
-
 declare class Dms {
-  static parseDMS(dmsStr: string): number;
-  static toDMS(deg: number, format?: format, dp?: 0 | 2 | 4): string;
-  static toLat(deg: number, format?: format, dp?: 0 | 2 | 4): string;
-  static toLon(deg: number, format?: format, dp?: 0 | 2 | 4): string;
-  static toBrng(deg: number, format?: format, dp?: 0 | 2 | 4): string;
-  static compassPoint(bearing: number, precision?: 1 | 2 | 3): string;
+  get separator(): string
+  set separator(char: string)
+  static parse(dms: string|number): number;
+  static toDms(deg: number, format?: format, dp?: dp): string;
+  static toLat(deg: number, format?: format, dp?: dp): string;
+  static toLon(deg: number, format?: format, dp?: dp): string;
+  static toBrng(deg: number, format?: format, dp?: dp): string;
+  static fromLocale(str: string): string;
+  static toLocale(str: string): string;
+  static compassPoint(bearing: number, precision?: precision): string;
+  static wrap360(degrees: number): string;
+  static wrap90(degrees: number): string;
 }
 
 declare class Vector3d {
@@ -104,6 +106,7 @@ declare class Vector3d {
   y: number
   z: number
   constructor(x: number, y: number, z: number)
+  get length(): number
   plus(v: Vector3d): Vector3d
   minus(v: Vector3d): Vector3d
   times(x: number): Vector3d
@@ -111,36 +114,52 @@ declare class Vector3d {
   dot(v: Vector3d): number
   cross(v: Vector3d): Vector3d
   negate(): Vector3d
-  length(): number
   unit(): Vector3d
   angleTo(v: Vector3d, n?: Vector3d): number
   rotateAround(axis: Vector3d, theta: number): Vector3d
   toString(precision?: number): string
-  toLatLonE(datum: Datum): LatLon
-  applyTransform(t: Array<number>): Vector3d
 }
 
 declare class OsGridRef {
   easting: number;
   northing: number;
   constructor(easting: number, northing: number);
-  static latLonToOsGrid(p: LatLon): OsGridRef;
-  static osGridToLatLon(gridref: OsGridRef, datum?: Datum): LatLon;
+  toLatLon(datum: Datum): LatLon
   static parse(gridref: string): OsGridRef;
   toString(digits?: number): string;
 }
 
 declare class LatLonEllipsoidal {
-  lat: number
-  lon: number
-  datum: Datum
-  constructor(lat: number, lon: number, datum?: Datum);
-  toUtm(): Utm
-  convertDatum(toDatum: Datum): LatLon
-  toCartesian(): Vector3d
-  toString(format?: format, dp?: 0 | 2 | 4): string;
-  static datum: Datums
-  static ellipsoid: Ellipsoids
+  _lat: number
+  _lon: number
+  _height: number
+  _datum: Datum
+  constructor(lat: number, lon: number, height?: number);
+  get lat(): number
+  get latitude(): number
+  set lat(lat: number)
+  set latitude(lat: number)
+  get lon(): number
+  get lng(): number
+  get longitude(): number
+  set lon(lon: number)
+  set lng(lon: number)
+  set longitude(lon: number)
+  get height(): number
+  set height(height: number)
+  get datum(): Datum
+  set datum(datum: Datum)
+  static get ellipsoids(): Ellipsoids
+  static get datums(): Datums
+  static parse(lat: number|string|object, lon?: number, height?: number): LatLon
+  toCartesian(): Cartesian
+  equals(point: LatLon): boolean
+  toString(format?: string, dp?: dp, dpHeight?: number): string
+}
+
+declare class Cartesian extends Vector3d {
+  toLatLon(ellipsoid: Ellipsoid): LatLon
+  toString(dp?: number): string
 }
 
 export {
@@ -149,5 +168,6 @@ export {
   Dms,
   Vector3d,
   OsGridRef,
-  LatLonEllipsoidal
+  LatLonEllipsoidal,
+  Cartesian
 }

@@ -13,18 +13,15 @@ import OsGridRef from '../osgridref.js';
  * Mgrs
  */
 const mgrs = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932);
-mgrs.band;
-mgrs.datum;
-mgrs.e100k;
-mgrs.e100kLetters;
-mgrs.easting;
-mgrs.latBands;
-mgrs.n100k;
-mgrs.n100kLetters;
-mgrs.northing;
-mgrs.toString();
-mgrs.toUtm();
 mgrs.zone;
+mgrs.band;
+mgrs.e100k;
+mgrs.n100k;
+mgrs.easting;
+mgrs.northing;
+mgrs.datum;
+mgrs.toUtm();
+mgrs.toString();
 
 // Static Functions
 Mgrs.parse('31U DQ 48251 11932');
@@ -33,14 +30,14 @@ Mgrs.parse('31U DQ 48251 11932');
  * Utm
  */
 const utm = new Utm(31, 'N', 448251, 5411932);
-utm.convergence;
-utm.datum;
-utm.easting;
+utm.zone;
 utm.hemisphere;
+utm.easting;
 utm.northing;
+utm.datum;
+utm.convergence;
 utm.scale;
-utm.toLatLonE();
-utm.toMgrs();
+utm.toLatLon();
 utm.toString();
 
 // Static Functions
@@ -49,11 +46,10 @@ Utm.parse('31 N 448251 5411932');
 /**
  * Dms
  */
-
 Dms.separator = '\u202f';
 
 // Static Functions
-Dms.parseDMS('51° 28′ 40.12″ N');
+Dms.parse('51° 28′ 40.12″ N');
 
 Dms.toDms(45);
 Dms.toDms(45, 'dm');
@@ -75,6 +71,12 @@ Dms.toBrng(90, 'dm');
 Dms.toBrng(90, 'd', 2);
 Dms.toBrng(90, 'dms', 4);
 
+Dms.fromLocale('51°28′40,12″N');
+Dms.fromLocale('51°28′40,37″N, 000°00′05,29″W');
+
+Dms.toLocale('123,456.789');
+Dms.toLocale('51°28′40.12″N, 000°00′05.31″W');
+
 Dms.compassPoint(180);
 Dms.compassPoint(180, 1);
 Dms.compassPoint(180, 2);
@@ -93,18 +95,11 @@ v1.cross(v2).dot(v3);
  * LatLon
  */
 const latlon = new LatLon(52.65798, 1.71605);
-new LatLon(51.4778, -0.0016, LatLon.datum.WGS84);
-const pWGS84 = new LatLon(51.4778, -0.0016, LatLon.datum.WGS84);
-const pOSGB = pWGS84.convertDatum(LatLon.datum.OSGB36);
 
-latlon.toUtm();
 latlon.toCartesian();
 latlon.toString();
 latlon.toString('dm');
 latlon.toString('d', 0);
-
-const mgrsGrid = new LatLon(45.4215296, -75.697193).toUtm().toMgrs();
-mgrsGrid.toString(6);
 
 /**
  * OsGridRef
@@ -112,9 +107,8 @@ mgrsGrid.toString(6);
 const gridref = new OsGridRef(651409, 313177);
 new OsGridRef(651409.903, 313177.27);
 new OsGridRef(651409, 313177).toString();
+gridref.toLatLon();
+gridref.toString();
 
 // Static Functions
-OsGridRef.latLonToOsGrid(latlon);
-OsGridRef.osGridToLatLon(gridref);
-OsGridRef.osGridToLatLon(gridref, LatLon.datum.OSGB36);
 OsGridRef.parse('TG 51409 13177');
