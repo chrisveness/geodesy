@@ -68,6 +68,14 @@
       "strict": [ "error", "global" ]
     }
   },
+  "files": [ 
+    "dms.js",
+    "latlon-*.js",
+    "mgrs.js",
+    "osgridref.js",
+    "utm.js",
+    "vector3d.js"
+  ],
   "jsdoc": {
     "plugins": [ "plugins/markdown" ],
     "markdown": { "idInHeadings": true }
