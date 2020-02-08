@@ -180,6 +180,7 @@ describe('latlon-spherical', function() {
         test('int’n (fail 3)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, 'invalid brng1 ‘n’'));
         test('int’n (fail 4)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, 'invalid brng2 ‘s’'));
         test('rounding errors',               () => LatLon.intersection(new LatLon(51, 0), 120, new LatLon(50, 0), 60).toString().should.equal('50.4921°N, 001.3612°E'));
+        test('rounding: φ3 requires clamp #71',() => LatLon.intersection(new LatLon(-77.6966041375563, 18.2812500000000), 179.99999999999995, new LatLon(89, 180), 180).toString().should.equal('90.0000°S, 163.9902°W'));
     });
 
     describe('cross-track / along-track', function() {

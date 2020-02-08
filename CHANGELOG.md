@@ -5,6 +5,7 @@
 ### Fixed
 
 - Round UTM to nm rather than (erroneous) μm
+- Fix (rare) rounding error issue in intersection() (#71]
 
 ## [2.2.0] - 2019-07-08
 
