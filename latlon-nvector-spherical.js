@@ -540,7 +540,7 @@ class LatLonNvectorSpherical {
      *
      * @param   {LatLon} point1 - Start point of great circle segment.
      * @param   {LatLon} point2 - End point of great circle segment.
-     * @returns {number} point on segment.
+     * @returns {LatLon} point on segment.
      *
      * @example
      *   const p1 = new LatLon(51.0, 1.0);
