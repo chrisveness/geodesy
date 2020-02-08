@@ -51,6 +51,10 @@ describe('latlon-spherical', function() {
         test('toString lat,lon',      () => greenwich.toString('n').split(',').should.deep.equal([ '51.4779', '-0.0015' ]));
     });
 
+    describe('constructor with strings', function() {
+        test('distanceTo d',  () => new LatLon('52.205', '0.119').distanceTo(new LatLon('48.857', '2.351')).toFixed().should.equal('404279'));
+    });
+
     describe('constructor fail', function() {
         test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
         test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));

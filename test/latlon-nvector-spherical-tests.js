@@ -58,6 +58,10 @@ describe('latlon-nvector-spherical', function() {
         test('toLatLon',             () => new Nvector(0.5000, 0.5000, 0.7071).toLatLon().toString('d', 1).should.equal('45.0°N, 045.0°E'));
     });
 
+    describe('constructor with strings', function() {
+        test('distanceTo d',  () => new LatLon('52.205', '0.119').distanceTo(new LatLon('48.857', '2.351')).toFixed().should.equal('404279'));
+    });
+
     describe('constructor fail', function() {
         test('non-numeric lat fail', () => should.Throw(function() { new LatLon('x', 0, 0); }, TypeError, 'invalid lat ‘x’'));
         test('non-numeric lon fail', () => should.Throw(function() { new LatLon(0, 'x', 0); }, TypeError, 'invalid lon ‘x’'));

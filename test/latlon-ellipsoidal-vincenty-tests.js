@@ -118,4 +118,8 @@ describe('latlon-ellipsoidal-vincenty', function() {
         test('direct destination', () => le.destinationPoint(dist, brngInit).toString('d', 6).should.equal('58.644399°N, 003.068521°W'));
     });
 
+    describe('constructor with strings', function() {
+        test('distanceTo d', () => new LatLon('52.205', '0.119').distanceTo(new LatLon('48.857', '2.351')).should.equal(404607.806));
+    });
+
 });

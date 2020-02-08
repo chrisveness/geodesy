@@ -49,8 +49,8 @@ class LatLonSpherical {
         if (isNaN(lat)) throw new TypeError(`invalid lat ‘${lat}’`);
         if (isNaN(lon)) throw new TypeError(`invalid lon ‘${lon}’`);
 
-        this._lat = Dms.wrap90(lat);
-        this._lon = Dms.wrap180(lon);
+        this._lat = Dms.wrap90(Number(lat));
+        this._lon = Dms.wrap180(Number(lon));
     }
 
 
@@ -61,11 +61,11 @@ class LatLonSpherical {
     get lat()       { return this._lat; }
     get latitude()  { return this._lat; }
     set lat(lat) {
-        this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(lat);
+        this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(Number(lat));
         if (isNaN(this._lat)) throw new TypeError(`invalid lat ‘${lat}’`);
     }
     set latitude(lat) {
-        this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(lat);
+        this._lat = isNaN(lat) ? Dms.wrap90(Dms.parse(lat)) : Dms.wrap90(Number(lat));
         if (isNaN(this._lat)) throw new TypeError(`invalid latitude ‘${lat}’`);
     }
 
@@ -77,15 +77,15 @@ class LatLonSpherical {
     get lng()       { return this._lon; }
     get longitude() { return this._lon; }
     set lon(lon) {
-        this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(lon);
+        this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
         if (isNaN(this._lon)) throw new TypeError(`invalid lon ‘${lon}’`);
     }
     set lng(lon) {
-        this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(lon);
+        this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
         if (isNaN(this._lon)) throw new TypeError(`invalid lng ‘${lon}’`);
     }
     set longitude(lon) {
-        this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(lon);
+        this._lon = isNaN(lon) ? Dms.wrap180(Dms.parse(lon)) : Dms.wrap180(Number(lon));
         if (isNaN(this._lon)) throw new TypeError(`invalid longitude ‘${lon}’`);
     }
 

@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- Coerce textual lat/long to numeric in latlon-spherical
 - Round UTM to nm rather than (erroneous) μm
 - Fix (rare) rounding error issue in intersection() (#71]
 
