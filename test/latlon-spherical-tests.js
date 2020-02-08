@@ -206,7 +206,8 @@ describe('latlon-spherical', function() {
         test('along-track SW',       () => new LatLon(-1, -1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5'));
         test('along-track NW',       () => new LatLon( 1, -1).alongTrackDistanceTo(new LatLon(0, 0), new LatLon(0, 2)).toPrecision(4).should.equal('-1.112e+5')); // eslint-disable-line space-in-parens
 
-        test('cross-track coinc',    () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(10, 0), new LatLon(0, 2)).should.be.NaN);
+        test('cross-track coinc',    () => new LatLon(10, 0).crossTrackDistanceTo(new LatLon(10, 0), new LatLon(0, 2)).should.equal(0));
+        test('along-track coinc',    () => new LatLon(10, 0).alongTrackDistanceTo(new LatLon(10, 0), new LatLon(0, 2)).should.equal(0));
         test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(null, 0); }, TypeError, 'invalid (null) point'));
         test('cross-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).crossTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, 'invalid point ‘x’'));
         test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(null, 0); }, TypeError, 'invalid (null) point'));

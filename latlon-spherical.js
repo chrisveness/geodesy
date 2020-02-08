@@ -463,6 +463,8 @@ class LatLonSpherical {
         if (!(pathEnd instanceof LatLonSpherical)) pathEnd = LatLonSpherical.parse(pathEnd);       // allow literal forms
         const R = radius;
 
+        if (this.equals(pathStart)) return 0;
+
         const δ13 = pathStart.distanceTo(this, R) / R;
         const θ13 = pathStart.initialBearingTo(this).toRadians();
         const θ12 = pathStart.initialBearingTo(pathEnd).toRadians();
@@ -494,6 +496,8 @@ class LatLonSpherical {
         if (!(pathStart instanceof LatLonSpherical)) pathStart = LatLonSpherical.parse(pathStart); // allow literal forms
         if (!(pathEnd instanceof LatLonSpherical)) pathEnd = LatLonSpherical.parse(pathEnd);       // allow literal forms
         const R = radius;
+
+        if (this.equals(pathStart)) return 0;
 
         const δ13 = pathStart.distanceTo(this, R) / R;
         const θ13 = pathStart.initialBearingTo(this).toRadians();
