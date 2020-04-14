@@ -481,7 +481,7 @@ class LatLonNvectorSpherical {
         if (!(pathStart instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid pathStart ‘${pathStart}’`);
         if (!(pathBrngEnd instanceof LatLonNvectorSpherical || !isNaN(pathBrngEnd))) throw new TypeError(`invalid pathBrngEnd ‘${pathBrngEnd}’`);
 
-        if (this.equals(pathStart)) return NaN; // coincident points
+        if (this.equals(pathStart)) return 0;
 
         const p = this.toNvector();
         const R = Number(radius);
