@@ -124,6 +124,8 @@ describe('utm/mgrs', function() {
         // forgiving parsing of 100km squares spanning bands
         test('01P ≡ UTM 01Q', () => Mgrs.parse('01P ET 00000 68935').toUtm().toString().should.equal('01 N 500000 1768935'));
         test('01Q ≡ UTM 01P', () => Mgrs.parse('01Q ET 00000 68935').toUtm().toString().should.equal('01 N 500000 1768935'));
+        // use correct latitude band base northing [#73]
+        test('nBand @ 3°',    () => Utm.parse('31 N 500000 7097014').toMgrs().toUtm().toString().should.equal('31 N 500000 7097014'));
     });
 
     describe('ED50 conversion', function() {

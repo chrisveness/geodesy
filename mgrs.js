@@ -117,7 +117,7 @@ class Mgrs {
         const latBand = (latBands.indexOf(this.band)-10)*8;
 
         // get northing of bottom of band, extended to include entirety of bottom-most 100km square
-        const nBand = Math.floor(new LatLonEllipsoidal(latBand, 0).toUtm().northing/100e3)*100e3;
+        const nBand = Math.floor(new LatLonEllipsoidal(latBand, 3).toUtm().northing/100e3)*100e3;
 
         // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to
         // get into required band
