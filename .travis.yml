@@ -1,9 +1,8 @@
 language: node_js
 
 node_js:
-- "lts/*"
 - "node"
-- "8"
+- "13"
 
 os:
 - linux
