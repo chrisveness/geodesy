@@ -11,5 +11,4 @@ os:
 - windows
 
 after_success:
-- ESM_DISABLE_CACHE=1 nyc --cache=false npm test # 1st run fails, so force report by running nyc twice; github.com/istanbuljs/nyc/issues/993
-- ESM_DISABLE_CACHE=1 nyc --cache=false npm test && nyc report --reporter=text-lcov | coveralls
+- c8 -r text-lcov npm test | coveralls
