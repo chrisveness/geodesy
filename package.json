@@ -8,12 +8,13 @@
   },
   "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "destination", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "reference frame", "TRF", "wgs84", "utm", "mgrs" ],
   "author": "Chris Veness",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=8.0.0"
   },
+  "files": [ "dms.js", "latlon-*.js", "mgrs.js", "osgridref.js", "utm.js", "vector3d.js" ],
   "bugs": "https://github.com/chrisveness/geodesy/issues",
   "scripts": {
     "test": "mocha --exit test/*.js",
@@ -67,14 +68,6 @@
       "strict": [ "error", "global" ]
     }
   },
-  "files": [
-    "dms.js",
-    "latlon-*.js",
-    "mgrs.js",
-    "osgridref.js",
-    "utm.js",
-    "vector3d.js"
-  ],
   "jsdoc": {
     "plugins": [ "plugins/markdown" ],
     "markdown": { "idInHeadings": true }

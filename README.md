@@ -96,7 +96,7 @@ The library can be used in the browser by taking a local copy, or loading it fro
 ```html
 <!doctype html><title>geodesy example</title><meta charset="utf-8">
 <script type="module">
-    import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.2.0/latlon-spherical.min.js';
+    import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.2.1/latlon-spherical.min.js';
 
     const p1 = new LatLon(50.06632, -5.71475);
     const p2 = new LatLon(58.64402, -3.07009);

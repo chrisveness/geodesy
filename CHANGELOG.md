@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [2.2.1] - 2020-04-22
 
 ### Fixed
 
@@ -10,6 +10,7 @@
 - Fix (rare) rounding error issue in intersection() [#71]
 - Fix (edgecase) gross error in MGRS -> UTM conversion [#73]
 - Return 0 rather than NaN for cross-track / along-track distance of coincident points [#76]
+- Remove tests from published package
 
 ## [2.2.0] - 2019-07-08
 
