@@ -127,6 +127,8 @@ $ node -r esm
 > console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 51″ W');
 ```
 
+For TypeScript users, type definitions are available from DefinitelyTyped: [www.npmjs.com/package/@types/geodesy](https://www.npmjs.com/package/@types/geodesy).
+
 ### Other examples
 
 Some examples of calculations possible with the libraries:
