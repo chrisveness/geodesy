@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Fix parsing of 'H' 500km squares (Scottish islands)
+
 ## [2.2.1] - 2020-04-22
 
 ### Fixed

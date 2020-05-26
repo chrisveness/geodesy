@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2019  */
+/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2020  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-gridref.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#osgridref                                  */
@@ -13,7 +13,7 @@ import LatLonEllipsoidal, { Dms } from './latlon-ellipsoidal-datum.js';
  * Formulation implemented here due to Thomas, Redfearn, etc is as published by OS, but is inferior
  * to Krüger as used by e.g. Karney 2011.
  *
- * www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf.
+ * www.ordnancesurvey.co.uk/documents/resources/guide-coordinate-systems-great-britain.pdf.
  *
  * Note OSGB grid references cover Great Britain only; Ireland and the Channel Islands have their
  * own references.
@@ -96,14 +96,14 @@ class OsGridRef {
             const Mb = (3*n + 3*n*n + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
             const Mc = ((15/8)*n2 + (15/8)*n3) * Math.sin(2*(φ-φ0)) * Math.cos(2*(φ+φ0));
             const Md = (35/24)*n3 * Math.sin(3*(φ-φ0)) * Math.cos(3*(φ+φ0));
-            M = b * F0 * (Ma - Mb + Mc - Md);               // meridional arc
+            M = b * F0 * (Ma - Mb + Mc - Md);                // meridional arc
 
         } while (Math.abs(N-N0-M) >= 0.00001);  // ie until < 0.01mm
 
         const cosφ = Math.cos(φ), sinφ = Math.sin(φ);
-        const ν = a*F0/Math.sqrt(1-e2*sinφ*sinφ);             // nu = transverse radius of curvature
-        const ρ = a*F0*(1-e2)/Math.pow(1-e2*sinφ*sinφ, 1.5);     // rho = meridional radius of curvature
-        const η2 = ν/ρ-1;                                   // eta = ?
+        const ν = a*F0/Math.sqrt(1-e2*sinφ*sinφ);            // nu = transverse radius of curvature
+        const ρ = a*F0*(1-e2)/Math.pow(1-e2*sinφ*sinφ, 1.5); // rho = meridional radius of curvature
+        const η2 = ν/ρ-1;                                    // eta = ?
 
         const tanφ = Math.tan(φ);
         const tan2φ = tanφ*tanφ, tan4φ = tan2φ*tan2φ, tan6φ = tan4φ*tan2φ;
@@ -157,18 +157,15 @@ class OsGridRef {
         if (match) return new OsGridRef(match[1], match[2]);
 
         // validate format
-        match = gridref.match(/^[A-Z]{2}\s*[0-9]+\s*[0-9]+$/i);
+        match = gridref.match(/^[HNST][ABCDEFGHJKLMNOPQRSTUVWXYZ]\s*[0-9]+\s*[0-9]+$/i);
         if (!match) throw new Error(`invalid grid reference ‘${gridref}’`);
 
         // get numeric values of letter references, mapping A->0, B->1, C->2, etc:
-        let l1 = gridref.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0);
-        let l2 = gridref.toUpperCase().charCodeAt(1) - 'A'.charCodeAt(0);
+        let l1 = gridref.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0); // 500km square
+        let l2 = gridref.toUpperCase().charCodeAt(1) - 'A'.charCodeAt(0); // 100km square
         // shuffle down letters after 'I' since 'I' is not used in grid:
         if (l1 > 7) l1--;
         if (l2 > 7) l2--;
-
-        // sanity check
-        if (l1<8 || l1 > 18) throw new Error(`invalid grid reference ‘${gridref}’`);
 
         // convert grid letters into 100km-square indexes from false origin (grid square SV):
         const e100km = ((l1 - 2) % 5) * 5 + (l2 % 5);

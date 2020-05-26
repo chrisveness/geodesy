@@ -90,6 +90,15 @@ describe('os-gridref', function() {
         });
     });
 
+    describe('extremities', function() {
+        test('LE>', () => OsGridRef.parse('SW 34240 25290').toLatLon().toString().should.equal('50.0682°N, 005.7152°W'));
+        test('LE<', () => new LatLon(50.0682, -5.7152).toOsGrid().toString().should.equal('SW 34240 25290'));
+        test('NF>', () => OsGridRef.parse('TR 39859 69616').toLatLon().toString().should.equal('51.3749°N, 001.4451°E'));
+        test('NF<', () => new LatLon(51.3749, 1.4451).toOsGrid().toString().should.equal('TR 39859 69616'));
+        test('HP>', () => OsGridRef.parse('HY 45153 09450').toLatLon().toString().should.equal('58.9687°N, 002.9555°W'));
+        test('HP<', () => new LatLon(58.9687, -2.9555).toOsGrid().toString().should.equal('HY 45153 09450'));
+    });
+
     describe('Extra-UK lat/lon fail', function() {
         test('0,0',    () => should.Throw(function() { new LatLon(0.00, 0.00).toOsGrid(); }, Error, 'invalid northing ‘-5527598.33’ from (-0.004833,0.000890).toOsGrid()'));
         test('Dublin', () => should.Throw(function() { new LatLon(53.35, 6.26).toOsGrid(); }, Error, 'invalid easting ‘949400.51’ from (53.349579,6.262431).toOsGrid()'));
