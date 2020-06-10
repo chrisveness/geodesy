@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vector-based ellipsoidal geodetic (latitude/longitude) functions   (c) Chris Veness 2015-2019  */
+/* Vector-based ellipsoidal geodetic (latitude/longitude) functions   (c) Chris Veness 2015-2020  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vectors.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-nvector-ellipsoidal                 */
@@ -79,7 +79,7 @@ class LatLon_NvectorEllipsoidal extends LatLonEllipsoidal {
         const δn = new Cartesian(
             r[0][0]*δc.x + r[0][1]*δc.y + r[0][2]*δc.z,
             r[1][0]*δc.x + r[1][1]*δc.y + r[1][2]*δc.z,
-            r[2][0]*δc.x + r[2][1]*δc.y + r[2][2]*δc.z
+            r[2][0]*δc.x + r[2][1]*δc.y + r[2][2]*δc.z,
         );
 
         return new Ned(δn.x, δn.y, δn.z);
@@ -124,7 +124,7 @@ class LatLon_NvectorEllipsoidal extends LatLonEllipsoidal {
         const δc = new Cartesian(
             r[0][0]*δn.x + r[0][1]*δn.y + r[0][2]*δn.z,
             r[1][0]*δn.x + r[1][1]*δn.y + r[1][2]*δn.z,
-            r[2][0]*δn.x + r[2][1]*δn.y + r[2][2]*δn.z
+            r[2][0]*δn.x + r[2][1]*δn.y + r[2][2]*δn.z,
         );
 
         // apply (cartesian) delta to c1 to obtain destination point as cartesian coordinate

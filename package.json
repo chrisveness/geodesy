@@ -23,22 +23,23 @@
     "docs": "jsdoc *.js README.md -d ../../geodesy/docs"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.0",
     "c8": "^7.0.0",
     "chai": "chaijs/chai#pull/1317/head",
     "coveralls": "^3.0.0",
-    "eslint": "^6.0.0",
+    "eslint": "^7.0.0",
     "jsdoc": "^3.0.0",
     "mocha": "^7.0.0"
   },
   "eslintConfig": {
     "env": {
       "browser": true,
-      "es6": true,
+      "es2020": true,
       "mocha": true,
       "node": true
     },
-    "parser": "babel-eslint",
+    "parserOptions": {
+      "sourceType": "module"
+    },
     "extends": "eslint:recommended",
     "globals": {
       "chai": true,
@@ -53,7 +54,7 @@
       "key-spacing": [ "error", { "align": "value" } ],
       "keyword-spacing": [ "error" ],
       "no-case-declarations": "warn",
-      "no-console": [ "warn", { "allow": [ "error", "info" ] } ],
+      "no-console": [ "warn", { "allow": [ "error", "info", "debug" ] } ],
       "no-irregular-whitespace": "warn",
       "no-redeclare": "warn",
       "no-shadow": "warn",
