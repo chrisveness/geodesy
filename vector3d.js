@@ -37,7 +37,7 @@ class Vector3d {
      *   const v = new Vector3d(0.267, 0.535, 0.802);
      */
     constructor(x, y, z) {
-        if (isNaN(x) || isNaN(x) || isNaN(x)) throw new TypeError(`invalid vector [${x},${y},${z}]`);
+        if (isNaN(x) || isNaN(y) || isNaN(z)) throw new TypeError(`invalid vector [${x},${y},${z}]`);
 
         this.x = Number(x);
         this.y = Number(y);
