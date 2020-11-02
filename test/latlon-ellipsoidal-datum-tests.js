@@ -1,11 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - ellipsoidal datums                          (c) Chris Veness 2014-2019  */
+/* Geodesy Test Harness - ellipsoidal datums                          (c) Chris Veness 2014-2020  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Cartesian, Dms } from '../latlon-ellipsoidal-datum.js';
 
 if (typeof window == 'undefined') { // node
-    import('chai').then(chai => { global.should = chai.should(); });
+    const chai = await import('chai');
+    global.should = chai.should();
 } else {                           // browser
     chai.should();
 }

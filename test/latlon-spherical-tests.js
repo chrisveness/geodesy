@@ -1,11 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-spherical                            (c) Chris Veness 2014-2019  */
+/* Geodesy Test Harness - latlon-spherical                            (c) Chris Veness 2014-2020  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Dms } from '../latlon-spherical.js';
 
 if (typeof window == 'undefined') { // node
-    import('chai').then(chai => global.should = chai.should());
+    const chai = await import('chai');
+    global.should = chai.should();
 } else {                           // browser
     window.should = chai.should();
 }

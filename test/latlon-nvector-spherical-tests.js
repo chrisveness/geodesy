@@ -1,11 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-nvector-spherical                    (c) Chris Veness 2014-2019  */
+/* Geodesy Test Harness - latlon-nvector-spherical                    (c) Chris Veness 2014-2020  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Nvector, Dms } from '../latlon-nvector-spherical.js';
 
 if (typeof window == 'undefined') { // node
-    import('chai').then(chai => global.should = chai.should());
+    const chai = await import('chai');
+    global.should = chai.should();
 } else {                            // browser
     window.should = chai.should();
 }
