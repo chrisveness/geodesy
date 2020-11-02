@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy representation conversion functions                        (c) Chris Veness 2002-2019  */
+/* Geodesy representation conversion functions                        (c) Chris Veness 2002-2020  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong.html                                                    */
 /* www.movable-type.co.uk/scripts/js/geodesy/geodesy-library.html#dms                             */
@@ -285,31 +285,7 @@ class Dms {
 
 
     /**
-     * Constrain degrees to range 0..360 (e.g. for bearings); -1 => 359, 361 => 1.
-     *
-     * @private
-     * @param {number} degrees
-     * @returns degrees within range 0..360.
-     */
-    static wrap360(degrees) {
-        if (0<=degrees && degrees<360) return degrees; // avoid rounding due to arithmetic ops if within range
-        return (degrees%360+360) % 360; // sawtooth wave p:360, a:360
-    }
-
-    /**
-     * Constrain degrees to range -180..+180 (e.g. for longitude); -181 => 179, 181 => -179.
-     *
-     * @private
-     * @param {number} degrees
-     * @returns degrees within range -180..+180.
-     */
-    static wrap180(degrees) {
-        if (-180<degrees && degrees<=180) return degrees; // avoid rounding due to arithmetic ops if within range
-        return (degrees+540)%360-180; // sawtooth wave p:180, a:±180
-    }
-
-    /**
-     * Constrain degrees to range -90..+90 (e.g. for latitude); -91 => -89, 91 => 89.
+     * Constrain degrees to range -90..+90 (for latitude); e.g. -91 => -89, 91 => 89.
      *
      * @private
      * @param {number} degrees
@@ -317,7 +293,52 @@ class Dms {
      */
     static wrap90(degrees) {
         if (-90<=degrees && degrees<=90) return degrees; // avoid rounding due to arithmetic ops if within range
-        return Math.abs((degrees%360 + 270)%360 - 180) - 90; // triangle wave p:360 a:±90 TODO: fix e.g. -315°
+
+        // latitude wrapping requires a triangle wave function; a general triangle wave is
+        //     f(x) = 4a/p ⋅ | (x-p/4)%p - p/2 | - a
+        // where a = amplitude, p = period, % = modulo; however, JavaScript '%' is a remainder operator
+        // not a modulo operator - for modulo, replace 'x%n' with '((x%n)+n)%n'
+        const x = degrees, a = 90, p = 360;
+        return 4*a/p * Math.abs((((x-p/4)%p)+p)%p - p/2) - a;
+    }
+
+    /**
+     * Constrain degrees to range -180..+180 (for longitude); e.g. -181 => 179, 181 => -179.
+     *
+     * @private
+     * @param {number} degrees
+     * @returns degrees within range -180..+180.
+     */
+    static wrap180(degrees) {
+        if (-180<=degrees && degrees<=180) return degrees; // avoid rounding due to arithmetic ops if within range
+
+        // longitude wrapping requires a sawtooth wave function; a general sawtooth wave is
+        //     f(x) = (2ax/p - p/2) % p - a
+        // where a = amplitude, p = period, % = modulo; however, JavaScript '%' is a remainder operator
+        // not a modulo operator - for modulo, replace 'x%n' with '((x%n)+n)%n'
+        const x = degrees, a = 180, p = 360;
+        return (((2*a*x/p - p/2)%p)+p)%p - a;
+    }
+
+    /**
+     * Constrain degrees to range 0..360 (for bearings); e.g. -1 => 359, 361 => 1.
+     *
+     * @private
+     * @param {number} degrees
+     * @returns degrees within range 0..360.
+     */
+    static wrap360(degrees) {
+        if (0<=degrees && degrees<360) return degrees; // avoid rounding due to arithmetic ops if within range
+
+        // bearing wrapping requires a sawtooth wave function with a vertical offset equal to the
+        // amplitude and a corresponding phase shift; this changes the general sawtooth wave function from
+        //     f(x) = (2ax/p - p/2) % p - a
+        // to
+        //     f(x) = (2ax/p) % p
+        // where a = amplitude, p = period, % = modulo; however, JavaScript '%' is a remainder operator
+        // not a modulo operator - for modulo, replace 'x%n' with '((x%n)+n)%n'
+        const x = degrees, a = 180, p = 360;
+        return (((2*a*x/p)%p)+p)%p;
     }
 
 }

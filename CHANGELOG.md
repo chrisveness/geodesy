@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fix parsing of 'H' 500km squares (Scottish islands)
+- Fix Dms.wrap90(), Dms.wrap180() to work for all -ve degrees
 
 ## [2.2.1] - 2020-04-22
 

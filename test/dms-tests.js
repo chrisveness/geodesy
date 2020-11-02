@@ -197,7 +197,7 @@ describe('dms', function() {
         test('-450°', () => Dms.wrap90(-450).should.equal( -90));
         test('-405°', () => Dms.wrap90(-405).should.equal( -45));
         test('-360°', () => Dms.wrap90(-360).should.equal(   0));
-        // test('-315°', () => Dms.wrap90(-315).should.equal(  45)); TODO: fix!
+        test('-315°', () => Dms.wrap90(-315).should.equal(  45));
         test('-270°', () => Dms.wrap90(-270).should.equal(  90));
         test('-225°', () => Dms.wrap90(-225).should.equal(  45));
         test('-180°', () => Dms.wrap90(-180).should.equal(   0));
