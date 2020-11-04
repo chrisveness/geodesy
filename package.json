@@ -23,6 +23,8 @@
     "docs": "jsdoc *.js README.md -d ../../geodesy/docs"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.0.0",
+    "@babel/plugin-syntax-top-level-await": "^7.0.0",
     "c8": "^7.0.0",
     "chai": "chaijs/chai#pull/1317/head",
     "coveralls": "^3.0.0",
@@ -33,13 +35,10 @@
   "eslintConfig": {
     "env": {
       "browser": true,
-      "es2020": true,
       "mocha": true,
       "node": true
     },
-    "parserOptions": {
-      "sourceType": "module"
-    },
+    "parser": "@babel/eslint-parser",
     "extends": "eslint:recommended",
     "globals": {
       "chai": true,
@@ -63,11 +62,15 @@
       "object-curly-spacing": [ "error", "always" ],
       "prefer-const": "error",
       "quotes": [ "error", "single", "avoid-escape" ],
+      "require-await": "error",
       "semi": [ "error", "always" ],
       "space-before-blocks": [ "error", "always" ],
       "space-in-parens": [ "error" ],
       "strict": [ "error", "global" ]
     }
+  },
+  "babel": {
+    "plugins": ["@babel/plugin-syntax-top-level-await"]
   },
   "jsdoc": {
     "plugins": [ "plugins/markdown" ],
