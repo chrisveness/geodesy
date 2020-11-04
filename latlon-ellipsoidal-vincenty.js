@@ -162,11 +162,14 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
      * @throws  {EvalError}  Formula failed to converge.
      */
     direct(distance, initialBearing) {
+        if (isNaN(distance)) throw new TypeError(`invalid distance ${distance}`);
+        if (distance == 0) return { point: this, finalBearing: NaN, iterations: 0 };
+        if (isNaN(initialBearing)) throw new TypeError(`invalid bearing ${initialBearing}`);
         if (this.height != 0) throw new RangeError('point must be on the surface of the ellipsoid');
 
         const φ1 = this.lat.toRadians(), λ1 = this.lon.toRadians();
-        const α1 = initialBearing.toRadians();
-        const s = distance;
+        const α1 = Number(initialBearing).toRadians();
+        const s = Number(distance);
 
         // allow alternative ellipsoid to be specified
         const ellipsoid = this.datum ? this.datum.ellipsoid : LatLonEllipsoidal.ellipsoids.WGS84;
