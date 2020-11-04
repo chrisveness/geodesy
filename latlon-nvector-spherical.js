@@ -272,7 +272,7 @@ class LatLonNvectorSpherical {
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
      *   const p2 = new LatLon(48.857, 2.351);
-     *   const pInt = p1.intermediatePointTo(p2, 0.25); // 51.3723°N, 000.7072°E
+     *   const pInt = p1.intermediatePointTo(p2, 0.25); // 51.3721°N, 000.7072°E
      */
     intermediatePointTo(point, fraction) {
         if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);

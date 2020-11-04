@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2019  */
+/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2020  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-ellipsoidal-vincenty.html                               */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal-vincenty                */
@@ -141,12 +141,36 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
      *
      * @example
      *   const p1 = new LatLon(-37.95103, 144.42487);
-     *   const b2 = p1.finalBearingOn(306.86816, 54972.271); // 307.1736°
+     *   const b2 = p1.finalBearingOn(54972.271, 306.86816); // 307.1736°
      */
     finalBearingOn(distance, initialBearing) {
         const brng = this.direct(Number(distance), Number(initialBearing)).finalBearing;
         return Number(brng.toFixed(7)); // round to 0.001″ precision
     }
+
+
+    /**
+     * Returns the point at given fraction between ‘this’ point and given point.
+     *
+     * @param   {LatLon} point - Latitude/longitude of destination point.
+     * @param   {number} fraction - Fraction between the two points (0 = this point, 1 = specified point).
+     * @returns {LatLon} Intermediate point between this point and destination point.
+     *
+     * @example
+     *   const p1 = new LatLon(50.06632, -5.71475);
+     *   const p2 = new LatLon(58.64402, -3.07009);
+     *   const pInt = p1.intermediatePointTo(p2, 0.5); // 54.3639°N, 004.5304°W
+     */
+    intermediatePointTo(point, fraction) {
+        if (fraction == 0) return this;
+        const inverse = this.inverse(point);
+        const dist = inverse.distance;
+        const brng = inverse.initialBearing;
+        return isNaN(brng) ? this : this.destinationPoint(dist*fraction, brng);
+    }
+
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
     /**
