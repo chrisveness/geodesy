@@ -71,7 +71,7 @@ const d = p1.distanceTo(p2); // 404.3×10³ m
   earth:
 
 ```javascript
-import LatLon from '/js/geodesy/latlon-ellipsoidal-vincency.js';
+import LatLon from '/js/geodesy/latlon-ellipsoidal-vincenty.js';
 const p1 = new LatLon(-37.95103, 144.42487);
 const dist = 54972.271;
 const brng = 306.86816;
