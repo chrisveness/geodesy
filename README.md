@@ -61,7 +61,7 @@ for instance:
 - to find the distance between two points using a simple spherical earth model:
 
 ```javascript
-import LatLon from '/js/geodesy/latlon-spherical.js';
+import LatLon from 'geodesy/latlon-spherical.js';
 const p1 = new LatLon(52.205, 0.119);
 const p2 = new LatLon(48.857, 2.351);
 const d = p1.distanceTo(p2); // 404.3×10³ m
@@ -71,7 +71,7 @@ const d = p1.distanceTo(p2); // 404.3×10³ m
   earth:
 
 ```javascript
-import LatLon from '/js/geodesy/latlon-ellipsoidal-vincency.js';
+import LatLon from 'geodesy/latlon-ellipsoidal-vincenty.js';
 const p1 = new LatLon(-37.95103, 144.42487);
 const dist = 54972.271;
 const brng = 306.86816;
