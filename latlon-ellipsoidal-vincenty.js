@@ -208,8 +208,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const sinα = cosU1 * sinα1;          // α = azimuth of the geodesic at the equator
         const cosSqα = 1 - sinα*sinα;
         const uSq = cosSqα * (a*a - b*b) / (b*b);
-        const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
-        const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
+        const A = (((uSq*-175 + 320)*uSq - 768)*uSq + 4096)*uSq/16384 + 1;
+        const B = (((uSq*-47 + 74)*uSq - 128)*uSq + 256)*uSq/1024 + 1;
 
         let σ = s / (b*A), sinσ = null, cosσ = null, Δσ = null; // σ = angular distance P₁ P₂ on the sphere
         let cos2σₘ = null; // σₘ = angular distance on the sphere from the equator to the midpoint of the line
