@@ -1,6 +1,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2020  */
 /*                                                                                   MIT Licence  */
+/* www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                                          */
 /* www.movable-type.co.uk/scripts/latlong-ellipsoidal-vincenty.html                               */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal-vincenty                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -207,8 +208,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const sinα = cosU1 * sinα1;          // α = azimuth of the geodesic at the equator
         const cosSqα = 1 - sinα*sinα;
         const uSq = cosSqα * (a*a - b*b) / (b*b);
-        const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
-        const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
+        const A = (((uSq*-175 + 320)*uSq - 768)*uSq + 4096)*uSq/16384 + 1;
+        const B = (((uSq*-47 + 74)*uSq - 128)*uSq + 256)*uSq/1024;
 
         let σ = s / (b*A), sinσ = null, cosσ = null, Δσ = null; // σ = angular distance P₁ P₂ on the sphere
         let cos2σₘ = null; // σₘ = angular distance on the sphere from the equator to the midpoint of the line
@@ -301,8 +302,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         if (iterations >= 1000) throw new EvalError('Vincenty formula failed to converge');
 
         const uSq = cosSqα * (a*a - b*b) / (b*b);
-        const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
-        const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
+	const A = (((uSq*-175 + 320)*uSq - 768)*uSq + 4096)*uSq/16384 + 1;
+	const B = (((uSq*-47 + 74)*uSq - 128)*uSq + 256)*uSq/1024;
         const Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-
             B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
 
