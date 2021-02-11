@@ -302,8 +302,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         if (iterations >= 1000) throw new EvalError('Vincenty formula failed to converge');
 
         const uSq = cosSqα * (a*a - b*b) / (b*b);
-        const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
-        const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
+	const A = (((uSq*-175 + 320)*uSq - 768)*uSq + 4096)*uSq/16384 + 1;
+	const B = (((uSq*-47 + 74)*uSq - 128)*uSq + 256)*uSq/1024;
         const Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-
             B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
 
