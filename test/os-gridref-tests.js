@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - os-gridref                                  (c) Chris Veness 2014-2020  */
+/* Geodesy Test Harness - os-gridref                                  (c) Chris Veness 2014-2021  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import OsGridRef, { LatLon, Dms } from '../osgridref.js';
@@ -98,6 +98,8 @@ describe('os-gridref', function() {
         test('NF<', () => new LatLon(51.3749, 1.4451).toOsGrid().toString().should.equal('TR 39859 69616'));
         test('HP>', () => OsGridRef.parse('HY 45153 09450').toLatLon().toString().should.equal('58.9687°N, 002.9555°W'));
         test('HP<', () => new LatLon(58.9687, -2.9555).toOsGrid().toString().should.equal('HY 45153 09450'));
+        test('RH>', () => OsGridRef.parse('HU 30497 83497').toLatLon().toString().should.equal('60.5339°N, 001.4461°W'));
+        test('RH<', () => new LatLon(60.5339, -1.4461).toOsGrid().toString().should.equal('HU 30497 83497'));
     });
 
     describe('Extra-UK lat/lon fail', function() {
