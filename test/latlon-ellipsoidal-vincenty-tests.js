@@ -35,6 +35,8 @@ describe('latlon-ellipsoidal-vincenty', function() {
         test('inverse final bearing',     () => le.finalBearingTo(jog).should.equal(brngFinal));
         test('direct destination',        () => le.destinationPoint(dist, brngInit).toString('d').should.equal(jog.toString('d')));
         test('direct final bearing',      () => le.finalBearingOn(dist, brngInit).should.equal(brngFinal));
+        test('intermediate point 0',      () => le.intermediatePointTo(jog, 0).should.equal(le));
+        test('intermediate point 1',      () => le.intermediatePointTo(jog, 1).should.equal(jog));
         test('inverse distance (fail)',   () => should.Throw(function() { le.distanceTo(null); }, TypeError, 'invalid point ‘null’'));
         test('inverse init brng (fail)',  () => should.Throw(function() { le.initialBearingTo(null); }, TypeError, 'invalid point ‘null’'));
         test('inverse final brng (fail)', () => should.Throw(function() { le.finalBearingTo(null); }, TypeError, 'invalid point ‘null’'));
