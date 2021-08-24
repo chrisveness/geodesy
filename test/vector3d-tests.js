@@ -1,14 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - vector3d                                    (c) Chris Veness 2019-2020  */
+/* Geodesy Test Harness - vector3d                                    (c) Chris Veness 2019-2021  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import Vector3d from '../vector3d.js';
 
 if (typeof window == 'undefined') { // node
-    const chai = await import('chai');
+    const { default: chai } = await import('chai');
     global.should = chai.should();
-} else {                            // browser
-    window.should = chai.should();
 }
 
 describe('os-gridref', function() {

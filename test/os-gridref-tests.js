@@ -5,10 +5,8 @@
 import OsGridRef, { LatLon, Dms } from '../osgridref.js';
 
 if (typeof window == 'undefined') { // node
-    const chai = await import('chai');
+    const { default: chai } = await import('chai');
     global.should = chai.should();
-} else {                            // browser
-    window.should = chai.should();
 }
 
 describe('os-gridref', function() {
