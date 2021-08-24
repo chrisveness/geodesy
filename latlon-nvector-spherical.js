@@ -710,8 +710,9 @@ class LatLonNvectorSpherical {
         // will sum to less than 360° (due to spherical excess), exterior point angles will be small
         // but non-zero. TODO: are any winding number optimisations applicable to spherical surface?
 
-        if (classOf(polygon) != 'Array') throw new TypeError(`isEnclosedBy: polygon must be Array (not ${classOf(polygon)})`)
-        if (classOf(polygon[0]) != 'LatLonNvectorSpherical') throw new TypeError(`isEnclosedBy: polygon must be Array of LatLon (not ${classOf(polygon[0])})`)
+        if (!(polygon instanceof Array)) throw new TypeError(`isEnclosedBy: polygon must be Array (not ${classOf(polygon)})`)
+        if (!(polygon[0] instanceof LatLonNvectorSpherical)) throw new TypeError(`isEnclosedBy: polygon must be Array of LatLon (not ${classOf(polygon[0])})`)
+        if (polygon.length < 3) return false; // or throw?
 
         // close the polygon so that the last point equals the first point
         const closed = polygon[0].equals(polygon[polygon.length-1]);
@@ -984,13 +985,13 @@ class NvectorSpherical extends Vector3d {
 
 
 /**
- * Return class of supplied object.
+ * Return class of supplied argument; javascriptweblog.wordpress.com/2011/08/08.
  *
- * @param {any} obj - Object whose class is to be determined.
+ * @param   {any} thing - Object whose class is to be determined.
  * @returns {string} Class of supplied object.
  */
-function classOf(obj) {
-    return ({}).toString.call(obj).match(/\s([a-zA-Z0-9]+)/)[1];
+function classOf(thing) {
+    return ({}).toString.call(thing).match(/\s([a-zA-Z0-9]+)/)[1];
 }
 
 
