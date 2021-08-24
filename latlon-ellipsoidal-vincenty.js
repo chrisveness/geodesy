@@ -163,6 +163,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
      */
     intermediatePointTo(point, fraction) {
         if (fraction == 0) return this;
+        if (fraction == 1) return point;
+
         const inverse = this.inverse(point);
         const dist = inverse.distance;
         const brng = inverse.initialBearing;
