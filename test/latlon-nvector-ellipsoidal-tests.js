@@ -1,14 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-nvector-ellipsoidal                  (c) Chris Veness 2014-2020  */
+/* Geodesy Test Harness - latlon-nvector-ellipsoidal                  (c) Chris Veness 2014-2021  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Nvector, Cartesian, Ned, Dms } from '../latlon-nvector-ellipsoidal.js';
 
 if (typeof window == 'undefined') { // node
-    const chai = await import('chai');
+    const { default: chai } = await import('chai');
     global.should = chai.should();
-} else {                           // browser
-    chai.should();
 }
 
 

@@ -1,15 +1,13 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-ellipsoidal-vincenty                 (c) Chris Veness 2014-2020  */
+/* Geodesy Test Harness - latlon-ellipsoidal-vincenty                 (c) Chris Veness 2014-2021  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Dms } from '../latlon-ellipsoidal-vincenty.js';
 import { datums }      from '../latlon-ellipsoidal-datum.js';
 
 if (typeof window == 'undefined') { // node
-    const chai = await import('chai');
+    const { default: chai } = await import('chai');
     global.should = chai.should();
-} else {                           // browser
-    chai.should();
 }
 
 
