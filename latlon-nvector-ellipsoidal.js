@@ -1,10 +1,9 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vector-based ellipsoidal geodetic (latitude/longitude) functions   (c) Chris Veness 2015-2020  */
+/* Vector-based ellipsoidal geodetic (latitude/longitude) functions   (c) Chris Veness 2015-2021  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vectors.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-nvector-ellipsoidal                 */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
 
 import LatLonEllipsoidal, { Cartesian, Vector3d, Dms } from './latlon-ellipsoidal.js';
 
