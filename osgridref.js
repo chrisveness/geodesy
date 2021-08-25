@@ -7,6 +7,7 @@
 
 import LatLonEllipsoidal, { Dms } from './latlon-ellipsoidal-datum.js';
 
+
 /**
  * Ordnance Survey OSGB grid references provide geocoordinate references for UK mapping purposes.
  *
@@ -32,18 +33,25 @@ import LatLonEllipsoidal, { Dms } from './latlon-ellipsoidal-datum.js';
 /* OsGridRef  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+const nationalGrid = {
+    trueOrigin:  { lat: 49, lon: -2 },                 // true origin of grid 49°N,2°W on OSGB36 datum
+    falseOrigin: { easting: -400e3, northing: 100e3 }, // easting & northing of false origin, metres from true origin
+    scaleFactor: 0.9996012717,                         // scale factor on central meridian
+    ellipsoid:   LatLonEllipsoidal.ellipsoids.Airy1830,
+};
+// note Irish National Grid uses t/o 53°30′N, 8°W, f/o 200kmW, 250kmS, scale factor 1.000035, on Airy 1830 Modified ellipsoid
+
+
 /**
- * OS grid references with methods to parse and convert them to latitude/longitude points.
- *
- * @module osgridref
+ * OS Grid References with methods to parse and convert them to latitude/longitude points.
  */
 class OsGridRef {
 
     /**
      * Creates an OsGridRef object.
      *
-     * @param {number} easting - Easting in metres from OS false origin.
-     * @param {number} northing - Northing in metres from OS false origin.
+     * @param {number} easting - Easting in metres from OS Grid false origin.
+     * @param {number} northing - Northing in metres from OS Grid false origin.
      *
      * @example
      *   import OsGridRef from '/js/geodesy/osgridref.js';
@@ -59,10 +67,10 @@ class OsGridRef {
 
 
     /**
-     * Converts ‘this’ Ordnance Survey grid reference easting/northing coordinate to latitude/longitude
+     * Converts ‘this’ Ordnance Survey Grid Reference easting/northing coordinate to latitude/longitude
      * (SW corner of grid square).
      *
-     * While OS grid references are based on OSGB-36, the Ordnance Survey have deprecated the use of
+     * While OS Grid References are based on OSGB-36, the Ordnance Survey have deprecated the use of
      * OSGB-36 for latitude/longitude coordinates (in favour of WGS-84), hence this function returns
      * WGS-84 by default, with OSGB-36 as an option. See www.ordnancesurvey.co.uk/blog/2014/12/2.
      *
@@ -81,10 +89,13 @@ class OsGridRef {
     toLatLon(datum=LatLonEllipsoidal.datums.WGS84) {
         const { easting: E, northing: N } = this;
 
-        const a = 6377563.396, b = 6356256.909;             // Airy 1830 major & minor semi-axes
-        const F0 = 0.9996012717;                            // NatGrid scale factor on central meridian
-        const φ0 = (49).toRadians(), λ0 = (-2).toRadians(); // NatGrid true origin is 49°N,2°W
-        const N0 = -100e3, E0 = 400e3;                      // northing & easting of true origin, metres
+        const { a, b } = nationalGrid.ellipsoid;            // a = 6377563.396, b = 6356256.909
+        const φ0 = nationalGrid.trueOrigin.lat.toRadians(); // latitude of true origin, 49°N
+        const λ0 = nationalGrid.trueOrigin.lon.toRadians(); // longitude of true origin, 2°W
+        const E0 = -nationalGrid.falseOrigin.easting;       // easting of true origin, 400km
+        const N0 = -nationalGrid.falseOrigin.northing;      // northing of true origin, -100km
+        const F0 = nationalGrid.scaleFactor;                // 0.9996012717
+
         const e2 = 1 - (b*b)/(a*a);                         // eccentricity squared
         const n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;        // n, n², n³
 
@@ -141,7 +152,7 @@ class OsGridRef {
      * two-digit references up to 10-digit references (1m × 1m square), or fully numeric comma-separated
      * references in metres (eg '438700,114800').
      *
-     * @param   {string}    gridref - Standard format OS grid reference.
+     * @param   {string}    gridref - Standard format OS Grid Reference.
      * @returns {OsGridRef} Numeric version of grid reference in metres from false origin (SW corner of
      *   supplied grid square).
      * @throws  {Error}     Invalid grid reference.
@@ -191,7 +202,7 @@ class OsGridRef {
 
 
     /**
-     * Converts ‘this’ numeric grid reference to standard OS grid reference.
+     * Converts ‘this’ numeric grid reference to standard OS Grid Reference.
      *
      * @param   {number} [digits=10] - Precision of returned grid reference (10 digits = metres);
      *   digits=0 will return grid reference in numeric format.
@@ -244,9 +255,9 @@ class OsGridRef {
 
 
 /**
- * Extends LatLon class with method to convert LatLon point to OS grid reference.
+ * Extends LatLon class with method to convert LatLon point to OS Grid Reference.
  *
- * @extends LatLon
+ * @extends LatLonEllipsoidal
  */
 class LatLon_OsGridRef extends LatLonEllipsoidal {
 
@@ -269,10 +280,13 @@ class LatLon_OsGridRef extends LatLonEllipsoidal {
         const φ = point.lat.toRadians();
         const λ = point.lon.toRadians();
 
-        const a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
-        const F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
-        const φ0 = (49).toRadians(), λ0 = (-2).toRadians();  // NatGrid true origin is 49°N,2°W
-        const N0 = -100000, E0 = 400000;                     // northing & easting of true origin, metres
+        const { a, b } = nationalGrid.ellipsoid;            // a = 6377563.396, b = 6356256.909
+        const φ0 = nationalGrid.trueOrigin.lat.toRadians(); // latitude of true origin, 49°N
+        const λ0 = nationalGrid.trueOrigin.lon.toRadians(); // longitude of true origin, 2°W
+        const E0 = -nationalGrid.falseOrigin.easting;       // easting of true origin, 400km
+        const N0 = -nationalGrid.falseOrigin.northing;      // northing of true origin, -100km
+        const F0 = nationalGrid.scaleFactor;                // 0.9996012717
+
         const e2 = 1 - (b*b)/(a*a);                          // eccentricity squared
         const n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;         // n, n², n³
 
