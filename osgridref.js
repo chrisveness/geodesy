@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2020  */
+/* Ordnance Survey Grid Reference functions                           (c) Chris Veness 2005-2021  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-gridref.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#osgridref                                  */
@@ -314,6 +314,16 @@ class LatLon_OsGridRef extends LatLonEllipsoidal {
         } catch (e) {
             throw new Error(`${e.message} from (${point.lat.toFixed(6)},${point.lon.toFixed(6)}).toOsGrid()`);
         }
+    }
+
+
+    /**
+     * Override LatLonEllipsoidal.convertDatum() with version which returns LatLon_OsGridRef.
+     */
+    convertDatum(toDatum) {
+        const osgbED = super.convertDatum(toDatum); // returns LatLonEllipsoidal_Datum
+        const osgbOSGR = new LatLon_OsGridRef(osgbED.lat, osgbED.lon, osgbED.height, osgbED.datum);
+        return osgbOSGR;
     }
 
 }
