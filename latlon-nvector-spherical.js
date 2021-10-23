@@ -21,7 +21,7 @@ const π = Math.PI;
  * Note that these formulations take x => 0°N,0°E, y => 0°N,90°E, z => 90°N; Gade uses x => 90°N,
  * y => 0°N,90°E, z => 0°N,0°E.
  *
- * Note also that on a spherical model earth, an n-vector is equivalent to a  normalised version of
+ * Note also that on a spherical model earth, an n-vector is equivalent to a normalised version of
  * an (ECEF) cartesian coordinate.
  *
  * @module latlon-nvector-spherical
@@ -710,8 +710,8 @@ class LatLonNvectorSpherical {
         // will sum to less than 360° (due to spherical excess), exterior point angles will be small
         // but non-zero. TODO: are any winding number optimisations applicable to spherical surface?
 
-        if (!(polygon instanceof Array)) throw new TypeError(`isEnclosedBy: polygon must be Array (not ${classOf(polygon)})`)
-        if (!(polygon[0] instanceof LatLonNvectorSpherical)) throw new TypeError(`isEnclosedBy: polygon must be Array of LatLon (not ${classOf(polygon[0])})`)
+        if (!(polygon instanceof Array)) throw new TypeError(`isEnclosedBy: polygon must be Array (not ${classOf(polygon)})`);
+        if (!(polygon[0] instanceof LatLonNvectorSpherical)) throw new TypeError(`isEnclosedBy: polygon must be Array of LatLon (not ${classOf(polygon[0])})`);
         if (polygon.length < 3) return false; // or throw?
 
         // close the polygon so that the last point equals the first point

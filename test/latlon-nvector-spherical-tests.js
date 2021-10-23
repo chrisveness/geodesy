@@ -258,7 +258,7 @@ describe('latlon-nvector-spherical', function() {
         test('concave enclosed n',    () => new LatLon(2, 2).isEnclosedBy(polyConcave).should.be.false);
         test('enclosed (fail 1)',     () => should.Throw(function() { new LatLon(1, 1).isEnclosedBy('a string'); }, TypeError, 'isEnclosedBy: polygon must be Array (not String)'));
         test('enclosed (fail 2)',     () => should.Throw(function() { new LatLon(1, 1).isEnclosedBy([ 'a string' ]); }, TypeError, 'isEnclosedBy: polygon must be Array of LatLon (not String)'));
-        test('enclosed by line',      () => new LatLon(1, 1).isEnclosedBy([new LatLon(1, 1), new LatLon(2, 2) ]).should.be.false);
+        test('enclosed by line',      () => new LatLon(1, 1).isEnclosedBy([ new LatLon(1, 1), new LatLon(2, 2) ]).should.be.false);
     });
 
     describe('Ed Williams', function() { // www.edwilliams.org/avform.htm
