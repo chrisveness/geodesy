@@ -96,7 +96,7 @@ The library can be used in the browser by taking a local copy, or loading it fro
 ```html
 <!doctype html><title>geodesy example</title><meta charset="utf-8">
 <script type="module">
-    import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.2.1/latlon-spherical.min.js';
+    import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.3.0/latlon-spherical.min.js';
 
     const p1 = new LatLon(50.06632, -5.71475);
     const p2 = new LatLon(58.64402, -3.07009);
@@ -112,13 +112,12 @@ The library can be used in the browser by taking a local copy, or loading it fro
 ### Usage in Node.js
 
 The library can be loaded from [npm](https://www.npmjs.com/package/geodesy) to be used in a Node.js app 
-(in Node.js v13.2.0+, or using the [esm](https://www.npmjs.com/package/esm) package in 
-v8.0.0–v12.15.0<sup title="v12.16.0+ is not compatible with esm@3.2.25">*</sup>):
+(in Node.js v13.2.0+, or Node.js v12.0.0+ using --experimental-modules, or v8.0.0–v12.15.0<sup title="v12.16.0+ is not compatible with esm@3.2.25">*</sup>) using the [esm](https://www.npmjs.com/package/esm) package:
 
 ```shell
-$ npm install geodesy esm
-$ node -r esm
-> import LatLon from 'geodesy/latlon-spherical.js';
+$ npm install geodesy
+$ node
+> const { default: LatLon } = await import('geodesy/latlon-spherical.js');
 > const p1 = new LatLon(50.06632, -5.71475);
 > const p2 = new LatLon(58.64402, -3.07009);
 > const d = p1.distanceTo(p2);
@@ -126,6 +125,20 @@ $ node -r esm
 > const mid = p1.midpointTo(p2);
 > console.assert(mid.toString('dms') == '54° 21′ 44″ N, 004° 31′ 51″ W');
 ```
+
+To some extent, mixins can be used to add methods of a class to a different class, e.g.:
+
+    import LatLon  from 'geodesy/latlon-nvector-ellipsoidal.js';
+    import LatLonV from 'geodesy/latlon-ellipsoidal-vincenty.js';
+
+    for (const method of Object.getOwnPropertyNames(LatLonV.prototype)) {
+        LatLon.prototype[method] = LatLonV.prototype[method];
+    }
+
+    const d = new LatLon(51, 0).distanceTo(new LatLon(52, 1));
+    const δ = new LatLon(51, 0).deltaTo(new LatLon(52, 1));
+
+More care is of course required if there are conflicting constructors or method names.
 
 For TypeScript users, type definitions are available from DefinitelyTyped: [www.npmjs.com/package/@types/geodesy](https://www.npmjs.com/package/@types/geodesy).
 

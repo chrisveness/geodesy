@@ -1,15 +1,17 @@
 # Changelog
 
-## Unreleased
+## [2.3.0] - 2021-11-16
 
 ### Fixed
 
-- Fix parsing of 'H' 500km squares (Scottish islands)
+- Fix parsing of 'H' 500km squares (Scottish islands) [#96]
 - Fix Dms.wrap90(), Dms.wrap180() to work for all -ve degrees
+- LatLon_OsGridRef: Override super.convertDatum()
 
 ### Added
 
 - LatLonEllipsoidal_Vincenty.intermediatePointTo()
+- Extra type-checking (LatLonEllipsoidal_Vincenty.direct, LatLonNvectorSpherical.isEnclosedBy)
 
 ## [2.2.1] - 2020-04-22
 
