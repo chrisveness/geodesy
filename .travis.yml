@@ -1,13 +1,14 @@
 language: node_js
 
 node_js:
-- "node"
-- "lts/*"
+- node
+- lts/*
+- 14
 
 os:
 - linux
 - osx
-- windows
+# windows - removed 'cos travis have made non-backward-compatible move to nvs on windows (travis-ci.community/t/12393) - sigh!
 
 after_success:
 - c8 -r text-lcov npm test | coveralls
