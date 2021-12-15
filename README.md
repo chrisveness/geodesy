@@ -1,7 +1,7 @@
 Geodesy functions
 =================
 
-[![Build Status](https://travis-ci.org/chrisveness/geodesy.svg?branch=master)](https://travis-ci.org/chrisveness/geodesy)
+[![Build Status](https://travis-ci.com/chrisveness/geodesy.svg?branch=master)](https://app.travis-ci.com/github/chrisveness/geodesy)
 [![Coverage Status](https://coveralls.io/repos/github/chrisveness/geodesy/badge.svg)](https://coveralls.io/github/chrisveness/geodesy)
 [![Documentation](https://img.shields.io/badge/docs-www.movable--type.co.uk%2Fscripts%2Fgeodesy--library.html-lightgrey.svg)](https://www.movable-type.co.uk/scripts/geodesy-library.html)
 
