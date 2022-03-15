@@ -781,6 +781,40 @@ class LatLonNvectorSpherical {
 
 
     /**
+     * Calculates the centre of a spherical polygon where the sides of the polygon are great circle
+     * arcs joining the vertices.
+     *
+     * Based on a ‘non-obvious application of Stokes’ theorem’ giving C = Σ[a×b / |a×b| ⋅ θab/2] for
+     * each pair of consecutive vertices a, b; stackoverflow.com/questions/19897187#answer-38201499.
+     *
+     * @param   {LatLon[]} polygon - Array of points defining vertices of the polygon.
+     * @returns {LatLon}   Centre point of the polygon.
+     *
+     * @example
+     *   const polygon = [ new LatLon(0, 0), new LatLon(1, 0), new LatLon(1, 1), new LatLon(0, 1) ];
+     *   const centre = LatLon.centreOf(polygon); // 0.500°N, 0.500°E
+     */
+    static centreOf(polygon) {
+        let centreV = new NvectorSpherical(0, 0, 0);
+        for (let vertex=0; vertex<polygon.length; vertex++) {
+            const a = polygon[vertex].toNvector();                      // current vertex
+            const b = polygon[(vertex+1) % polygon.length].toNvector(); // next vertex
+            const v = a.cross(b).unit().times(a.angleTo(b)/2);          // a×b / |a×b| ⋅ θab/2
+            centreV = centreV.plus(v);
+        }
+
+        // if centreV is pointing in opposite direction to 1st vertex (depending on cw/ccw), negate it
+        const θ = centreV.angleTo(polygon[0].toNvector());
+        if (θ > π/2) centreV = centreV.negate();
+
+        const centreP = new NvectorSpherical(centreV.x, centreV.y, centreV.z).toLatLon();
+
+        return centreP;
+    }
+    static centerOf(polygon) { return LatLonNvectorSpherical.centreOf(polygon); } // for en-us American English
+
+
+    /**
      * Returns point representing geographic mean of supplied points.
      *
      * @param   {LatLon[]} points - Array of points to be averaged.

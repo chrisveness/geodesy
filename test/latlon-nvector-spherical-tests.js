@@ -40,6 +40,7 @@ describe('latlon-nvector-spherical', function() {
         const bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
         test('isEnclosedBy',                () => new LatLon(45.1, 1.1).isEnclosedBy(bounds).should.be.true);
         test('areaOf',                      () => LatLon.areaOf([ new LatLon(0, 0), new LatLon(1, 0), new LatLon(0, 1) ]).toExponential(2).should.equal('6.18e+9'));
+        test('centreOf',                    () => LatLon.centreOf([ new LatLon(0,0), new LatLon(1,0), new LatLon(1,1), new LatLon(0,1) ]).toString().should.equal('00.5000°N, 000.5000°E'));
         test('meanOf',                      () => LatLon.meanOf([ new LatLon(1, 1), new LatLon(4, 2), new LatLon(1, 3) ]).toString().should.equal('02.0001°N, 002.0000°E'));
         test('equals',                      () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
         const greenwich = new LatLon(51.47788, -0.00147);
@@ -227,7 +228,7 @@ describe('latlon-nvector-spherical', function() {
         test('coincident', () => should.equal(LatLon.trilaterate(p1, d1, p1, d2, p1, d3), null));
     });
 
-    describe('area / enclosed (polygon-based)', function() {
+    describe('area / centre / enclosed (polygon-based)', function() {
         const polyTriangle = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(1, 2) ];
         const polySquare = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(2, 2), new LatLon(1, 2) ];
         const polySquareClosed = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(2, 2), new LatLon(1, 2), new LatLon(1, 1) ];
@@ -239,6 +240,7 @@ describe('latlon-nvector-spherical', function() {
         const polyPole = [ new LatLon(89, 0), new LatLon(89, 120), new LatLon(89, -120) ];
         const polyPoleEdge = [ new LatLon(85, 90), new LatLon(85, 0), new LatLon(85, -90) ];
         const polyConcave = [ new LatLon(1, 1), new LatLon(5, 1), new LatLon(5, 3), new LatLon(1, 3), new LatLon(3, 2) ];
+        const polySlice = [ new LatLon(ε, 0), new LatLon(90-ε, 0.5), new LatLon(ε, 1) ];
 
         test('triangle area',         () => LatLon.areaOf(polyTriangle).toFixed(0).should.equal('6181527888'));
         test('triangle area radius',  () => LatLon.areaOf(polyTriangle, 6371e3).toFixed(0).should.equal('6181527888'));
@@ -252,6 +254,13 @@ describe('latlon-nvector-spherical', function() {
         test('pole area',             () => LatLon.areaOf(polyPole).toFixed(0).should.equal('16063139192'));
         test('concave area cw',       () => LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'));
         test('concave area ccw',      () => LatLon.areaOf(polyConcave.reverse()).toFixed(0).should.equal('74042699236'));
+
+        test('centreOf triangle',     () => LatLon.centreOf(polyTriangle).toString().should.equal('01.3334°N, 001.3334°E'));
+        test('centerOf (en-us)',      () => LatLon.centerOf(polyTriangle).toString().should.equal('01.3334°N, 001.3334°E'));
+        test('centreOf square cw',    () => LatLon.centreOf(polySquare).toString().should.equal('01.5000°N, 001.5000°E'));
+        test('centreOf square ccw',   () => LatLon.centreOf(polySquare.reverse()).toString().should.equal('01.5000°N, 001.5000°E'));
+        test('centreOf octant',       () => LatLon.centreOf(polyOctant).toString().should.equal('35.2644°N, 045.0000°E'));
+        test('centreOf slice',        () => LatLon.centreOf(polySlice).toString().should.equal('32.4820°N, 000.5000°E'));
 
         test('square enclosed y',     () => new LatLon(1.5, 1.5).isEnclosedBy(polySquare).should.be.true);
         test('square enclosed n',     () => new LatLon(2.5, 2.5).isEnclosedBy(polySquare).should.be.false);
