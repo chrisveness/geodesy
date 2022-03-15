@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vector-based spherical geodetic (latitude/longitude) functions     (c) Chris Veness 2011-2021  */
+/* Vector-based spherical geodetic (latitude/longitude) functions     (c) Chris Veness 2011-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vectors.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-nvector-spherical                   */
@@ -540,7 +540,7 @@ class LatLonNvectorSpherical {
      *
      * @param   {LatLon} point1 - Start point of great circle segment.
      * @param   {LatLon} point2 - End point of great circle segment.
-     * @returns {LatLon} point on segment.
+     * @returns {LatLon} Closest point on segment.
      *
      * @example
      *   const p1 = new LatLon(51.0, 1.0);
@@ -714,11 +714,7 @@ class LatLonNvectorSpherical {
         if (!(polygon[0] instanceof LatLonNvectorSpherical)) throw new TypeError(`isEnclosedBy: polygon must be Array of LatLon (not ${classOf(polygon[0])})`);
         if (polygon.length < 3) return false; // or throw?
 
-        // close the polygon so that the last point equals the first point
-        const closed = polygon[0].equals(polygon[polygon.length-1]);
-        if (!closed) polygon.push(polygon[0]);
-
-        const nVertices = polygon.length - 1;
+        const nVertices = polygon.length;
 
         const p = this.toNvector();
 
@@ -732,8 +728,6 @@ class LatLonNvectorSpherical {
         for (let v=0; v<nVertices; v++) {
             Σθ += vectorToVertex[v].angleTo(vectorToVertex[v+1], p);
         }
-
-        if (!closed) polygon.pop(); // restore polygon to pristine condition
 
         return Math.abs(Σθ) > π;
     }
@@ -756,38 +750,31 @@ class LatLonNvectorSpherical {
     static areaOf(polygon, radius=6371e3) {
         const R = Number(radius);
 
-        // close the polygon so that the last point equals the first point
-        const closed = polygon[0].equals(polygon[polygon.length-1]);
-        if (!closed) polygon.push(polygon[0]);
-
-        const n = polygon.length - 1; // number of vertices
-
-        // get great-circle vector for each segment
+        // get great-circle vector representing each segment
         const c = [];
-        for (let v=0; v<n; v++) {
+        for (let v=0; v<polygon.length; v++) {
+            if (polygon[v].equals(polygon[(v+1) % polygon.length])) continue; // ignore final vertex of closed polygon
             const i = polygon[v].toNvector();
-            const j = polygon[v+1].toNvector();
-            c[v] = i.cross(j); // great circle for segment v..v+1
+            const j = polygon[(v+1) % polygon.length].toNvector();
+            c.push(i.cross(j)); // great circle for segment v..v+1
         }
-        c.push(c[0]);
 
+        const n = c.length; // number of segments (≡ distinct vertices)
         // sum interior angles; depending on whether polygon is cw or ccw, angle between edges is
         // π−α or π+α, where α is angle between great-circle vectors; so sum α, then take n·π − |Σα|
         // (cannot use Σ(π−|α|) as concave polygons would fail); use vector to 1st point as plane
         // normal for sign of α
         const n1 = polygon[0].toNvector();
         let Σα = 0;
-        for (let v=0; v<n; v++) Σα += c[v].angleTo(c[v+1], n1);
+        for (let v=0; v<n; v++) Σα += c[v].angleTo(c[(v+1) % n], n1);
         const Σθ = n*π - Math.abs(Σα);
 
         // note: angle between two sides of a spherical triangle is acos(c₁·c₂) where cₙ is the
         // plane normal vector to the great circle representing the triangle side - use this instead
         // of angleTo()?
 
-        const E = (Σθ - (n-2)*π); // spherical excess (in steradians)
-        const A = E * R*R;        // area in units of R²
-
-        if (!closed) polygon.pop(); // restore polygon to pristine condition
+        const E = Σθ - (n-2)*π; // spherical excess (in steradians)
+        const A = E * R*R;      // area (in units of R²)
 
         return A;
     }
