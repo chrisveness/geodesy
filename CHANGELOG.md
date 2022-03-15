@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fix check for coincident points (previously < ≈95mm got treated as coincident)
+- Add check for null arguments to LatLonEllipsoidal constructor
 
 ### Added
 
