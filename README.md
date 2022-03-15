@@ -128,15 +128,17 @@ $ node
 
 To some extent, mixins can be used to add methods of a class to a different class, e.g.:
 
-    import LatLon  from 'geodesy/latlon-nvector-ellipsoidal.js';
-    import LatLonV from 'geodesy/latlon-ellipsoidal-vincenty.js';
+```javascript
+import LatLon  from 'geodesy/latlon-nvector-ellipsoidal.js';
+import LatLonV from 'geodesy/latlon-ellipsoidal-vincenty.js';
 
-    for (const method of Object.getOwnPropertyNames(LatLonV.prototype)) {
-        LatLon.prototype[method] = LatLonV.prototype[method];
-    }
+for (const method of Object.getOwnPropertyNames(LatLonV.prototype)) {
+    LatLon.prototype[method] = LatLonV.prototype[method];
+}
 
-    const d = new LatLon(51, 0).distanceTo(new LatLon(52, 1));
-    const δ = new LatLon(51, 0).deltaTo(new LatLon(52, 1));
+const d = new LatLon(51, 0).distanceTo(new LatLon(52, 1)); // vincenty
+const δ = new LatLon(51, 0).deltaTo(new LatLon(52, 1));    // n-vector
+```
 
 More care is of course required if there are conflicting constructors or method names.
 
