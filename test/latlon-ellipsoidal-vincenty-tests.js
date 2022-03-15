@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-ellipsoidal-vincenty                 (c) Chris Veness 2014-2021  */
+/* Geodesy Test Harness - latlon-ellipsoidal-vincenty                 (c) Chris Veness 2014-2022  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Dms } from '../latlon-ellipsoidal-vincenty.js';
@@ -62,6 +62,15 @@ describe('latlon-ellipsoidal-vincenty', function() {
         test('antipodal brng equatorial',            () => new LatLon(0, 0).initialBearingTo(new LatLon(0, 180)).should.equal(0));
         test('antipodal distance meridional',        () => new LatLon(90, 0).distanceTo(new LatLon(-90, 0)).should.equal(circMeridional/2));
         test('antipodal brng meridional',            () => new LatLon(90, 0).initialBearingTo(new LatLon(-90, 0)).should.equal(0));
+    });
+
+    describe('small dist (to 2mm)', function() {
+        const p = new LatLon(0, 0);
+        test('1e-5°', () => p.distanceTo(new LatLon(0.000010000, 0.000010000)).should.equal(1.569));
+        test('1e-6°', () => p.distanceTo(new LatLon(0.000001000, 0.000001000)).should.equal(0.157));
+        test('1e-7°', () => p.distanceTo(new LatLon(0.000000100, 0.000000100)).should.equal(0.016));
+        test('1e-8°', () => p.distanceTo(new LatLon(0.000000010, 0.000000010)).should.equal(0.002));
+        test('1e-9°', () => p.distanceTo(new LatLon(0.000000001, 0.000000001)).should.equal(0.000));
     });
 
     describe('coincident', function() {

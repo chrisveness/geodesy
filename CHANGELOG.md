@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Fix check for coincident points (previously < ≈95mm got treated as coincident)
+
 ## [2.3.0] - 2021-11-16
 
 ### Fixed

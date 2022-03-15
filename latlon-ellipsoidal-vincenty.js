@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2021  */
+/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vincenty.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal-vincenty                */
@@ -223,7 +223,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
             const Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
             σʹ = σ;
             σ = s / (b*A) + Δσ;
-        } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<100);
+        } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<100); // TV: 'iterate until negligible change in λ' (≈0.006mm)
         if (iterations >= 100) throw new EvalError('Vincenty formula failed to converge'); // not possible?
 
         const x = sinU1*sinσ - cosU1*cosσ*cosα1;
@@ -285,7 +285,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
             sinλ = Math.sin(λ);
             cosλ = Math.cos(λ);
             sinSqσ = (cosU2*sinλ)**2 + (cosU1*sinU2-sinU1*cosU2*cosλ)**2;
-            if (Math.abs(sinSqσ) < ε) break;  // co-incident/antipodal points (falls back on λ/σ = L)
+            if (Math.abs(sinSqσ) < 1e-24) break;  // co-incident/antipodal points (σ < ≈0.006mm)
             sinσ = Math.sqrt(sinSqσ);
             cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
             σ = Math.atan2(sinσ, cosσ);
@@ -297,7 +297,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
             λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σₘ+C*cosσ*(-1+2*cos2σₘ*cos2σₘ)));
             const iterationCheck = antipodal ? Math.abs(λ)-π : Math.abs(λ);
             if (iterationCheck > π) throw new EvalError('λ > π');
-        } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000);
+        } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000); // TV: 'iterate until negligible change in λ' (≈0.006mm)
         if (iterations >= 1000) throw new EvalError('Vincenty formula failed to converge');
 
         const uSq = cosSqα * (a*a - b*b) / (b*b);
