@@ -8,7 +8,7 @@
   },
   "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "destination", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "reference-frame", "TRF", "vector", "n-vector", "wgs84", "utm", "mgrs" ],
   "author": "Chris Veness",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "license": "MIT",
   "type": "module",
   "module": "./",
