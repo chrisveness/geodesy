@@ -40,7 +40,7 @@ describe('latlon-nvector-spherical', function() {
         const bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
         test('isEnclosedBy',                () => new LatLon(45.1, 1.1).isEnclosedBy(bounds).should.be.true);
         test('areaOf',                      () => LatLon.areaOf([ new LatLon(0, 0), new LatLon(1, 0), new LatLon(0, 1) ]).toExponential(2).should.equal('6.18e+9'));
-        test('centreOf',                    () => LatLon.centreOf([ new LatLon(0,0), new LatLon(1,0), new LatLon(1,1), new LatLon(0,1) ]).toString().should.equal('00.5000°N, 000.5000°E'));
+        test('centreOf',                    () => LatLon.centreOf([ new LatLon(0, 0), new LatLon(1, 0), new LatLon(1, 1), new LatLon(0, 1) ]).toString().should.equal('00.5000°N, 000.5000°E'));
         test('meanOf',                      () => LatLon.meanOf([ new LatLon(1, 1), new LatLon(4, 2), new LatLon(1, 3) ]).toString().should.equal('02.0001°N, 002.0000°E'));
         test('equals',                      () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
         const greenwich = new LatLon(51.47788, -0.00147);
