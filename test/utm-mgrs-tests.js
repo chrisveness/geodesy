@@ -54,7 +54,9 @@ describe('utm/mgrs', function() {
         test('bad grid sq northing', () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'I', 0, 0); }, RangeError, 'invalid MGRS 100km grid square row ‘I’'));
         test('invalid grid sq e',    () => should.Throw(function() { new Mgrs(2, 'C', 'A', 'A', 0, 0); }, RangeError, 'invalid MGRS 100km grid square column ‘A’ for zone 2'));
         test('bad easting',          () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 'x', 0); }, RangeError, 'invalid MGRS easting ‘x’'));
+        test('big easting',          () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 999999, 0); }, RangeError, 'invalid MGRS easting ‘999999’'));
         test('bad northing',         () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'invalid MGRS northing ‘x’'));
+        test('big northing',         () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 999999); }, RangeError, 'invalid MGRS northing ‘999999’'));
         test('too far north',        () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'invalid MGRS northing ‘x’'));
         test('bad multiples',        () => should.Throw(function() { new Mgrs(1, 'A', 'A', 'I', 0, 0); }, RangeError, 'invalid MGRS band ‘A’, invalid MGRS 100km grid square row ‘I’'));
     });

@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* MGRS / UTM Conversion Functions                                    (c) Chris Veness 2014-2019  */
+/* MGRS / UTM Conversion Functions                                    (c) Chris Veness 2014-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-utm-mgrs.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#mgrs                                       */
@@ -76,6 +76,8 @@ class Mgrs {
         if (n100k.length!=1 || n100kLetters[0].indexOf(n100k) == -1) errors.push(`invalid MGRS 100km grid square row ‘${n100k}’`);
         if (isNaN(Number(easting))) errors.push(`invalid MGRS easting ‘${easting}’`);
         if (isNaN(Number(northing))) errors.push(`invalid MGRS northing ‘${northing}’`);
+        if (Number(easting) < 0 || Number(easting) > 99999) errors.push(`invalid MGRS easting ‘${easting}’`);
+        if (Number(northing) < 0 || Number(northing) > 99999) errors.push(`invalid MGRS northing ‘${northing}’`);
         if (!datum || datum.ellipsoid==undefined) errors.push(`unrecognised datum ‘${datum}’`);
         if (errors.length > 0) throw new RangeError(errors.join(', '));
 
