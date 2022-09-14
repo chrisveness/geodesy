@@ -85,8 +85,8 @@ class Mgrs {
         this.band = band;
         this.e100k = e100k;
         this.n100k = n100k;
-        this.easting = Number(easting);
-        this.northing = Number(northing);
+        this.easting = Math.floor(easting);
+        this.northing = Math.floor(northing);
         this.datum = datum;
     }
 
@@ -263,13 +263,9 @@ class Utm_Mgrs extends Utm {
         const row = Math.floor(this.northing / 100e3) % 20;
         const n100k = n100kLetters[(zone-1)%2].charAt(row);
 
-        // truncate easting/northing to within 100km grid square
-        let easting = this.easting % 100e3;
-        let northing = this.northing % 100e3;
-
-        // round to nm precision
-        easting = Number(easting.toFixed(6));
-        northing = Number(northing.toFixed(6));
+        // truncate easting/northing to within 100km grid square & round to 1-metre precision
+        const easting = Math.floor(this.easting % 100e3);
+        const northing = Math.floor(this.northing % 100e3);
 
         return new Mgrs(zone, band, e100k, n100k, easting, northing);
     }

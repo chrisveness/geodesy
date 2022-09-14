@@ -160,12 +160,12 @@ describe('utm/mgrs', function() {
         test('#10 LL->MGRS', () => new LatLon( 77.3450,  156.9876).toUtm().toMgrs().toString().should.equal('57X VF 50793 86116'));
     });
 
-    describe('varying resolution', function() {
+    describe('MGRS varying resolution', function() {
         test('MGRS 4-digit -> UTM',    () => Mgrs.parse('12S TC 52 86').toUtm().toString().should.equal('12 N 252000 3786000'));
         test('MGRS 10-digit -> UTM',   () => Mgrs.parse('12S TC 52000 86000').toUtm().toString().should.equal('12 N 252000 3786000'));
-        test('MGRS 10-digit+decimals', () => Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3).should.equal('12 N 252000.123 3786000.123'));
+        test('MGRS 10-digit+decimals', () => Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3).should.equal('12 N 252000.000 3786000.000'));
         test('MGRS truncate',          () => Mgrs.parse('12S TC 52999.999 86999.999').toString(6).should.equal('12S TC 529 869'));
-        test('MGRS-UTM round',         () => Mgrs.parse('12S TC 52999.999 86999.999').toUtm().toString().should.equal('12 N 253000 3787000'));
+        test('MGRS-UTM truncate',      () => Mgrs.parse('12S TC 52999.999 86999.999').toUtm().toString().should.equal('12 N 252999 3786999'));
     });
 
     describe('UTM fail', function() {

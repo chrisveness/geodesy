@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Truncate MGRS easting / northing values to max 1 metre resolution
+
 ## [2.4.0] - 2022-03-16
 
 ### Fixed
