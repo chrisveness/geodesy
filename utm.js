@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* UTM / WGS-84 Conversion Functions                                  (c) Chris Veness 2014-2019  */
+/* UTM / WGS-84 Conversion Functions                                  (c) Chris Veness 2014-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-utm-mgrs.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#utm                                        */
@@ -58,10 +58,10 @@ class Utm {
         if (!(1<=zone && zone<=60)) throw new RangeError(`invalid UTM zone ‘${zone}’`);
         if (zone != parseInt(zone)) throw new RangeError(`invalid UTM zone ‘${zone}’`);
         if (typeof hemisphere != 'string' || !hemisphere.match(/[NS]/i)) throw new RangeError(`invalid UTM hemisphere ‘${hemisphere}’`);
-        if (verifyEN) { // range-check E/N values
+        if (verifyEN) { // (rough) range-check of E/N values
             if (!(0<=easting && easting<=1000e3)) throw new RangeError(`invalid UTM easting ‘${easting}’`);
-            if (hemisphere.toUpperCase()=='N' && !(0<=northing && northing<9328094)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
-            if (hemisphere.toUpperCase()=='S' && !(1118414<northing && northing<=10000e3)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
+            if (hemisphere.toUpperCase()=='N' && !(0<=northing && northing<9329006)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
+            if (hemisphere.toUpperCase()=='S' && !(1116915<northing && northing<=10000e3)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
         }
         if (!datum || datum.ellipsoid==undefined) throw new TypeError(`unrecognised datum ‘${datum}’`);
 

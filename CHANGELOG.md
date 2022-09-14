@@ -5,6 +5,7 @@
 ### Fixed
 
 - Truncate MGRS easting / northing values to max 1 metre resolution
+- Fix UTM constructor northing range check
 
 ## [2.4.0] - 2022-03-16
 

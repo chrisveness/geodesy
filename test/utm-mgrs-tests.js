@@ -42,8 +42,8 @@ describe('utm/mgrs', function() {
         test('zone fail',       () => should.Throw(function() { new Utm(1.5, 'N', 0, 0); }, RangeError, 'invalid UTM zone ‘1.5’'));
         test('hemisphere fail', () => should.Throw(function() { new Utm(1, 'E', 0, 0); }, RangeError, 'invalid UTM hemisphere ‘E’'));
         test('easting fail',    () => should.Throw(function() { new Utm(1, 'N', 1001e3, 0); }, RangeError, 'invalid UTM easting ‘1001000’'));
-        test('northing N fail', () => should.Throw(function() { new Utm(1, 'N', 0, 9329e3); }, RangeError, 'invalid UTM northing ‘9329000’'));
-        test('northing S fail', () => should.Throw(function() { new Utm(1, 'S', 0, 1118e3); }, RangeError, 'invalid UTM northing ‘1118000’'));
+        test('northing N fail', () => should.Throw(function() { new Utm(1, 'N', 0, 9330e3); }, RangeError, 'invalid UTM northing ‘9330000’'));
+        test('northing S fail', () => should.Throw(function() { new Utm(1, 'S', 0, 1116e3); }, RangeError, 'invalid UTM northing ‘1116000’'));
     });
 
     describe('MGRS constructor fail', function() {
