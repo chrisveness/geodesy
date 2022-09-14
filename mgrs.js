@@ -255,7 +255,7 @@ class Utm_Mgrs extends Utm {
         // convert UTM to lat/long to get latitude to determine band
         const latlong = this.toLatLon();
         // grid zones are 8° tall, 0°N is 10th band
-        const band = latBands.charAt(Math.floor(latlong.lat/8+10)); // latitude band
+        const band = latBands.charAt(Math.floor(latlong.lat.toFixed(12)/8+10)); // latitude band
 
         // columns in zone 1 are A-H, zone 2 J-R, zone 3 S-Z, then repeating every 3rd zone
         const col = Math.floor(this.easting / 100e3);

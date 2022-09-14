@@ -134,6 +134,7 @@ describe('utm/mgrs', function() {
         test('David Smith (CCS) N-3°', () => new LatLon( 64, 3).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°N, 003.0000°E'));
         test('David Smith (CCS) S-0°', () => new LatLon(-64, 0).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°S, 000.0000°W'));
         test('David Smith (CCS) S-3°', () => new LatLon(-64, 3).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°S, 003.0000°E'));
+        test('Rounding error @ 80°S',  () => new LatLon(-80, 0).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('80.0000°S, 000.0000°W'));
     });
 
     describe('ED50 conversion', function() {
