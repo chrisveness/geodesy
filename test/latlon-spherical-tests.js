@@ -151,6 +151,9 @@ describe('latlon-spherical', function() {
         test('final brng (fail)',  () => should.Throw(function() { cambg.finalBearingTo('paris'); }, TypeError, 'invalid point ‘paris’'));
         test('midpoint (fail)',    () => should.Throw(function() { cambg.midpointTo('paris'); }, TypeError, 'invalid point ‘paris’'));
         test('int.point (fail)',   () => should.Throw(function() { cambg.intermediatePointTo('paris', 0.5); }, TypeError, 'invalid point ‘paris’'));
+        test('dest’n (fail dist)', () => should.Throw(function() { cambg.destinationPoint('far away', 0); }, TypeError, 'invalid distance ‘far away’'));
+        test('dest’n (fail brng)', () => should.Throw(function() { cambg.destinationPoint(99, 'over there'); }, TypeError, 'invalid bearing ‘over there’'));
+        test('dest’n (fail rad)',  () => should.Throw(function() { cambg.destinationPoint(99, 0, 'huge'); }, TypeError, 'invalid radius ‘huge’'));
     });
 
     describe('intersection', function() {

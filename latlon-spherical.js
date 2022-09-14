@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2021  */
+/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong.html                                                    */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-spherical                           */
@@ -352,12 +352,17 @@ class LatLonSpherical {
      * @param   {number} bearing - Initial bearing in degrees from north.
      * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
      * @returns {LatLon} Destination point.
+     * @throws  {TypeError} Invalid distance/bearing/radius.
      *
      * @example
      *   const p1 = new LatLon(51.47788, -0.00147);
      *   const p2 = p1.destinationPoint(7794, 300.7); // 51.5136°N, 000.0983°W
      */
     destinationPoint(distance, bearing, radius=6371e3) {
+        if (isNaN(distance)) throw new TypeError(`invalid distance ‘${distance}’`);
+        if (isNaN(bearing)) throw new TypeError(`invalid bearing ‘${bearing}’`);
+        if (isNaN(radius)) throw new TypeError(`invalid radius ‘${radius}’`);
+
         // sinφ2 = sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ
         // tanΔλ = sinθ⋅sinδ⋅cosφ1 / cosδ−sinφ1⋅sinφ2
         // see mathforum.org/library/drmath/view/52049.html for derivation
