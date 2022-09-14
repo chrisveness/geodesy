@@ -115,11 +115,14 @@ class Mgrs {
         const row = n100kLetters[(this.zone-1)%2].indexOf(this.n100k);
         const n100kNum = row * 100e3; // n100k in metres
 
-        // get latitude of (bottom of) band
+        // get latitude of (bottom of) band (10 bands above the equator, 8°latitude each)
         const latBand = (latBands.indexOf(this.band)-10)*8;
 
-        // get northing of bottom of band, extended to include entirety of bottom-most 100km square
-        const nBand = Math.floor(new LatLonEllipsoidal(latBand, 3).toUtm().northing/100e3)*100e3;
+        // get southern-most northing of bottom of band, using floor() to extend to include entirety
+        // of bottom-most 100km square - note in northern hemisphere, centre of zone will be furthest
+        // south; in southern hemisphere extremity of zone will be furthest south, so use 3°E / 0°E
+        const lon = this.band >= 'N' ? 3 : 0;
+        const nBand = Math.floor(new LatLonEllipsoidal(latBand, lon).toUtm().northing/100e3)*100e3;
 
         // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to
         // get into required band

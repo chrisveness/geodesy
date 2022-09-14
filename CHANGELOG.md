@@ -6,6 +6,7 @@
 
 - Truncate MGRS easting / northing values to max 1 metre resolution
 - Fix UTM constructor northing range check
+- Fix Mgrs.toUtm() edge case at zone boundaries (e.g. @ 64°S,0°E)
 
 ## [2.4.0] - 2022-03-16
 

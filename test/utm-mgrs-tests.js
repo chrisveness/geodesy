@@ -129,6 +129,13 @@ describe('utm/mgrs', function() {
         test('nBand @ 3°',    () => Utm.parse('31 N 500000 7097014').toMgrs().toUtm().toString().should.equal('31 N 500000 7097014'));
     });
 
+    describe('round-tripping', function() {
+        test('David Smith (CCS) N-0°', () => new LatLon( 64, 0).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°N, 000.0000°W'));
+        test('David Smith (CCS) N-3°', () => new LatLon( 64, 3).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°N, 003.0000°E'));
+        test('David Smith (CCS) S-0°', () => new LatLon(-64, 0).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°S, 000.0000°W'));
+        test('David Smith (CCS) S-3°', () => new LatLon(-64, 3).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°S, 003.0000°E'));
+    });
+
     describe('ED50 conversion', function() {
         const helmertturm = new Utm(33, 'N', 368381.402, 5805291.614, LatLon.datums.ED50); // epsg.io/23033
         const llED50 = helmertturm.toLatLon();
