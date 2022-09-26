@@ -27,6 +27,42 @@ describe('latlon-ellipsoidal-vincenty', function() {
         test('intermediatePointTo', () => new LatLon(50.06632, -5.71475).intermediatePointTo(new LatLon(58.64402, -3.07009), 0.5).toString().should.equal('54.3639°N, 004.5304°W'));
     });
 
+    describe('Rainsford (from TV Direct & Inverse Solutions)', function() {
+        // Rainsford analysed errors in the order of the fifth digit of a second, and of the millimeter
+        // TODO: some of these results exceed Rainsford's errors (if only marginally) - worth investigating?
+        const a = { φ1: '55°45′00.00000″N', φ2: '33°26′00.00000″S', L: '108°13′00.00000″', s: '14110526.170', α1: '096°36′08.79960″', α2: '137°52′22.01454″' };
+        const b = { φ1: '37°19′54.95367″N', φ2: '26°07′42.83946″N', L: '041°28′35.50729″', s:  '4085966.703', α1: '095°27′59.63089″', α2: '118°05′58.96161″' };
+        const c = { φ1: '35°16′11.24862″N', φ2: '67°22′14.77638″N', L: '137°47′28.31435″', s:  '8084823.839', α1: '015°44′23.74850″', α2: '144°55′39.92147″' };
+        const d = { φ1:  '1°00′00.00000″N', φ2: '00°59′53.83076″S', L: '179°17′48.02997″', s: '19960000.000', α1: '089°00′OO.00000″', α2: '091°00′06.11733″' };
+        const e = { φ1: '01°00′00.00000″N', φ2: '01°01′15.18952″N', L: '179°46′17.84244″', s: '19780006.558', α1: '004°59′59.99995″', α2: '174°59′59.88481″' };
+        // "The first example is on the Bessel Ellipsoid and the remaining ones are on the International"
+        a.p1 = LatLon.parse(a.φ1, 0); a.p2 = LatLon.parse(a.φ2, a.L); a.p1.datum = datums.Potsdam; // using Bessel ellipsoid
+        b.p1 = LatLon.parse(b.φ1, 0); b.p2 = LatLon.parse(b.φ2, b.L); b.p1.datum = datums.ED50;    // using Intl1924 ellipsoid
+        c.p1 = LatLon.parse(c.φ1, 0); c.p2 = LatLon.parse(c.φ2, c.L); c.p1.datum = datums.ED50;    // using Intl1924 ellipsoid
+        d.p1 = LatLon.parse(d.φ1, 0); d.p2 = LatLon.parse(d.φ2, d.L); d.p1.datum = datums.ED50;    // using Intl1924 ellipsoid
+        e.p1 = LatLon.parse(e.φ1, 0); e.p2 = LatLon.parse(e.φ2, e.L); e.p1.datum = datums.ED50;    // using Intl1924 ellipsoid
+        test('a direct dest',   () => a.p1.destinationPoint(a.s, Dms.parse(a.α1)).toString('dms', 5).should.equal('33°26′00.00001″S, 108°13′00.00001″E')); // δ0.00001″
+        test('a inverse dist',  () => a.p1.distanceTo(a.p2).toFixed(3).should.equal(a.s));                                                                 // δ-
+        test('a inverse brng1', () => Dms.toBrng(a.p1.initialBearingTo(a.p2), 'dms', 5).should.equal('096°36′08.79948″'));                                 // δ0.00012″
+        test('a inverse brng2', () => Dms.toBrng(a.p1.finalBearingTo(a.p2), 'dms', 5).should.equal('137°52′22.01448″'));                                   // δ0.00006″
+        test('b direct dest',   () => b.p1.destinationPoint(b.s, Dms.parse(b.α1)).toString('dms', 5).should.equal('26°07′42.83945″N, 041°28′35.50730″E')); // δ0.00001″
+        test('b inverse dist',  () => b.p1.distanceTo(b.p2).toFixed(3).should.equal(b.s));                                                                 // δ-
+        test('b inverse brng1', () => Dms.toBrng(b.p1.initialBearingTo(b.p2), 'dms', 5).should.equal('095°27′59.63076″'));                                 // δ0.00013″
+        test('b inverse brng2', () => Dms.toBrng(b.p1.finalBearingTo(b.p2), 'dms', 5).should.equal('118°05′58.96176″'));                                   // δ0.00015″
+        test('c direct dest',   () => c.p1.destinationPoint(c.s, Dms.parse(c.α1)).toString('dms', 5).should.equal('67°22′14.77636″N, 137°47′28.31438″E')); // δ0.00003″
+        test('c inverse dist',  () => c.p1.distanceTo(c.p2).toFixed(3).should.equal('8084823.838'));                                                       // δ1mm
+        test('c inverse brng1', () => Dms.toBrng(c.p1.initialBearingTo(c.p2), 'dms', 5).should.equal('015°44′23.74836″'));                                 // δ0.00014″
+        test('c inverse brng2', () => Dms.toBrng(c.p1.finalBearingTo(c.p2), 'dms', 5).should.equal('144°55′39.92160″'));                                   // δ0.00013″
+        test('d direct dest',   () => d.p1.destinationPoint(d.s, Dms.parse(d.α1)).toString('dms', 5).should.equal('00°59′53.83076″S, 179°17′48.02998″E')); // δ0.00001″
+        test('d inverse dist',  () => d.p1.distanceTo(d.p2).toFixed(3).should.equal(d.s));                                                                 // δ-
+        test('d inverse brng1', () => Dms.toBrng(d.p1.initialBearingTo(d.p2), 'dms', 5).should.equal('088°59′59.99892″'));                                 // δ0.00108″
+        test('d inverse brng2', () => Dms.toBrng(d.p1.finalBearingTo(d.p2), 'dms', 5).should.equal('091°00′06.11820″'));                                   // δ0.00087″
+        test('e direct dest',   () => e.p1.destinationPoint(e.s, Dms.parse(e.α1)).toString('dms', 5).should.equal('01°01′15.18955″N, 179°46′17.84244″E')); // δ0.00003″
+        test('e inverse dist',  () => e.p1.distanceTo(e.p2).toFixed(3).should.equal('19780006.559'));                                                      // δ1mm
+        test('e inverse brng1', () => Dms.toBrng(e.p1.initialBearingTo(e.p2), 'dms', 5).should.equal('005°00′00.00000″'));                                 // δ0.00005″
+        test('e inverse brng2', () => Dms.toBrng(e.p1.finalBearingTo(e.p2), 'dms', 5).should.equal('174°59′59.88480″'));                                   // δ0.00001″
+    });
+
     describe('UK', function() {
         const le = new LatLon(50.06632, -5.71475), jog = new LatLon(58.64402, -3.07009);
         const dist = 969954.166, brngInit = 9.1418775, brngFinal = 11.2972204;
