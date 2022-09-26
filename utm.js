@@ -61,7 +61,7 @@ class Utm {
         if (verifyEN) { // (rough) range-check of E/N values
             if (!(0<=easting && easting<=1000e3)) throw new RangeError(`invalid UTM easting ‘${easting}’`);
             if (hemisphere.toUpperCase()=='N' && !(0<=northing && northing<9329006)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
-            if (hemisphere.toUpperCase()=='S' && !(1116915<northing && northing<=10000e3)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
+            if (hemisphere.toUpperCase()=='S' && !(1116914<northing && northing<=10000e3)) throw new RangeError(`invalid UTM northing ‘${northing}’`);
         }
         if (!datum || datum.ellipsoid==undefined) throw new TypeError(`unrecognised datum ‘${datum}’`);
 
