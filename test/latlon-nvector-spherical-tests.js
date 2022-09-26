@@ -234,7 +234,7 @@ describe('latlon-nvector-spherical', function() {
         const polySquareClosed = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(2, 2), new LatLon(1, 2), new LatLon(1, 1) ];
         const polyOctant = [ new LatLon(0, ε), new LatLon(90, 0), new LatLon(0, 90-ε) ];
         const polyOctantS = [ new LatLon(-ε, ε), new LatLon(90, 0), new LatLon(-ε, 90-ε) ];
-        // const polyQuadrant = [ new LatLon(ε, ε), new LatLon(90, ε), new LatLon(ε, 180-ε), new LatLon(ε, 90) ];
+        const polyQuadrantNE = [ new LatLon(ε, ε), new LatLon(90, ε), new LatLon(ε, 180-ε), new LatLon(ε, 90) ];
         const polyHemiE = [ new LatLon(ε, ε), new LatLon(90-ε, 0), new LatLon(90-ε, 180), new LatLon(ε, 180), new LatLon(-ε, 180), new LatLon(-90+ε, 180), new LatLon(-90+ε, 0), new LatLon(-ε, ε) ];
         const polyGc = [ new LatLon(10, 0), new LatLon(10, 90), new LatLon(0, 45) ];
         const polyPole = [ new LatLon(89, 0), new LatLon(89, 120), new LatLon(89, -120) ];
@@ -249,7 +249,7 @@ describe('latlon-nvector-spherical', function() {
         test('square ccw area',       () => LatLon.areaOf(polySquare.reverse()).toFixed(0).should.equal('12360230987'));
         test('octant area',           () => LatLon.areaOf(polyOctant).should.equal(π*R*R/2));
         test('super-octant area',     () => LatLon.areaOf(polyOctantS).should.equal(π*R*R/2));
-        // TODO: fails: test('quadrant area', () => LatLon.areaOf(polyQuadrant).should.equal(π*R*R));
+        // TODO: fails: test('quadrant area', () => LatLon.areaOf(polyQuadrantNE).should.equal(π*R*R));
         test('hemisphere area',       () => LatLon.areaOf(polyHemiE).toFixed(1).should.equal((2*π*R*R).toFixed(1)));
         test('pole area',             () => LatLon.areaOf(polyPole).toFixed(0).should.equal('16063139192'));
         test('concave area cw',       () => LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'));
@@ -259,8 +259,9 @@ describe('latlon-nvector-spherical', function() {
         test('centerOf (en-us)',      () => LatLon.centerOf(polyTriangle).toString().should.equal('01.3334°N, 001.3334°E'));
         test('centreOf square cw',    () => LatLon.centreOf(polySquare).toString().should.equal('01.5000°N, 001.5000°E'));
         test('centreOf square ccw',   () => LatLon.centreOf(polySquare.reverse()).toString().should.equal('01.5000°N, 001.5000°E'));
-        test('centreOf octant',       () => LatLon.centreOf(polyOctant).toString().should.equal('35.2644°N, 045.0000°E'));
         test('centreOf slice',        () => LatLon.centreOf(polySlice).toString().should.equal('32.4820°N, 000.5000°E'));
+        test('centreOf octant',       () => LatLon.centreOf(polyOctant).toString().should.equal('35.2644°N, 045.0000°E'));
+        test('centreOf quadrant',     () => LatLon.centreOf(polyQuadrantNE).toString().should.equal('45.0000°N, 090.0000°E'));
 
         test('square enclosed y',     () => new LatLon(1.5, 1.5).isEnclosedBy(polySquare).should.be.true);
         test('square enclosed n',     () => new LatLon(2.5, 2.5).isEnclosedBy(polySquare).should.be.false);
