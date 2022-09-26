@@ -70,6 +70,16 @@ describe('utm/mgrs', function() {
     });
 
     describe('MGRS parse', function() {
+        // note Wikipedia considers 4Q & 4Q FJ to be valid MGRS values; this library expects easting & northing;
+        test('Wikipedia 4Q FJ 1 6', () => Mgrs.parse('4Q FJ 1 6').toString(2).should.equal('04Q FJ 1 6'));
+        test('Wikipedia 4Q FJ 12 67', () => Mgrs.parse('4Q FJ 12 67').toString(4).should.equal('04Q FJ 12 67'));
+        test('Wikipedia 4Q FJ 123 678', () => Mgrs.parse('4Q FJ 123 678').toString(6).should.equal('04Q FJ 123 678'));
+        test('Wikipedia 4Q FJ 1234 6789', () => Mgrs.parse('4Q FJ 1234 6789').toString(8).should.equal('04Q FJ 1234 6789'));
+        test('Wikipedia 4Q FJ 12345 67890', () => Mgrs.parse('4Q FJ 12345 67890').toString(10).should.equal('04Q FJ 12345 67890'));
+        // Defense Mapping Agency Technical Manual 8358.1: Datums, Ellipsoids, Grids, and Grid Reference Systems 3-4
+        test('DMA 18SUU80', () => Mgrs.parse('18SUU80').toString(2).should.equal('18S UU 8 0'));
+        test('DMA 18SUU8401', () => Mgrs.parse('18SUU8401').toString(4).should.equal('18S UU 84 01'));
+        test('DMA 18SUU8360140', () => Mgrs.parse('18SUU836014').toString(6).should.equal('18S UU 836 014'));
         test('parse fail 1', () => should.Throw(function() { Mgrs.parse(null); }, Error, 'invalid MGRS grid reference ‘null’'));
         test('parse fail 2', () => should.Throw(function() { Mgrs.parse('Cambridge'); }, Error, 'invalid MGRS grid reference ‘Cambridge’'));
         test('parse fail 3', () => should.Throw(function() { Mgrs.parse('New York'); }, Error, 'invalid MGRS grid reference ‘New York’'));

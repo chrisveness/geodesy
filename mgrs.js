@@ -148,18 +148,24 @@ class Mgrs {
      *
      * @example
      *   const mgrsRef = Mgrs.parse('31U DQ 48251 11932');
-     *   const mgrsRef = Mgrs.parse('31UDQ4825111932');
+     *   const mgrsRef = Mgrs.parse('31UDQ4825111932'); // military style no separators
      *   //  mgrsRef: { zone:31, band:'U', e100k:'D', n100k:'Q', easting:48251, northing:11932 }
      */
     static parse(mgrsGridRef) {
         if (!mgrsGridRef) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
         // check for military-style grid reference with no separators
-        if (!mgrsGridRef.trim().match(/\s/)) {
-            if (!Number(mgrsGridRef.slice(0, 2))) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
-            let en = mgrsGridRef.trim().slice(5); // get easting/northing following zone/band/100ksq
-            en = en.slice(0, en.length/2)+' '+en.slice(-en.length/2); // separate easting/northing
-            mgrsGridRef = mgrsGridRef.slice(0, 3)+' '+mgrsGridRef.slice(3, 5)+' '+en; // insert spaces
+        if (!mgrsGridRef.trim().match(/\s/)) { // replace with standard space-separated format
+            const milref = mgrsGridRef.match(/(\d\d?[A-Z])([A-Z]{2})([0-9]{2,10})/);
+            if (!milref) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
+            const mil = {
+                gzd:    milref[1],
+                en100k: milref[2],
+                en:     milref[3],
+            };
+            mil.e = mil.en.slice(0, mil.en.length/2);
+            mil.n = mil.en.slice(-mil.en.length/2);
+            mgrsGridRef = `${mil.gzd} ${mil.en100k} ${mil.e} ${mil.n}`;
         }
 
         // match separate elements (separated by whitespace)
@@ -168,9 +174,9 @@ class Mgrs {
         if (ref==null || ref.length!=4) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
         // split gzd into zone/band
-        const gzd = ref[0];
-        const zone = gzd.slice(0, 2);
-        const band = gzd.slice(2, 3);
+        const gzd = ref[0].match(/(\d\d?)([A-Z])/i);
+        const zone = gzd[1];
+        const band = gzd[2];
 
         // split 100km letter-pair into e/n
         const en100k = ref[1];

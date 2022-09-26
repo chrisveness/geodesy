@@ -8,6 +8,7 @@
 - Fix UTM constructor northing range check
 - Fix Mgrs.toUtm() edge case at zone boundaries (e.g. @ 64°S,0°E)
 - Fix rounding error in Utm.toMgrs() which caused UTM for 80°S,0°E to fail
+- Allow single-digit zone when parsing MGRS grid reference [#104]
 
 ## [2.4.0] - 2022-03-16
 
