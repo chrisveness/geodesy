@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy tools for conversions between (historical) datums          (c) Chris Veness 2005-2019  */
+/* Geodesy tools for conversions between (historical) datums          (c) Chris Veness 2005-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-convert-coords.html                                     */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal-datum                  */
@@ -39,12 +39,12 @@ const ellipsoids = {
     WGS84:         { a: 6378137,     b: 6356752.314245, f: 1/298.257223563 },
     Airy1830:      { a: 6377563.396, b: 6356256.909,    f: 1/299.3249646   },
     AiryModified:  { a: 6377340.189, b: 6356034.448,    f: 1/299.3249646   },
-    Bessel1841:    { a: 6377397.155, b: 6356078.962818, f: 1/299.1528128   },
+    Bessel1841:    { a: 6377397.155, b: 6356078.962822, f: 1/299.15281285  },
     Clarke1866:    { a: 6378206.4,   b: 6356583.8,      f: 1/294.978698214 },
     Clarke1880IGN: { a: 6378249.2,   b: 6356515.0,      f: 1/293.466021294 },
     GRS80:         { a: 6378137,     b: 6356752.314140, f: 1/298.257222101 },
-    Intl1924:      { a: 6378388,     b: 6356911.946,    f: 1/297           }, // aka Hayford
-    WGS72:         { a: 6378135,     b: 6356750.5,      f: 1/298.26        },
+    Intl1924:      { a: 6378388,     b: 6356911.946128, f: 1/297           }, // aka Hayford
+    WGS72:         { a: 6378135,     b: 6356750.52,     f: 1/298.26        },
 };
 
 

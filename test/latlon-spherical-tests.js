@@ -1,14 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-spherical                            (c) Chris Veness 2014-2020  */
+/* Geodesy Test Harness - latlon-spherical                            (c) Chris Veness 2014-2021  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Dms } from '../latlon-spherical.js';
 
 if (typeof window == 'undefined') { // node
-    const chai = await import('chai');
+    const { default: chai } = await import('chai');
     global.should = chai.should();
-} else {                           // browser
-    window.should = chai.should();
 }
 
 
@@ -153,6 +151,9 @@ describe('latlon-spherical', function() {
         test('final brng (fail)',  () => should.Throw(function() { cambg.finalBearingTo('paris'); }, TypeError, 'invalid point ‘paris’'));
         test('midpoint (fail)',    () => should.Throw(function() { cambg.midpointTo('paris'); }, TypeError, 'invalid point ‘paris’'));
         test('int.point (fail)',   () => should.Throw(function() { cambg.intermediatePointTo('paris', 0.5); }, TypeError, 'invalid point ‘paris’'));
+        test('dest’n (fail dist)', () => should.Throw(function() { cambg.destinationPoint('far away', 0); }, TypeError, 'invalid distance ‘far away’'));
+        test('dest’n (fail brng)', () => should.Throw(function() { cambg.destinationPoint(99, 'over there'); }, TypeError, 'invalid bearing ‘over there’'));
+        test('dest’n (fail rad)',  () => should.Throw(function() { cambg.destinationPoint(99, 0, 'huge'); }, TypeError, 'invalid radius ‘huge’'));
     });
 
     describe('intersection', function() {
@@ -185,7 +186,7 @@ describe('latlon-spherical', function() {
         test('int’n (fail 3)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, 'invalid brng1 ‘n’'));
         test('int’n (fail 4)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, 'invalid brng2 ‘s’'));
         test('rounding errors',               () => LatLon.intersection(new LatLon(51, 0), 120, new LatLon(50, 0), 60).toString().should.equal('50.4921°N, 001.3612°E'));
-        test('rounding: φ3 requires clamp #71', () => LatLon.intersection(new LatLon(-77.6966041375563, 18.2812500000000), 179.99999999999995, new LatLon(89, 180), 180).toString().should.equal('90.0000°S, 163.9902°W'));
+        test('rounding: φ3 requires clamp #71', () => LatLon.intersection(new LatLon(-77.6966041375563, 18.2812500000000), 179.99999999999994, new LatLon(89, 180), 180).toString().should.equal('90.0000°S, 163.9902°W'));
     });
 
     describe('cross-track / along-track', function() {
@@ -271,6 +272,8 @@ describe('latlon-spherical', function() {
         const dov = new LatLon(51.127, 1.338), cal = new LatLon(50.964, 1.853);
         test('distance',              () => dov.rhumbDistanceTo(cal).toPrecision(4).should.equal('4.031e+4'));
         test('distance r',            () => dov.rhumbDistanceTo(cal, 6371e3).toPrecision(4).should.equal('4.031e+4'));
+        test('dist E-W (Δψ < 10⁻¹²)', () => new LatLon(1, -1).rhumbDistanceTo(new LatLon(1, 1)).toPrecision(4).should.equal('2.224e+5'));
+        test('dist @ -90° (Δψ → ∞)',  () => new LatLon(-90, 0).rhumbDistanceTo(new LatLon(0, 0)).toPrecision(4).should.equal('1.001e+7'));
         test('distance dateline E-W', () => new LatLon(1, -179).rhumbDistanceTo(new LatLon(1, 179)).toFixed(6).should.equal(new LatLon(1, 1).rhumbDistanceTo(new LatLon(1, -1)).toFixed(6)));
         test('distance err',          () => should.Throw(function() { dov.rhumbDistanceTo(false); }, TypeError, 'invalid point ‘false’'));
         test('bearing',               () => dov.rhumbBearingTo(cal).toFixed(1).should.equal('116.7'));

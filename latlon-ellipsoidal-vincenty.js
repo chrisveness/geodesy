@@ -1,8 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2020  */
+/* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2022  */
 /*                                                                                   MIT Licence  */
 /* www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                                          */
-/* www.movable-type.co.uk/scripts/latlong-ellipsoidal-vincenty.html                               */
+/* www.movable-type.co.uk/scripts/latlong-vincenty.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal-vincenty                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
@@ -69,8 +69,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
 
 
     /**
-     * Returns the initial bearing (forward azimuth) to travel along a geodesic from ‘this’ point to
-     * the given point, using Vincenty inverse solution.
+     * Returns the initial bearing to travel along a geodesic from ‘this’ point to the given point,
+     * using Vincenty inverse solution.
      *
      * @param   {LatLon} point - Latitude/longitude of destination point.
      * @returns {number} Initial bearing in degrees from north (0°..360°) or NaN if failed to converge.
@@ -92,8 +92,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
 
 
     /**
-     * Returns the final bearing (reverse azimuth) having travelled along a geodesic from ‘this’
-     * point to the given point, using Vincenty inverse solution.
+     * Returns the final bearing having travelled along a geodesic from ‘this’ point to the given
+     * point, using Vincenty inverse solution.
      *
      * @param   {LatLon} point - Latitude/longitude of destination point.
      * @returns {number} Final bearing in degrees from north (0°..360°) or NaN if failed to converge.
@@ -132,8 +132,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
 
 
     /**
-     * Returns the final bearing (reverse azimuth) having travelled along a geodesic given by initial
-     * bearing for a given distance from ‘this’ point, using Vincenty direct solution.
+     * Returns the final bearing having travelled along a geodesic given by initial bearing for a
+     * given distance from ‘this’ point, using Vincenty direct solution.
      * TODO: arg order? (this is consistent with destinationPoint, but perhaps less intuitive)
      *
      * @param   {number} distance - Distance travelled along the geodesic in metres.
@@ -164,6 +164,8 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
      */
     intermediatePointTo(point, fraction) {
         if (fraction == 0) return this;
+        if (fraction == 1) return point;
+
         const inverse = this.inverse(point);
         const dist = inverse.distance;
         const brng = inverse.initialBearing;
@@ -211,7 +213,7 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
         const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
 
-        let σ = s / (b*A), sinσ = null, cosσ = null, Δσ = null; // σ = angular distance P₁ P₂ on the sphere
+        let σ = s / (b*A), sinσ = null, cosσ = null; // σ = angular distance P₁ P₂ on the sphere
         let cos2σₘ = null; // σₘ = angular distance on the sphere from the equator to the midpoint of the line
 
         let σʹ = null, iterations = 0;
@@ -219,11 +221,10 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
             cos2σₘ = Math.cos(2*σ1 + σ);
             sinσ = Math.sin(σ);
             cosσ = Math.cos(σ);
-            Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-
-                B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
+            const Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
             σʹ = σ;
             σ = s / (b*A) + Δσ;
-        } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<100);
+        } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations<100); // TV: 'iterate until negligible change in λ' (≈0.006mm)
         if (iterations >= 100) throw new EvalError('Vincenty formula failed to converge'); // not possible?
 
         const x = sinU1*sinσ - cosU1*cosσ*cosα1;
@@ -278,34 +279,32 @@ class LatLonEllipsoidal_Vincenty extends LatLonEllipsoidal {
         let λ = L, sinλ = null, cosλ = null; // λ = difference in longitude on an auxiliary sphere
         let σ = antipodal ? π : 0, sinσ = 0, cosσ = antipodal ? -1 : 1, sinSqσ = null; // σ = angular distance P₁ P₂ on the sphere
         let cos2σₘ = 1;                      // σₘ = angular distance on the sphere from the equator to the midpoint of the line
-        let sinα = null, cosSqα = 1;         // α = azimuth of the geodesic at the equator
-        let C = null;
+        let cosSqα = 1;                      // α = azimuth of the geodesic at the equator
 
         let λʹ = null, iterations = 0;
         do {
             sinλ = Math.sin(λ);
             cosλ = Math.cos(λ);
-            sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
-            if (Math.abs(sinSqσ) < ε) break;  // co-incident/antipodal points (falls back on λ/σ = L)
+            sinSqσ = (cosU2*sinλ)**2 + (cosU1*sinU2-sinU1*cosU2*cosλ)**2;
+            if (Math.abs(sinSqσ) < 1e-24) break;  // co-incident/antipodal points (σ < ≈0.006mm)
             sinσ = Math.sqrt(sinSqσ);
             cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
             σ = Math.atan2(sinσ, cosσ);
-            sinα = cosU1 * cosU2 * sinλ / sinσ;
+            const sinα = cosU1 * cosU2 * sinλ / sinσ;
             cosSqα = 1 - sinα*sinα;
             cos2σₘ = (cosSqα != 0) ? (cosσ - 2*sinU1*sinU2/cosSqα) : 0; // on equatorial line cos²α = 0 (§6)
-            C = f/16*cosSqα*(4+f*(4-3*cosSqα));
+            const C = f/16*cosSqα*(4+f*(4-3*cosSqα));
             λʹ = λ;
             λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σₘ+C*cosσ*(-1+2*cos2σₘ*cos2σₘ)));
             const iterationCheck = antipodal ? Math.abs(λ)-π : Math.abs(λ);
             if (iterationCheck > π) throw new EvalError('λ > π');
-        } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000);
+        } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<1000); // TV: 'iterate until negligible change in λ' (≈0.006mm)
         if (iterations >= 1000) throw new EvalError('Vincenty formula failed to converge');
 
         const uSq = cosSqα * (a*a - b*b) / (b*b);
         const A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
         const B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
-        const Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-
-            B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
+        const Δσ = B*sinσ*(cos2σₘ+B/4*(cosσ*(-1+2*cos2σₘ*cos2σₘ)-B/6*cos2σₘ*(-3+4*sinσ*sinσ)*(-3+4*cos2σₘ*cos2σₘ)));
 
         const s = b*A*(σ-Δσ); // s = length of the geodesic
 

@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - utm/mgrs                                    (c) Chris Veness 2014-2020  */
+/* Geodesy Test Harness - utm/mgrs                                    (c) Chris Veness 2014-2021  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /* eslint-disable space-in-parens */
@@ -7,10 +7,8 @@
 import Mgrs, { Utm, LatLon, Dms } from '../mgrs.js';
 
 if (typeof window == 'undefined') { // node
-    const chai = await import('chai');
+    const { default: chai } = await import('chai');
     global.should = chai.should();
-} else {                            // browser
-    window.should = chai.should();
 }
 
 describe('utm/mgrs', function() {
@@ -44,8 +42,8 @@ describe('utm/mgrs', function() {
         test('zone fail',       () => should.Throw(function() { new Utm(1.5, 'N', 0, 0); }, RangeError, 'invalid UTM zone ‘1.5’'));
         test('hemisphere fail', () => should.Throw(function() { new Utm(1, 'E', 0, 0); }, RangeError, 'invalid UTM hemisphere ‘E’'));
         test('easting fail',    () => should.Throw(function() { new Utm(1, 'N', 1001e3, 0); }, RangeError, 'invalid UTM easting ‘1001000’'));
-        test('northing N fail', () => should.Throw(function() { new Utm(1, 'N', 0, 9329e3); }, RangeError, 'invalid UTM northing ‘9329000’'));
-        test('northing S fail', () => should.Throw(function() { new Utm(1, 'S', 0, 1118e3); }, RangeError, 'invalid UTM northing ‘1118000’'));
+        test('northing N fail', () => should.Throw(function() { new Utm(1, 'N', 0, 9330e3); }, RangeError, 'invalid UTM northing ‘9330000’'));
+        test('northing S fail', () => should.Throw(function() { new Utm(1, 'S', 0, 1116e3); }, RangeError, 'invalid UTM northing ‘1116000’'));
     });
 
     describe('MGRS constructor fail', function() {
@@ -56,7 +54,9 @@ describe('utm/mgrs', function() {
         test('bad grid sq northing', () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'I', 0, 0); }, RangeError, 'invalid MGRS 100km grid square row ‘I’'));
         test('invalid grid sq e',    () => should.Throw(function() { new Mgrs(2, 'C', 'A', 'A', 0, 0); }, RangeError, 'invalid MGRS 100km grid square column ‘A’ for zone 2'));
         test('bad easting',          () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 'x', 0); }, RangeError, 'invalid MGRS easting ‘x’'));
+        test('big easting',          () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 999999, 0); }, RangeError, 'invalid MGRS easting ‘999999’'));
         test('bad northing',         () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'invalid MGRS northing ‘x’'));
+        test('big northing',         () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 999999); }, RangeError, 'invalid MGRS northing ‘999999’'));
         test('too far north',        () => should.Throw(function() { new Mgrs(1, 'C', 'A', 'A', 0, 'x'); }, RangeError, 'invalid MGRS northing ‘x’'));
         test('bad multiples',        () => should.Throw(function() { new Mgrs(1, 'A', 'A', 'I', 0, 0); }, RangeError, 'invalid MGRS band ‘A’, invalid MGRS 100km grid square row ‘I’'));
     });
@@ -70,6 +70,16 @@ describe('utm/mgrs', function() {
     });
 
     describe('MGRS parse', function() {
+        // note Wikipedia considers 4Q & 4Q FJ to be valid MGRS values; this library expects easting & northing;
+        test('Wikipedia 4Q FJ 1 6', () => Mgrs.parse('4Q FJ 1 6').toString(2).should.equal('04Q FJ 1 6'));
+        test('Wikipedia 4Q FJ 12 67', () => Mgrs.parse('4Q FJ 12 67').toString(4).should.equal('04Q FJ 12 67'));
+        test('Wikipedia 4Q FJ 123 678', () => Mgrs.parse('4Q FJ 123 678').toString(6).should.equal('04Q FJ 123 678'));
+        test('Wikipedia 4Q FJ 1234 6789', () => Mgrs.parse('4Q FJ 1234 6789').toString(8).should.equal('04Q FJ 1234 6789'));
+        test('Wikipedia 4Q FJ 12345 67890', () => Mgrs.parse('4Q FJ 12345 67890').toString(10).should.equal('04Q FJ 12345 67890'));
+        // Defense Mapping Agency Technical Manual 8358.1: Datums, Ellipsoids, Grids, and Grid Reference Systems 3-4
+        test('DMA 18SUU80', () => Mgrs.parse('18SUU80').toString(2).should.equal('18S UU 8 0'));
+        test('DMA 18SUU8401', () => Mgrs.parse('18SUU8401').toString(4).should.equal('18S UU 84 01'));
+        test('DMA 18SUU8360140', () => Mgrs.parse('18SUU836014').toString(6).should.equal('18S UU 836 014'));
         test('parse fail 1', () => should.Throw(function() { Mgrs.parse(null); }, Error, 'invalid MGRS grid reference ‘null’'));
         test('parse fail 2', () => should.Throw(function() { Mgrs.parse('Cambridge'); }, Error, 'invalid MGRS grid reference ‘Cambridge’'));
         test('parse fail 3', () => should.Throw(function() { Mgrs.parse('New York'); }, Error, 'invalid MGRS grid reference ‘New York’'));
@@ -129,6 +139,14 @@ describe('utm/mgrs', function() {
         test('nBand @ 3°',    () => Utm.parse('31 N 500000 7097014').toMgrs().toUtm().toString().should.equal('31 N 500000 7097014'));
     });
 
+    describe('round-tripping', function() {
+        test('David Smith (CCS) N-0°', () => new LatLon( 64, 0).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°N, 000.0000°W'));
+        test('David Smith (CCS) N-3°', () => new LatLon( 64, 3).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°N, 003.0000°E'));
+        test('David Smith (CCS) S-0°', () => new LatLon(-64, 0).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°S, 000.0000°W'));
+        test('David Smith (CCS) S-3°', () => new LatLon(-64, 3).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('64.0000°S, 003.0000°E'));
+        test('Rounding error @ 80°S',  () => new LatLon(-80, 0).toUtm().toMgrs().toUtm().toLatLon().toString().should.equal('80.0000°S, 000.0000°W'));
+    });
+
     describe('ED50 conversion', function() {
         const helmertturm = new Utm(33, 'N', 368381.402, 5805291.614, LatLon.datums.ED50); // epsg.io/23033
         const llED50 = helmertturm.toLatLon();
@@ -160,12 +178,12 @@ describe('utm/mgrs', function() {
         test('#10 LL->MGRS', () => new LatLon( 77.3450,  156.9876).toUtm().toMgrs().toString().should.equal('57X VF 50793 86116'));
     });
 
-    describe('varying resolution', function() {
+    describe('MGRS varying resolution', function() {
         test('MGRS 4-digit -> UTM',    () => Mgrs.parse('12S TC 52 86').toUtm().toString().should.equal('12 N 252000 3786000'));
         test('MGRS 10-digit -> UTM',   () => Mgrs.parse('12S TC 52000 86000').toUtm().toString().should.equal('12 N 252000 3786000'));
-        test('MGRS 10-digit+decimals', () => Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3).should.equal('12 N 252000.123 3786000.123'));
+        test('MGRS 10-digit+decimals', () => Mgrs.parse('12S TC 52000.123 86000.123').toUtm().toString(3).should.equal('12 N 252000.000 3786000.000'));
         test('MGRS truncate',          () => Mgrs.parse('12S TC 52999.999 86999.999').toString(6).should.equal('12S TC 529 869'));
-        test('MGRS-UTM round',         () => Mgrs.parse('12S TC 52999.999 86999.999').toUtm().toString().should.equal('12 N 253000 3787000'));
+        test('MGRS-UTM truncate',      () => Mgrs.parse('12S TC 52999.999 86999.999').toUtm().toString().should.equal('12 N 252999 3786999'));
     });
 
     describe('UTM fail', function() {

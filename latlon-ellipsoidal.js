@@ -1,6 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy tools for an ellipsoidal earth model                       (c) Chris Veness 2005-2019  */
+/* Geodesy tools for an ellipsoidal earth model                       (c) Chris Veness 2005-2022  */
 /*                                                                                   MIT Licence  */
+/* Core class for latlon-ellipsoidal-datum & latlon-ellipsoidal-referenceframe.                   */
+/*                                                                                                */
 /* www.movable-type.co.uk/scripts/latlong-convert-coords.html                                     */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal                         */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -77,9 +79,9 @@ class LatLonEllipsoidal {
      *   const p = new LatLon(51.47788, -0.00147, 17);
      */
     constructor(lat, lon, height=0) {
-        if (isNaN(lat)) throw new TypeError(`invalid lat ‘${lat}’`);
-        if (isNaN(lon)) throw new TypeError(`invalid lon ‘${lon}’`);
-        if (isNaN(height)) throw new TypeError(`invalid height ‘${height}’`);
+        if (isNaN(lat) || lat == null) throw new TypeError(`invalid lat ‘${lat}’`);
+        if (isNaN(lon) || lon == null) throw new TypeError(`invalid lon ‘${lon}’`);
+        if (isNaN(height) || height == null) throw new TypeError(`invalid height ‘${height}’`);
 
         this._lat = Dms.wrap90(Number(lat));
         this._lon = Dms.wrap180(Number(lon));

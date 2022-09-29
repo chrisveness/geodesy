@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2019  */
+/* Latitude/longitude spherical geodesy tools                         (c) Chris Veness 2002-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong.html                                                    */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-spherical                           */
@@ -352,12 +352,17 @@ class LatLonSpherical {
      * @param   {number} bearing - Initial bearing in degrees from north.
      * @param   {number} [radius=6371e3] - (Mean) radius of earth (defaults to radius in metres).
      * @returns {LatLon} Destination point.
+     * @throws  {TypeError} Invalid distance/bearing/radius.
      *
      * @example
      *   const p1 = new LatLon(51.47788, -0.00147);
      *   const p2 = p1.destinationPoint(7794, 300.7); // 51.5136°N, 000.0983°W
      */
     destinationPoint(distance, bearing, radius=6371e3) {
+        if (isNaN(distance)) throw new TypeError(`invalid distance ‘${distance}’`);
+        if (isNaN(bearing)) throw new TypeError(`invalid bearing ‘${bearing}’`);
+        if (isNaN(radius)) throw new TypeError(`invalid radius ‘${radius}’`);
+
         // sinφ2 = sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ
         // tanΔλ = sinθ⋅sinδ⋅cosφ1 / cosδ−sinφ1⋅sinφ2
         // see mathforum.org/library/drmath/view/52049.html for derivation
@@ -425,7 +430,7 @@ class LatLonSpherical {
         const α2 = θ21 - θ23; // angle 1-2-3
 
         if (Math.sin(α1) == 0 && Math.sin(α2) == 0) return null; // infinite intersections
-        if (Math.sin(α1) * Math.sin(α2) < 0) return null;        // ambiguous intersection (antipodal?)
+        if (Math.sin(α1) * Math.sin(α2) < 0) return null;        // ambiguous intersection (antipodal/360°)
 
         const cosα3 = -Math.cos(α1)*Math.cos(α2) + Math.sin(α1)*Math.sin(α2)*Math.cos(δ12);
 
@@ -605,7 +610,7 @@ class LatLonSpherical {
         if (Math.abs(Δλ) > π) Δλ = Δλ > 0 ? -(2 * π - Δλ) : (2 * π + Δλ);
 
         // on Mercator projection, longitude distances shrink by latitude; q is the 'stretch factor'
-        // q becomes ill-conditioned along E-W line (0/0); use empirical tolerance to avoid it
+        // q becomes ill-conditioned along E-W line (0/0); use empirical tolerance to avoid it (note ε is too small)
         const Δψ = Math.log(Math.tan(φ2 / 2 + π / 4) / Math.tan(φ1 / 2 + π / 4));
         const q = Math.abs(Δψ) > 10e-12 ? Δφ / Δψ : Math.cos(φ1);
 

@@ -1,13 +1,16 @@
 language: node_js
 
 node_js:
-- "node"
-- "14"
+- node
+- lts/*
+- 14
 
 os:
 - linux
 - osx
-- windows
+# windows - removed 'cos travis have made non-backward-compatible move to nvs on windows (travis-ci.community/t/12393) - sigh!
+dist: jammy          # as of Sep 2022 travis defaults Linux to xenial, which is incompatible with node.js 18.x.x
+osx_image: xcode13.2 # as of Sep 2022 travis defaults macOS to 10.13, which is incompatible with node.js 18.x.x
 
 after_success:
 - c8 -r text-lcov npm test | coveralls

@@ -1,14 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-nvector-spherical                    (c) Chris Veness 2014-2020  */
+/* Geodesy Test Harness - latlon-nvector-spherical                    (c) Chris Veness 2014-2022  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Nvector, Dms } from '../latlon-nvector-spherical.js';
 
 if (typeof window == 'undefined') { // node
-    const chai = await import('chai');
+    const { default: chai } = await import('chai');
     global.should = chai.should();
-} else {                            // browser
-    window.should = chai.should();
 }
 
 
@@ -19,12 +17,11 @@ describe('latlon-nvector-spherical', function() {
     const π = Math.PI;
     const ε = Number.EPSILON;
 
-    describe('@examples', function() {
+    describe('@examples', function() { // correctness of jsdoc examples
         test('constructor',                 () => new LatLon(52.205, 0.119).toString().should.equal('52.2050°N, 000.1190°E'));
         test('toNvector',                   () => new LatLon(45, 45).toNvector().toString().should.equal('[0.500,0.500,0.707]'));
         test('greatCircle',                 () => new LatLon(53.3206, -1.7297).greatCircle(96.0).toString().should.equal('[-0.794,0.129,0.594]'));
-        test('distanceTo d',                () => new LatLon(52.205, 0.119).distanceTo(new LatLon(48.857, 2.351)).toFixed().should.equal('404279'));
-        test('distanceTo m',                () => new LatLon(52.205, 0.119).distanceTo(new LatLon(48.857, 2.351), 3959).toFixed(1).should.equal('251.2'));
+        test('distanceTo',                  () => new LatLon(52.205, 0.119).distanceTo(new LatLon(48.857, 2.351)).toFixed().should.equal('404279'));
         test('initialBearingTo',            () => new LatLon(52.205, 0.119).initialBearingTo(new LatLon(48.857, 2.351)).toFixed(1).should.equal('156.2'));
         test('finalBearingTo',              () => new LatLon(52.205, 0.119).finalBearingTo(new LatLon(48.857, 2.351)).toFixed(1).should.equal('157.9'));
         test('midpointTo',                  () => new LatLon(52.205, 0.119).midpointTo(new LatLon(48.857, 2.351)).toString().should.equal('50.5363°N, 001.2746°E'));
@@ -36,16 +33,14 @@ describe('latlon-nvector-spherical', function() {
         test('alongTrackDistanceTo',        () => new LatLon(53.2611, -0.7972).alongTrackDistanceTo(new LatLon(53.3206, -1.7297), new LatLon(53.1887, 0.1334)).toFixed().should.equal('62331'));
         test('nearestPointOnSegment 1',     () => new LatLon(51.0, 1.9).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0004°N, 001.9000°E'));
         test('nearestPointOnSegment 2',     () => new LatLon(51.0, 2.1).nearestPointOnSegment(new LatLon(51.0, 1.0), new LatLon(51.0, 2.0)).toString().should.equal('51.0000°N, 002.0000°E'));
-        test('nearestPointOnSegment antip', () => new LatLon(10, -140).nearestPointOnSegment(new LatLon(0, 20), new LatLon(0, 40)).toString().should.equal('00.0000°N, 020.0000°E'));
-        test('isWithinExtent 1',            () => new LatLon(52, 1).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.true);
-        test('isWithinExtent 2',            () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.false);
-        test('isWithinExtent coincident',   () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(51, 1)).should.be.false);
+        test('isWithinExtent t',            () => new LatLon(52, 1).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.true);
+        test('isWithinExtent f',            () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(52, 2)).should.be.false);
         test('triangulate',                 () => LatLon.triangulate(new LatLon(50.7175, 1.65139), 333.3508, new LatLon(50.9250, 1.7094), 310.1414).toString().should.equal('51.1297°N, 001.3214°E'));
         test('trilaterate',                 () => LatLon.trilaterate(new LatLon(0, 0), 157e3, new LatLon(0, 1), 111e3, new LatLon(1, 0), 111e3).toString().should.equal('00.9985°N, 000.9986°E'));
         const bounds = [ new LatLon(45, 1), new LatLon(45, 2), new LatLon(46, 2), new LatLon(46, 1) ];
         test('isEnclosedBy',                () => new LatLon(45.1, 1.1).isEnclosedBy(bounds).should.be.true);
-        test('areaOf cw',                   () => LatLon.areaOf([ new LatLon(0, 0), new LatLon(1, 0), new LatLon(0, 1) ]).toExponential(2).should.equal('6.18e+9'));
-        test('areaOf ccw',                  () => LatLon.areaOf([ new LatLon(0, 0), new LatLon(0, 1), new LatLon(1, 0) ]).toExponential(2).should.equal('6.18e+9'));
+        test('areaOf',                      () => LatLon.areaOf([ new LatLon(0, 0), new LatLon(1, 0), new LatLon(0, 1) ]).toExponential(2).should.equal('6.18e+9'));
+        test('centreOf',                    () => LatLon.centreOf([ new LatLon(0, 0), new LatLon(1, 0), new LatLon(1, 1), new LatLon(0, 1) ]).toString().should.equal('00.5000°N, 000.5000°E'));
         test('meanOf',                      () => LatLon.meanOf([ new LatLon(1, 1), new LatLon(4, 2), new LatLon(1, 3) ]).toString().should.equal('02.0001°N, 002.0000°E'));
         test('equals',                      () => new LatLon(52.205, 0.119).equals(new LatLon(52.205, 0.119)).should.be.true);
         const greenwich = new LatLon(51.47788, -0.00147);
@@ -213,6 +208,14 @@ describe('latlon-nvector-spherical', function() {
         test('along-track (fail)',   () => should.Throw(function() { new LatLon(0, 0).alongTrackDistanceTo(new LatLon(0, 0), 'x'); }, TypeError, 'invalid pathBrngEnd ‘x’'));
     });
 
+    describe('nearest point', function() {
+        test('nearestPointOnSegment antip', () => new LatLon(10, -140).nearestPointOnSegment(new LatLon(0, 20), new LatLon(0, 40)).toString().should.equal('00.0000°N, 020.0000°E'));
+    });
+
+    describe('within extent', function() {
+        test('isWithinExtent coincident',   () => new LatLon(51, 0).isWithinExtent(new LatLon(51, 1), new LatLon(51, 1)).should.be.false);
+    });
+
     describe('triangulate', function() {
         // TODO
     });
@@ -225,31 +228,45 @@ describe('latlon-nvector-spherical', function() {
         test('coincident', () => should.equal(LatLon.trilaterate(p1, d1, p1, d2, p1, d3), null));
     });
 
-    describe('area / enclosed (polygon-based)', function() {
+    describe('area / centre / enclosed (polygon-based)', function() {
         const polyTriangle = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(1, 2) ];
-        const polySquareCw = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(2, 2), new LatLon(1, 2) ];
-        const polySquareCcw = [ new LatLon(1, 1), new LatLon(1, 2), new LatLon(2, 2), new LatLon(2, 1) ];
+        const polySquare = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(2, 2), new LatLon(1, 2) ];
+        const polySquareClosed = [ new LatLon(1, 1), new LatLon(2, 1), new LatLon(2, 2), new LatLon(1, 2), new LatLon(1, 1) ];
         const polyOctant = [ new LatLon(0, ε), new LatLon(90, 0), new LatLon(0, 90-ε) ];
         const polyOctantS = [ new LatLon(-ε, ε), new LatLon(90, 0), new LatLon(-ε, 90-ε) ];
-        // const polyQuadrant = [ new LatLon(ε, ε), new LatLon(90, ε), new LatLon(ε, 180-ε), new LatLon(ε, 90) ];
+        const polyQuadrantNE = [ new LatLon(ε, ε), new LatLon(90, ε), new LatLon(ε, 180-ε), new LatLon(ε, 90) ];
         const polyHemiE = [ new LatLon(ε, ε), new LatLon(90-ε, 0), new LatLon(90-ε, 180), new LatLon(ε, 180), new LatLon(-ε, 180), new LatLon(-90+ε, 180), new LatLon(-90+ε, 0), new LatLon(-ε, ε) ];
         const polyGc = [ new LatLon(10, 0), new LatLon(10, 90), new LatLon(0, 45) ];
         const polyPole = [ new LatLon(89, 0), new LatLon(89, 120), new LatLon(89, -120) ];
         const polyPoleEdge = [ new LatLon(85, 90), new LatLon(85, 0), new LatLon(85, -90) ];
         const polyConcave = [ new LatLon(1, 1), new LatLon(5, 1), new LatLon(5, 3), new LatLon(1, 3), new LatLon(3, 2) ];
+        const polySlice = [ new LatLon(ε, 0), new LatLon(90-ε, 0.5), new LatLon(ε, 1) ];
 
         test('triangle area',         () => LatLon.areaOf(polyTriangle).toFixed(0).should.equal('6181527888'));
         test('triangle area radius',  () => LatLon.areaOf(polyTriangle, 6371e3).toFixed(0).should.equal('6181527888'));
         test('triangle area closed',  () => LatLon.areaOf(polyTriangle.concat(polyTriangle[0])).toFixed(0).should.equal('6181527888'));
-        test('square cw area',        () => LatLon.areaOf(polySquareCw).toFixed(0).should.equal('12360230987'));
-        test('square ccw area',       () => LatLon.areaOf(polySquareCcw).toFixed(0).should.equal('12360230987'));
+        test('square cw area',        () => LatLon.areaOf(polySquare).toFixed(0).should.equal('12360230987'));
+        test('square ccw area',       () => LatLon.areaOf(polySquare.reverse()).toFixed(0).should.equal('12360230987'));
         test('octant area',           () => LatLon.areaOf(polyOctant).should.equal(π*R*R/2));
         test('super-octant area',     () => LatLon.areaOf(polyOctantS).should.equal(π*R*R/2));
-        // TODO: fails: test('quadrant area', () => LatLon.areaOf(polyQuadrant).should.equal(π*R*R));
+        // TODO: fails: test('quadrant area', () => LatLon.areaOf(polyQuadrantNE).should.equal(π*R*R));
         test('hemisphere area',       () => LatLon.areaOf(polyHemiE).toFixed(1).should.equal((2*π*R*R).toFixed(1)));
         test('pole area',             () => LatLon.areaOf(polyPole).toFixed(0).should.equal('16063139192'));
-        test('concave area',          () => LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'));
+        test('concave area cw',       () => LatLon.areaOf(polyConcave).toFixed(0).should.equal('74042699236'));
+        test('concave area ccw',      () => LatLon.areaOf(polyConcave.reverse()).toFixed(0).should.equal('74042699236'));
 
+        test('centreOf triangle',     () => LatLon.centreOf(polyTriangle).toString().should.equal('01.3334°N, 001.3334°E'));
+        test('centerOf (en-us)',      () => LatLon.centerOf(polyTriangle).toString().should.equal('01.3334°N, 001.3334°E'));
+        test('centreOf square cw',    () => LatLon.centreOf(polySquare).toString().should.equal('01.5000°N, 001.5000°E'));
+        test('centreOf square ccw',   () => LatLon.centreOf(polySquare.reverse()).toString().should.equal('01.5000°N, 001.5000°E'));
+        test('centreOf slice',        () => LatLon.centreOf(polySlice).toString().should.equal('32.4820°N, 000.5000°E'));
+        test('centreOf octant',       () => LatLon.centreOf(polyOctant).toString().should.equal('35.2644°N, 045.0000°E'));
+        test('centreOf quadrant',     () => LatLon.centreOf(polyQuadrantNE).toString().should.equal('45.0000°N, 090.0000°E'));
+
+        test('square enclosed y',     () => new LatLon(1.5, 1.5).isEnclosedBy(polySquare).should.be.true);
+        test('square enclosed n',     () => new LatLon(2.5, 2.5).isEnclosedBy(polySquare).should.be.false);
+        test('square enclosed C y',   () => new LatLon(1.5, 1.5).isEnclosedBy(polySquareClosed).should.be.true);
+        test('square enclosed C n',   () => new LatLon(2.5, 2.5).isEnclosedBy(polySquareClosed).should.be.false);
         test('hemisphere enclosed y', () => new LatLon(45, 1).isEnclosedBy(polyHemiE).should.be.true);
         // TODO: fails: test('hemisphere enclosed n', () => new LatLon(45, -1).isEnclosedBy(polyHemiE).should.be.false);
         test('gc enclosed y',         () => new LatLon(14, 45).isEnclosedBy(polyGc).should.be.true);
@@ -258,6 +275,9 @@ describe('latlon-nvector-spherical', function() {
         test('polar edge enclosed',   () => new LatLon(90, 0).isEnclosedBy(polyPoleEdge).should.be.true);
         test('concave enclosed y',    () => new LatLon(4, 2).isEnclosedBy(polyConcave).should.be.true);
         test('concave enclosed n',    () => new LatLon(2, 2).isEnclosedBy(polyConcave).should.be.false);
+        test('enclosed (fail 1)',     () => should.Throw(function() { new LatLon(1, 1).isEnclosedBy('a string'); }, TypeError, 'isEnclosedBy: polygon must be Array (not String)'));
+        test('enclosed (fail 2)',     () => should.Throw(function() { new LatLon(1, 1).isEnclosedBy([ 'a string' ]); }, TypeError, 'isEnclosedBy: polygon must be Array of LatLon (not String)'));
+        test('enclosed by line',      () => new LatLon(1, 1).isEnclosedBy([ new LatLon(1, 1), new LatLon(2, 2) ]).should.be.false);
     });
 
     describe('Ed Williams', function() { // www.edwilliams.org/avform.htm

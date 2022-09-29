@@ -6,11 +6,12 @@
     "type": "git",
     "url": "https://github.com/chrisveness/geodesy"
   },
-  "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "destination", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "reference frame", "TRF", "wgs84", "utm", "mgrs" ],
+  "keywords": [ "geodesy", "latitude", "longitude", "distance", "bearing", "destination", "haversine", "vincenty", "rhumb", "ellipsoid", "datum", "reference-frame", "TRF", "vector", "n-vector", "wgs84", "utm", "mgrs" ],
   "author": "Chris Veness",
-  "version": "2.2.1",
+  "version": "2.4.0",
   "license": "MIT",
   "type": "module",
+  "module": "./",
   "engines": {
     "node": ">=8.0.0"
   },
@@ -23,14 +24,12 @@
     "docs": "jsdoc *.js README.md -d ../../geodesy/docs"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.0.0",
-    "@babel/plugin-syntax-top-level-await": "^7.0.0",
     "c8": "^7.0.0",
-    "chai": "chaijs/chai#pull/1317/head",
+    "chai": "^4.0.0",
     "coveralls": "^3.0.0",
-    "eslint": "^7.0.0",
+    "eslint": "^8.0.0",
     "jsdoc": "^3.0.0",
-    "mocha": "^7.0.0"
+    "mocha": "^9.0.0"
   },
   "eslintConfig": {
     "env": {
@@ -38,10 +37,12 @@
       "mocha": true,
       "node": true
     },
-    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+      "ecmaVersion": 2022,
+      "sourceType": "module"
+    },
     "extends": "eslint:recommended",
     "globals": {
-      "chai": true,
       "should": true
     },
     "rules": {
@@ -53,7 +54,7 @@
       "key-spacing": [ "error", { "align": "value" } ],
       "keyword-spacing": [ "error" ],
       "no-case-declarations": "warn",
-      "no-console": [ "warn", { "allow": [ "error", "info", "debug" ] } ],
+      "no-console": [ "warn", { "allow": [ "error", "info", "debug", "assert" ] } ],
       "no-irregular-whitespace": "warn",
       "no-redeclare": "warn",
       "no-shadow": "warn",
@@ -65,12 +66,8 @@
       "require-await": "error",
       "semi": [ "error", "always" ],
       "space-before-blocks": [ "error", "always" ],
-      "space-in-parens": [ "error" ],
-      "strict": [ "error", "global" ]
+      "space-in-parens": [ "error" ]
     }
-  },
-  "babel": {
-    "plugins": ["@babel/plugin-syntax-top-level-await"]
   },
   "jsdoc": {
     "plugins": [ "plugins/markdown" ],

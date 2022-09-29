@@ -4,12 +4,35 @@
 
 ### Fixed
 
-- Fix parsing of 'H' 500km squares (Scottish islands)
+- Truncate MGRS easting / northing values to max 1 metre resolution
+- Fix UTM constructor northing range check
+- Fix Mgrs.toUtm() edge case at zone boundaries (e.g. @ 64°S,0°E)
+- Fix rounding error in Utm.toMgrs() which caused UTM for 80°S,0°E to fail
+- Allow single-digit zone when parsing MGRS grid reference [#104]
+
+## [2.4.0] - 2022-03-16
+
+### Fixed
+
+- Fix check for coincident points (previously < ≈95mm got treated as coincident)
+- Add check for null arguments to LatLonEllipsoidal constructor
+
+### Added
+
+- LatLonNvectorSpherical.centreOf()
+
+## [2.3.0] - 2021-11-16
+
+### Fixed
+
+- Fix parsing of 'H' 500km squares (Scottish islands) [#96]
 - Fix Dms.wrap90(), Dms.wrap180() to work for all -ve degrees
+- LatLon_OsGridRef: Override super.convertDatum()
 
 ### Added
 
 - LatLonEllipsoidal_Vincenty.intermediatePointTo()
+- Extra type-checking (LatLonEllipsoidal_Vincenty.direct, LatLonNvectorSpherical.isEnclosedBy)
 
 ## [2.2.1] - 2020-04-22
 

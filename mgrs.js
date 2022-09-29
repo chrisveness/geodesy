@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* MGRS / UTM Conversion Functions                                    (c) Chris Veness 2014-2019  */
+/* MGRS / UTM Conversion Functions                                    (c) Chris Veness 2014-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-utm-mgrs.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#mgrs                                       */
@@ -76,6 +76,8 @@ class Mgrs {
         if (n100k.length!=1 || n100kLetters[0].indexOf(n100k) == -1) errors.push(`invalid MGRS 100km grid square row ‘${n100k}’`);
         if (isNaN(Number(easting))) errors.push(`invalid MGRS easting ‘${easting}’`);
         if (isNaN(Number(northing))) errors.push(`invalid MGRS northing ‘${northing}’`);
+        if (Number(easting) < 0 || Number(easting) > 99999) errors.push(`invalid MGRS easting ‘${easting}’`);
+        if (Number(northing) < 0 || Number(northing) > 99999) errors.push(`invalid MGRS northing ‘${northing}’`);
         if (!datum || datum.ellipsoid==undefined) errors.push(`unrecognised datum ‘${datum}’`);
         if (errors.length > 0) throw new RangeError(errors.join(', '));
 
@@ -83,8 +85,8 @@ class Mgrs {
         this.band = band;
         this.e100k = e100k;
         this.n100k = n100k;
-        this.easting = Number(easting);
-        this.northing = Number(northing);
+        this.easting = Math.floor(easting);
+        this.northing = Math.floor(northing);
         this.datum = datum;
     }
 
@@ -113,11 +115,14 @@ class Mgrs {
         const row = n100kLetters[(this.zone-1)%2].indexOf(this.n100k);
         const n100kNum = row * 100e3; // n100k in metres
 
-        // get latitude of (bottom of) band
+        // get latitude of (bottom of) band (10 bands above the equator, 8°latitude each)
         const latBand = (latBands.indexOf(this.band)-10)*8;
 
-        // get northing of bottom of band, extended to include entirety of bottom-most 100km square
-        const nBand = Math.floor(new LatLonEllipsoidal(latBand, 3).toUtm().northing/100e3)*100e3;
+        // get southern-most northing of bottom of band, using floor() to extend to include entirety
+        // of bottom-most 100km square - note in northern hemisphere, centre of zone will be furthest
+        // south; in southern hemisphere extremity of zone will be furthest south, so use 3°E / 0°E
+        const lon = this.band >= 'N' ? 3 : 0;
+        const nBand = Math.floor(new LatLonEllipsoidal(latBand, lon).toUtm().northing/100e3)*100e3;
 
         // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to
         // get into required band
@@ -143,18 +148,24 @@ class Mgrs {
      *
      * @example
      *   const mgrsRef = Mgrs.parse('31U DQ 48251 11932');
-     *   const mgrsRef = Mgrs.parse('31UDQ4825111932');
+     *   const mgrsRef = Mgrs.parse('31UDQ4825111932'); // military style no separators
      *   //  mgrsRef: { zone:31, band:'U', e100k:'D', n100k:'Q', easting:48251, northing:11932 }
      */
     static parse(mgrsGridRef) {
         if (!mgrsGridRef) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
         // check for military-style grid reference with no separators
-        if (!mgrsGridRef.trim().match(/\s/)) {
-            if (!Number(mgrsGridRef.slice(0, 2))) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
-            let en = mgrsGridRef.trim().slice(5); // get easting/northing following zone/band/100ksq
-            en = en.slice(0, en.length/2)+' '+en.slice(-en.length/2); // separate easting/northing
-            mgrsGridRef = mgrsGridRef.slice(0, 3)+' '+mgrsGridRef.slice(3, 5)+' '+en; // insert spaces
+        if (!mgrsGridRef.trim().match(/\s/)) { // replace with standard space-separated format
+            const milref = mgrsGridRef.match(/(\d\d?[A-Z])([A-Z]{2})([0-9]{2,10})/);
+            if (!milref) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
+            const mil = {
+                gzd:    milref[1],
+                en100k: milref[2],
+                en:     milref[3],
+            };
+            mil.e = mil.en.slice(0, mil.en.length/2);
+            mil.n = mil.en.slice(-mil.en.length/2);
+            mgrsGridRef = `${mil.gzd} ${mil.en100k} ${mil.e} ${mil.n}`;
         }
 
         // match separate elements (separated by whitespace)
@@ -163,9 +174,9 @@ class Mgrs {
         if (ref==null || ref.length!=4) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
         // split gzd into zone/band
-        const gzd = ref[0];
-        const zone = gzd.slice(0, 2);
-        const band = gzd.slice(2, 3);
+        const gzd = ref[0].match(/(\d\d?)([A-Z])/i);
+        const zone = gzd[1];
+        const band = gzd[2];
 
         // split 100km letter-pair into e/n
         const en100k = ref[1];
@@ -250,7 +261,7 @@ class Utm_Mgrs extends Utm {
         // convert UTM to lat/long to get latitude to determine band
         const latlong = this.toLatLon();
         // grid zones are 8° tall, 0°N is 10th band
-        const band = latBands.charAt(Math.floor(latlong.lat/8+10)); // latitude band
+        const band = latBands.charAt(Math.floor(latlong.lat.toFixed(12)/8+10)); // latitude band
 
         // columns in zone 1 are A-H, zone 2 J-R, zone 3 S-Z, then repeating every 3rd zone
         const col = Math.floor(this.easting / 100e3);
@@ -261,13 +272,9 @@ class Utm_Mgrs extends Utm {
         const row = Math.floor(this.northing / 100e3) % 20;
         const n100k = n100kLetters[(zone-1)%2].charAt(row);
 
-        // truncate easting/northing to within 100km grid square
-        let easting = this.easting % 100e3;
-        let northing = this.northing % 100e3;
-
-        // round to nm precision
-        easting = Number(easting.toFixed(6));
-        northing = Number(northing.toFixed(6));
+        // truncate easting/northing to within 100km grid square & round to 1-metre precision
+        const easting = Math.floor(this.easting % 100e3);
+        const northing = Math.floor(this.northing % 100e3);
 
         return new Mgrs(zone, band, e100k, n100k, easting, northing);
     }

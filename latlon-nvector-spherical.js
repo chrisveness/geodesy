@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Vector-based spherical geodetic (latitude/longitude) functions     (c) Chris Veness 2011-2019  */
+/* Vector-based spherical geodetic (latitude/longitude) functions     (c) Chris Veness 2011-2022  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/latlong-vectors.html                                            */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-nvector-spherical                   */
@@ -21,7 +21,7 @@ const π = Math.PI;
  * Note that these formulations take x => 0°N,0°E, y => 0°N,90°E, z => 90°N; Gade uses x => 90°N,
  * y => 0°N,90°E, z => 0°N,0°E.
  *
- * Note also that on a spherical model earth, an n-vector is equivalent to a  normalised version of
+ * Note also that on a spherical model earth, an n-vector is equivalent to a normalised version of
  * an (ECEF) cartesian coordinate.
  *
  * @module latlon-nvector-spherical
@@ -540,7 +540,7 @@ class LatLonNvectorSpherical {
      *
      * @param   {LatLon} point1 - Start point of great circle segment.
      * @param   {LatLon} point2 - End point of great circle segment.
-     * @returns {LatLon} point on segment.
+     * @returns {LatLon} Closest point on segment.
      *
      * @example
      *   const p1 = new LatLon(51.0, 1.0);
@@ -710,11 +710,11 @@ class LatLonNvectorSpherical {
         // will sum to less than 360° (due to spherical excess), exterior point angles will be small
         // but non-zero. TODO: are any winding number optimisations applicable to spherical surface?
 
-        // close the polygon so that the last point equals the first point
-        const closed = polygon[0].equals(polygon[polygon.length-1]);
-        if (!closed) polygon.push(polygon[0]);
+        if (!(polygon instanceof Array)) throw new TypeError(`isEnclosedBy: polygon must be Array (not ${classOf(polygon)})`);
+        if (!(polygon[0] instanceof LatLonNvectorSpherical)) throw new TypeError(`isEnclosedBy: polygon must be Array of LatLon (not ${classOf(polygon[0])})`);
+        if (polygon.length < 3) return false; // or throw?
 
-        const nVertices = polygon.length - 1;
+        const nVertices = polygon.length;
 
         const p = this.toNvector();
 
@@ -728,8 +728,6 @@ class LatLonNvectorSpherical {
         for (let v=0; v<nVertices; v++) {
             Σθ += vectorToVertex[v].angleTo(vectorToVertex[v+1], p);
         }
-
-        if (!closed) polygon.pop(); // restore polygon to pristine condition
 
         return Math.abs(Σθ) > π;
     }
@@ -752,41 +750,68 @@ class LatLonNvectorSpherical {
     static areaOf(polygon, radius=6371e3) {
         const R = Number(radius);
 
-        // close the polygon so that the last point equals the first point
-        const closed = polygon[0].equals(polygon[polygon.length-1]);
-        if (!closed) polygon.push(polygon[0]);
-
-        const n = polygon.length - 1; // number of vertices
-
-        // get great-circle vector for each segment
+        // get great-circle vector representing each segment
         const c = [];
-        for (let v=0; v<n; v++) {
+        for (let v=0; v<polygon.length; v++) {
+            if (polygon[v].equals(polygon[(v+1) % polygon.length])) continue; // ignore final vertex of closed polygon
             const i = polygon[v].toNvector();
-            const j = polygon[v+1].toNvector();
-            c[v] = i.cross(j); // great circle for segment v..v+1
+            const j = polygon[(v+1) % polygon.length].toNvector();
+            c.push(i.cross(j)); // great circle for segment v..v+1
         }
-        c.push(c[0]);
 
+        const n = c.length; // number of segments (≡ distinct vertices)
         // sum interior angles; depending on whether polygon is cw or ccw, angle between edges is
         // π−α or π+α, where α is angle between great-circle vectors; so sum α, then take n·π − |Σα|
         // (cannot use Σ(π−|α|) as concave polygons would fail); use vector to 1st point as plane
         // normal for sign of α
         const n1 = polygon[0].toNvector();
         let Σα = 0;
-        for (let v=0; v<n; v++) Σα += c[v].angleTo(c[v+1], n1);
+        for (let v=0; v<n; v++) Σα += c[v].angleTo(c[(v+1) % n], n1);
         const Σθ = n*π - Math.abs(Σα);
 
         // note: angle between two sides of a spherical triangle is acos(c₁·c₂) where cₙ is the
         // plane normal vector to the great circle representing the triangle side - use this instead
         // of angleTo()?
 
-        const E = (Σθ - (n-2)*π); // spherical excess (in steradians)
-        const A = E * R*R;        // area in units of R²
-
-        if (!closed) polygon.pop(); // restore polygon to pristine condition
+        const E = Σθ - (n-2)*π; // spherical excess (in steradians)
+        const A = E * R*R;      // area (in units of R²)
 
         return A;
     }
+
+
+    /**
+     * Calculates the centre of a spherical polygon where the sides of the polygon are great circle
+     * arcs joining the vertices.
+     *
+     * Based on a ‘non-obvious application of Stokes’ theorem’ giving C = Σ[a×b / |a×b| ⋅ θab/2] for
+     * each pair of consecutive vertices a, b; stackoverflow.com/questions/19897187#answer-38201499.
+     *
+     * @param   {LatLon[]} polygon - Array of points defining vertices of the polygon.
+     * @returns {LatLon}   Centre point of the polygon.
+     *
+     * @example
+     *   const polygon = [ new LatLon(0, 0), new LatLon(1, 0), new LatLon(1, 1), new LatLon(0, 1) ];
+     *   const centre = LatLon.centreOf(polygon); // 0.500°N, 0.500°E
+     */
+    static centreOf(polygon) {
+        let centreV = new NvectorSpherical(0, 0, 0);
+        for (let vertex=0; vertex<polygon.length; vertex++) {
+            const a = polygon[vertex].toNvector();                      // current vertex
+            const b = polygon[(vertex+1) % polygon.length].toNvector(); // next vertex
+            const v = a.cross(b).unit().times(a.angleTo(b)/2);          // a×b / |a×b| ⋅ θab/2
+            centreV = centreV.plus(v);
+        }
+
+        // if centreV is pointing in opposite direction to 1st vertex (depending on cw/ccw), negate it
+        const θ = centreV.angleTo(polygon[0].toNvector());
+        if (θ > π/2) centreV = centreV.negate();
+
+        const centreP = new NvectorSpherical(centreV.x, centreV.y, centreV.z).toLatLon();
+
+        return centreP;
+    }
+    static centerOf(polygon) { return LatLonNvectorSpherical.centreOf(polygon); } // for en-us American English
 
 
     /**
@@ -977,6 +1002,17 @@ class NvectorSpherical extends Vector3d {
         return `[${x},${y},${z}]`;
     }
 
+}
+
+
+/**
+ * Return class of supplied argument; javascriptweblog.wordpress.com/2011/08/08.
+ *
+ * @param   {any} thing - Object whose class is to be determined.
+ * @returns {string} Class of supplied object.
+ */
+function classOf(thing) {
+    return ({}).toString.call(thing).match(/\s([a-zA-Z0-9]+)/)[1];
 }
 
 
