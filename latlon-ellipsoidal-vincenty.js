@@ -1,6 +1,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* Vincenty Direct and Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2022  */
 /*                                                                                   MIT Licence  */
+/* www.ngs.noaa.gov/PUBS_LIB/inverse.pdf                                                          */
 /* www.movable-type.co.uk/scripts/latlong-vincenty.html                                           */
 /* www.movable-type.co.uk/scripts/geodesy-library.html#latlon-ellipsoidal-vincenty                */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
