@@ -155,41 +155,28 @@ class Mgrs {
         if (!mgrsGridRef) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
         // check for military-style grid reference with no separators
-        if (!mgrsGridRef.trim().match(/\s/)) { // replace with standard space-separated format
-            const milref = mgrsGridRef.match(/(\d\d?[A-Z])([A-Z]{2})([0-9]{2,10})/);
-            if (!milref) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
-            const mil = {
-                gzd:    milref[1],
-                en100k: milref[2],
-                en:     milref[3],
-            };
-            mil.e = mil.en.slice(0, mil.en.length/2);
-            mil.n = mil.en.slice(-mil.en.length/2);
-            mgrsGridRef = `${mil.gzd} ${mil.en100k} ${mil.e} ${mil.n}`;
+        if (!mgrsGridRef.trim().match(/\s/)) { // convert mgrsGridRef to standard space-separated format
+            const ref = mgrsGridRef.match(/(\d\d?[A-Z])([A-Z]{2})([0-9]{2,10})/i);
+            if (!ref) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
+
+            const [ , gzd, en100k, en ] = ref;  // split grid ref into gzd, en100k, en
+            const [ easting, northing ] = [ en.slice(0, en.length/2), en.slice(-en.length/2) ];
+            mgrsGridRef = `${gzd} ${en100k} ${easting} ${northing}`;
         }
 
         // match separate elements (separated by whitespace)
-        const ref = mgrsGridRef.match(/\S+/g);
-
+        const ref = mgrsGridRef.match(/\S+/g); // returns [ gzd, e100k, easting, northing ]
         if (ref==null || ref.length!=4) throw new Error(`invalid MGRS grid reference ‘${mgrsGridRef}’`);
 
-        // split gzd into zone/band
-        const gzd = ref[0].match(/(\d\d?)([A-Z])/i);
-        const zone = gzd[1];
-        const band = gzd[2];
-
-        // split 100km letter-pair into e/n
-        const en100k = ref[1];
-        const e100k = en100k.slice(0, 1);
-        const n100k = en100k.slice(1, 2);
-
-        let e = ref[2], n = ref[3];
+        const [ gzd, en100k, e, n ] = ref;                     // split grid ref into gzd, en100k, e, n
+        const [ , zone, band ] = gzd.match(/(\d\d?)([A-Z])/i); // split gzd into zone, band
+        const [ e100k, n100k ] = en100k.split('');             // split 100km letter-pair into e, n
 
         // standardise to 10-digit refs - ie metres) (but only if < 10-digit refs, to allow decimals)
-        e = e.length>=5 ?  e : (e+'00000').slice(0, 5);
-        n = n.length>=5 ?  n : (n+'00000').slice(0, 5);
+        const easting = e.length>=5 ?  e : e.padEnd(5, '0');
+        const northing = n.length>=5 ?  n : n.padEnd(5, '0');
 
-        return new Mgrs(zone, band, e100k, n100k, e, n);
+        return new Mgrs(zone, band, e100k, n100k, easting, northing);
     }
 
 
