@@ -86,14 +86,14 @@ class OsGridRef {
         const φ0 = (49).toRadians(), λ0 = (-2).toRadians(); // NatGrid true origin is 49°N,2°W
         const N0 = -100e3, E0 = 400e3;                      // northing & easting of true origin, metres
         const e2 = 1 - (b*b)/(a*a);                         // eccentricity squared
-        const n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;        // n, n², n³
+        const n = (a-b)/(a+b), n2 = n*n, n3 = n2*n;        // n, n², n³
 
         let φ=φ0, M=0;
         do {
             φ = (N-N0-M)/(a*F0) + φ;
 
             const Ma = (1 + n + (5/4)*n2 + (5/4)*n3) * (φ-φ0);
-            const Mb = (3*n + 3*n*n + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
+            const Mb = (3*n + 3*n2 + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
             const Mc = ((15/8)*n2 + (15/8)*n3) * Math.sin(2*(φ-φ0)) * Math.cos(2*(φ+φ0));
             const Md = (35/24)*n3 * Math.sin(3*(φ-φ0)) * Math.cos(3*(φ+φ0));
             M = b * F0 * (Ma - Mb + Mc - Md);               // meridional arc
