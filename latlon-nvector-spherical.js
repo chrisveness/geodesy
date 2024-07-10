@@ -344,6 +344,10 @@ class LatLonNvectorSpherical {
      *   const p2 = p1.destinationPoint(7794, 300.7); // 51.5136°N, 000.0983°W
      */
     destinationPoint(distance, bearing, radius=6371e3) {
+        if (distance == null || isNaN(distance)) throw new TypeError(`invalid distance ‘${distance}’`);
+        if (bearing == null || isNaN(bearing)) throw new TypeError(`invalid bearing ‘${bearing}’`);
+        if (radius == null || isNaN(radius)) throw new TypeError(`invalid radius ‘${radius}’`);
+
         const n1 = this.toNvector();           // Gade's n_EA_E
         const δ = distance / radius;           // angular distance in radians
         const θ = Number(bearing).toRadians(); // initial bearing in radians
@@ -797,6 +801,8 @@ class LatLonNvectorSpherical {
      *   const centre = LatLon.centreOf(polygon); // 0.500°N, 0.500°E
      */
     static centreOf(polygon) {
+        if (!Array.isArray(polygon)) throw new TypeError(`invalid polygon ‘${polygon}’`);
+
         let centreV = new NvectorSpherical(0, 0, 0);
         for (let vertex=0; vertex<polygon.length; vertex++) {
             const a = polygon[vertex].toNvector();                      // current vertex

@@ -146,6 +146,12 @@ describe('latlon-nvector-spherical', function() {
         test('midpoint (fail)',     () => should.Throw(function() { cambg.midpointTo('paris'); }, TypeError, 'invalid point ‘paris’'));
         test('int.point (fail)',    () => should.Throw(function() { cambg.intermediatePointTo('paris', 0.5); }, TypeError, 'invalid point ‘paris’'));
         test('int.point.ch (fail)', () => should.Throw(function() { cambg.intermediatePointOnChordTo('paris', 0.5); }, TypeError, 'invalid point ‘paris’'));
+        test('dest (fail d)',       () => should.Throw(function() { cambg.destinationPoint('xx', 45); }, TypeError, 'invalid distance ‘xx’'));
+        test('dest (fail d)',       () => should.Throw(function() { cambg.destinationPoint(null, 45); }, TypeError, 'invalid distance ‘null’'));
+        test('dest (fail b)',       () => should.Throw(function() { cambg.destinationPoint(99, 'xx'); }, TypeError, 'invalid bearing ‘xx’'));
+        test('dest (fail b)',       () => should.Throw(function() { cambg.destinationPoint(99, null); }, TypeError, 'invalid bearing ‘null’'));
+        test('dest (fail r)',       () => should.Throw(function() { cambg.destinationPoint(99, 45, 'xx'); }, TypeError, 'invalid radius ‘xx’'));
+        test('dest (fail r)',       () => should.Throw(function() { cambg.destinationPoint(99, 45, null); }, TypeError, 'invalid radius ‘null’'));
     });
 
     describe('intersection', function() {
@@ -270,6 +276,7 @@ describe('latlon-nvector-spherical', function() {
         test('centreOf slice',        () => LatLon.centreOf(polySlice).toString().should.equal('32.4820°N, 000.5000°E'));
         test('centreOf octant',       () => LatLon.centreOf(polyOctant).toString().should.equal('35.2644°N, 045.0000°E'));
         test('centreOf quadrant',     () => LatLon.centreOf(polyQuadrantNE).toString().should.equal('45.0000°N, 090.0000°E'));
+        test('centreOf (fail)',       () => should.Throw(function() { LatLon.centreOf('xx') }, TypeError, 'invalid polygon ‘xx’'));
 
         test('square enclosed y',     () => new LatLon(1.5, 1.5).isEnclosedBy(polySquare).should.be.true);
         test('square enclosed n',     () => new LatLon(2.5, 2.5).isEnclosedBy(polySquare).should.be.false);
