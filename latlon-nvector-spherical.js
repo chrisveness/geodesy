@@ -378,7 +378,8 @@ class LatLonNvectorSpherical {
      * @param   {LatLon|number} path1brngEnd - End point of first path or initial bearing from first start point.
      * @param   {LatLon}        path2start - Start point of second path.
      * @param   {LatLon|number} path2brngEnd - End point of second path or initial bearing from second start point.
-     * @returns {LatLon}        Destination point (null if no unique intersection defined)
+     * @param   {Boolean}       [limit=false] - For path defined by endpoints, limit result to intersection between endpoints.
+     * @returns {LatLon}        Destination point (null if no intersection found)
      * @throws  {TypeError}     Invalid parameter.
      *
      * @example
@@ -386,13 +387,78 @@ class LatLonNvectorSpherical {
      *   const p2 = new LatLon(49.0034, 2.5735), brng2 =  32.44;
      *   const pInt = LatLon.intersection(p1, brng1, p2, brng2); // 50.9076°N, 004.5086°E
      */
-    static intersection(path1start, path1brngEnd, path2start, path2brngEnd) {
+    static intersection(path1start, path1brngEnd, path2start, path2brngEnd, limit) {
+        // validate parameters
         if (!(path1start instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid path1start ‘${path1start}’`);
         if (!(path2start instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid path2start ‘${path2start}’`);
-        if (!(path1brngEnd instanceof LatLonNvectorSpherical) && isNaN(path1brngEnd)) throw new TypeError(`invalid path1brngEnd ‘${path1brngEnd}’`);
-        if (!(path2brngEnd instanceof LatLonNvectorSpherical) && isNaN(path2brngEnd)) throw new TypeError(`invalid path2brngEnd ‘${path2brngEnd}’`);
 
-        if (path1start.equals(path2start)) return new LatLonNvectorSpherical(path1start.lat, path2start.lon); // coincident points
+        // if paths defined by start/end points, use intersectionByEndpoints() to find solution
+        if (path1brngEnd instanceof LatLonNvectorSpherical && path2brngEnd instanceof LatLonNvectorSpherical) {
+            return this.#intersectionByEndpoints(path1start, path1brngEnd, path2start, path2brngEnd, limit);
+        }
+
+        // if either path1 or path2 endpoint given, convert it to bearing
+        if (path1brngEnd instanceof LatLonNvectorSpherical) path1brngEnd = path1start.initialBearingTo(path1brngEnd);
+        if (path2brngEnd instanceof LatLonNvectorSpherical) path2brngEnd = path2start.initialBearingTo(path2brngEnd);
+
+        // validate parameters
+        if (isNaN(path1brngEnd)) throw new TypeError(`invalid path1brngEnd ‘${path1brngEnd}’`);
+        if (isNaN(path2brngEnd)) throw new TypeError(`invalid path2brngEnd ‘${path2brngEnd}’`);
+        if (limit != undefined) throw new TypeError('limit not applicable to intersection by bearings');
+
+        // use intersectionByBearings() to find solution
+        return this.#intersectionByBearings(path1start, path1brngEnd, path2start, path2brngEnd);
+    }
+
+    // intersection of paths a, b defined by endpoints a₁-a₂, b₁-b₂
+    // credit to observablehq.com/@fil/spherical-intersection for method
+    static #intersectionByEndpoints(pA1, pA2, pB1, pB2, limit=false) {
+        // paths with coincident start/end points? no solution
+        if (pA1.equals(pA2) || pB1.equals(pB2)) return null;
+
+        // coincident points defining paths?
+        if (pA1.equals(pB1) || pA1.equals(pB2)) return new LatLonNvectorSpherical(pA1.lat, pA1.lon);
+        if (pA2.equals(pB1) || pA2.equals(pB2)) return new LatLonNvectorSpherical(pA2.lat, pA2.lon);
+
+        const a1 = pA1.toNvector(), a2 = pA2.toNvector(); // a₁ / a₂ n-vectors representing start/end points of path a
+        const b1 = pB1.toNvector(), b2 = pB2.toNvector(); // b₁ / b₂ n-vectors representing start/end points of path b
+
+        const a = a1.cross(a2); // vector representing great circle through a1-a2
+        const b = b1.cross(b2); // vector representing great circle through b1-b2
+
+        const i1 = a.cross(b); // n-vector representing intersection of paths a & b
+        const i2 = b.cross(a); // antipodal n-vector representing intersection of paths b & a
+
+        if (!limit) { // select nearest intersection to mid-point of all points
+            const mid = a1.plus(b2).plus(b1).plus(b2);
+            const i = mid.dot(i1) > 0 ? i1 : i2;
+            return new NvectorSpherical(i.x, i.y, i.z).toLatLon();
+        }
+
+        // a×a₁ is vector from point a₁ tangential to sphere surface in direction of point a₂;
+        // a×a₁·i₁ gives dir'n from i ('scuse the wacky characters, but it makes it easier to read)
+        const aˣa1ˑi = a.cross(a1).dot(i1), aˣa2ˑi = a.cross(a2).dot(i1); // a × aₙ · i₁
+        const bˣb1ˑi = b.cross(b1).dot(i1), bˣb2ˑi = b.cross(b2).dot(i1); // b × bₙ · i₁
+
+        // check if intersection point is within limits of path endpoints
+        if (aˣa1ˑi >= 0 && aˣa2ˑi <= 0 && bˣb1ˑi >= 0 && bˣb2ˑi <= 0) {
+            return new NvectorSpherical(i1.x, i1.y, i1.z).toLatLon();
+        }
+
+        // check if antipodal intersection point is within limits of path endpoints
+        if (aˣa1ˑi <= 0 && aˣa2ˑi >= 0 && bˣb1ˑi <= 0 && bˣb2ˑi >= 0) {
+            return new NvectorSpherical(i2.x, i2.y, i2.z).toLatLon();
+        }
+
+        const aʹ = 1;
+        // intersection point not within limits of paths
+        return null;
+    }
+
+    // intersection of paths 1, 2 defined by start points & initial bearings
+    static #intersectionByBearings(path1start, path1brng, path2start, path2brng) {
+        // coincident start points?
+        if (path1start.equals(path2start)) return new LatLonNvectorSpherical(path1start.lat, path1start.lon);
 
         // if c1 & c2 are great circles through start and end points (or defined by start point + bearing),
         // then candidate intersections are simply c1 × c2 & c2 × c1; most of the work is deciding correct
@@ -402,62 +468,30 @@ class LatLonNvectorSpherical {
         const p1 = path1start.toNvector();
         const p2 = path2start.toNvector();
 
-        let c1 = null, c2 = null, path1def = null, path2def = null;
-        // c1 & c2 are vectors defining great circles through start & end points; p × c gives initial bearing vector
-
-        if (path1brngEnd instanceof LatLonNvectorSpherical) { // path 1 defined by endpoint
-            c1 = p1.cross(path1brngEnd.toNvector());
-            path1def = 'endpoint';
-        } else {                              // path 1 defined by initial bearing
-            c1 = path1start.greatCircle(path1brngEnd);
-            path1def = 'bearing';
-        }
-        if (path2brngEnd instanceof LatLonNvectorSpherical) { // path 2 defined by endpoint
-            c2 = p2.cross(path2brngEnd.toNvector());
-            path2def = 'endpoint';
-        } else {                              // path 2 defined by initial bearing
-            c2 = path2start.greatCircle(path2brngEnd);
-            path2def = 'bearing';
-        }
+        // c1, c2 are vectors defining great circles through start & end points; p × c gives initial bearing vector
+        const c1 = path1start.greatCircle(path1brng), c2 = path2start.greatCircle(path2brng);
 
         // there are two (antipodal) candidate intersection points; we have to choose which to return
         const i1 = c1.cross(c2);
         const i2 = c2.cross(c1);
 
-        // TODO am I making heavy weather of this? is there a simpler way to do it?
-
         // selection of intersection point depends on how paths are defined (bearings or endpoints)
+        // TODO am I making heavy weather of this? is there a simpler way to do it?
         let intersection = null, dir1 = null, dir2 = null;
-        switch (path1def + '+' + path2def) {
-            case 'bearing+bearing':
-                // if c×p⋅i1 is +ve, the initial bearing is towards i1, otherwise towards antipodal i2
-                dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
-                dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
+        // if c×p⋅i1 is +ve, the initial bearing is towards i1, otherwise towards antipodal i2
+        dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
+        dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
 
-                switch (dir1 + dir2) {
-                    case  2: // dir1, dir2 both +ve, 1 & 2 both pointing to i1
-                        intersection = i1;
-                        break;
-                    case -2: // dir1, dir2 both -ve, 1 & 2 both pointing to i2
-                        intersection = i2;
-                        break;
-                    case  0: // dir1, dir2 opposite; intersection is at further-away intersection point
-                        // take opposite intersection from mid-point of p1 & p2 [is this always true?]
-                        intersection = p1.plus(p2).dot(i1) > 0 ? i2 : i1;
-                        break;
-                }
+        switch (dir1 + dir2) {
+            case  2: // dir1, dir2 both +ve, 1 & 2 both pointing to i1
+                intersection = i1;
                 break;
-            case 'bearing+endpoint': // use bearing c1 × p1
-                dir1 = Math.sign(c1.cross(p1).dot(i1)); // c1×p1⋅i1 +ve means p1 bearing points to i1
-                intersection = dir1 > 0 ? i1 : i2;
+            case -2: // dir1, dir2 both -ve, 1 & 2 both pointing to i2
+                intersection = i2;
                 break;
-            case 'endpoint+bearing': // use bearing c2 × p2
-                dir2 = Math.sign(c2.cross(p2).dot(i1)); // c2×p2⋅i1 +ve means p2 bearing points to i1
-                intersection = dir2 > 0 ? i1 : i2;
-                break;
-            case 'endpoint+endpoint': // select nearest intersection to mid-point of all points
-                const mid = p1.plus(p2).plus(path1brngEnd.toNvector()).plus(path2brngEnd.toNvector()); // eslint-disable-line no-case-declarations
-                intersection = mid.dot(i1) > 0 ? i1 : i2;
+            case  0: // dir1, dir2 opposite; intersection is at further-away intersection point
+                // take opposite intersection from mid-point of p1 & p2 [is this always true?]
+                intersection = p1.plus(p2).dot(i1) > 0 ? i2 : i1;
                 break;
         }
 

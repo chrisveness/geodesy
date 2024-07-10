@@ -154,7 +154,7 @@ describe('latlon-nvector-spherical', function() {
         test('dest (fail r)',       () => should.Throw(function() { cambg.destinationPoint(99, 45, null); }, TypeError, 'invalid radius ‘null’'));
     });
 
-    describe('intersection', function() {
+    describe('intersection by bearings', function() {
         const N = 0, E = 90, S = 180, W = 270;
         test('toward 1,1 N,E nearest',        () => LatLon.intersection(new LatLon(0, 1), N, new LatLon(1, 0), E).toString().should.equal('00.9998°N, 001.0000°E'));
         test('toward 1,1 E,N nearest',        () => LatLon.intersection(new LatLon(1, 0), E, new LatLon(0, 1), N).toString().should.equal('00.9998°N, 001.0000°E'));
@@ -174,7 +174,8 @@ describe('latlon-nvector-spherical', function() {
         test('brng+end 2a',                   () => LatLon.intersection(new LatLon(1, 0), new LatLon(1, 3), new LatLon(2, 2), N).toString().should.equal('01.0003°S, 178.0000°W'));
         test('brng+end 2b',                   () => LatLon.intersection(new LatLon(2, 2), N, new LatLon(1, 0), new LatLon(1, 3)).toString().should.equal('01.0003°S, 178.0000°W'));
 
-        test('end+end',                       () => LatLon.intersection(new LatLon(1, 1), new LatLon(2, 2), new LatLon(1, 4), new LatLon(2, 3)).toString().should.equal('02.4994°N, 002.5000°E'));
+        test('end+end in limits',             () => LatLon.intersection(new LatLon(1, 1), new LatLon(2, 2), new LatLon(1, 4), new LatLon(2, 3)).toString().should.equal('02.4994°N, 002.5000°E'));
+        test('end+end beyond limits',         () => should.equal(LatLon.intersection(new LatLon(1, 1), new LatLon(2, 2), new LatLon(1, 4), new LatLon(2, 3), true), null));
 
         test('coincident',                    () => LatLon.intersection(new LatLon(1, 1), N, new LatLon(1, 1), E).toString().should.equal('01.0000°N, 001.0000°E'));
 
@@ -188,6 +189,24 @@ describe('latlon-nvector-spherical', function() {
         test('int’n (fail 3)',                () => should.Throw(function() { LatLon.intersection(stn, 'n', cdg, 's'); }, TypeError, 'invalid path1brngEnd ‘n’'));
         test('int’n (fail 4)',                () => should.Throw(function() { LatLon.intersection(stn, 0, cdg, 's'); }, TypeError, 'invalid path2brngEnd ‘s’'));
         test('rounding errors',               () => LatLon.intersection(new LatLon(51, 0), 120, new LatLon(50, 0), 60).toString().should.equal('50.4921°N, 001.3612°E'));
+    });
+
+    describe('intersection by endpoints', function() { // from observablehq.com/@fil/spherical-intersection
+        test('standard',               () => LatLon.intersection(new LatLon(70, 0), new LatLon(10, -10), new LatLon(30, -40), new LatLon(45, 10), true).toString('d', 2).should.equal('42.95°N, 007.08°W'));
+        test('flipped (antipode)',     () => LatLon.intersection(new LatLon(10, -10), new LatLon(70, 0), new LatLon(30, -40), new LatLon(45, 10), true).toString('d', 2).should.equal('42.95°N, 007.08°W'));
+        test('no intersection',        () => should.equal(LatLon.intersection(new LatLon(30, -40), new LatLon(10, -10), new LatLon(70, 0), new LatLon(45, 10), true), null));
+        test('points far apart',       () => LatLon.intersection(new LatLon(89.99, 0), new LatLon(-89.99, 0), new LatLon(0, -89.99), new LatLon(0, 89.99), true).toString('d', 2).should.equal('00.00°N, 000.00°E'));
+        test('points far apart 2 (!)', () => LatLon.intersection(new LatLon(89.99, 0), new LatLon(-89.99, 0), new LatLon(0, 0), new LatLon(0, -1), true).toString('d', 2).should.equal('00.00°N, 000.00°E'));
+        test('B=A',                    () => should.equal(LatLon.intersection(new LatLon(70, 0), new LatLon(70, 0), new LatLon(30, -40), new LatLon(45, 10), true), null));
+        test('C=A',                    () => LatLon.intersection(new LatLon(70, 0), new LatLon(10, -10), new LatLon(70, 0), new LatLon(45, 10), true).toString('d', 2).should.equal('70.00°N, 000.00°E'));
+        test('D=A',                    () => LatLon.intersection(new LatLon(70, 0), new LatLon(10, -10), new LatLon(30, -40), new LatLon(70, 0), true).toString('d', 2).should.equal('70.00°N, 000.00°E'));
+        test('D=C',                    () => should.equal(LatLon.intersection(new LatLon(70, 0), new LatLon(10, -10), new LatLon(30, -40), new LatLon(30, -40), true), null));
+        console.log('!!', LatLon.intersection(new LatLon(70, 0), new LatLon(10, -10), new LatLon(30, -40), new LatLon(-30, 140)));
+        test('C & D antipodal (!)',    () => LatLon.intersection(new LatLon(70, 0), new LatLon(10, -10), new LatLon(30, -40), new LatLon(-30, 140), true).toString('d', 2).should.equal('28.01°N, 008.63°W'));
+        test('touching',               () => should.equal(LatLon.intersection(new LatLon(20, 10.016123042797354), new LatLon(65.16582155142366, 26.74662279421412), new LatLon(-20, 11.317794657829324), new LatLon(39.84003041891316, 14.310519883938444), true), null));
+        test('colinear',          () => LatLon.intersection(new LatLon(70, 0), new LatLon(10, -10), new LatLon(70, 0), new LatLon(82.06656745045608, 18.279023657167595), true).toString('d', 2).should.equal('70.00°N, 000.00°E'));
+        test('orthogonal',             () => should.equal(LatLon.intersection(new LatLon(0, 0), new LatLon(90, 0), new LatLon(0, 70), new LatLon(0, 90), true), null));
+        test('orthogonal flipped',     () => should.equal(LatLon.intersection(new LatLon(90, 0), new LatLon(0, 0), new LatLon(0, 70), new LatLon(0, 90), true), null));
     });
 
     describe('cross-track / along-track', function() {
