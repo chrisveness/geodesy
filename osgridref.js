@@ -104,7 +104,7 @@ class OsGridRef {
             φ = (N-N0-M)/(a*F0) + φ;
 
             const Ma = (1 + n + (5/4)*n2 + (5/4)*n3) * (φ-φ0);
-            const Mb = (3*n + 3*n*n + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
+            const Mb = (3*n + 3*n2 + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
             const Mc = ((15/8)*n2 + (15/8)*n3) * Math.sin(2*(φ-φ0)) * Math.cos(2*(φ+φ0));
             const Md = (35/24)*n3 * Math.sin(3*(φ-φ0)) * Math.cos(3*(φ+φ0));
             M = b * F0 * (Ma - Mb + Mc - Md);                // meridional arc
@@ -296,7 +296,7 @@ class LatLon_OsGridRef extends LatLonEllipsoidal {
         const η2 = ν/ρ-1;                                    // eta = ?
 
         const Ma = (1 + n + (5/4)*n2 + (5/4)*n3) * (φ-φ0);
-        const Mb = (3*n + 3*n*n + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
+        const Mb = (3*n + 3*n2 + (21/8)*n3) * Math.sin(φ-φ0) * Math.cos(φ+φ0);
         const Mc = ((15/8)*n2 + (15/8)*n3) * Math.sin(2*(φ-φ0)) * Math.cos(2*(φ+φ0));
         const Md = (35/24)*n3 * Math.sin(3*(φ-φ0)) * Math.cos(3*(φ+φ0));
         const M = b * F0 * (Ma - Mb + Mc - Md);              // meridional arc
