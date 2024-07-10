@@ -69,6 +69,10 @@ class LatLonEllipsoidal {
     /**
      * Creates a geodetic latitude/longitude point on a (WGS84) ellipsoidal model earth.
      *
+     * Ellipsoidal LatLon is set without any datum / referenceFrame: these are set up in
+     * LatLonEllipsoidal_Datum / LatLonEllipsoidal_ReferenceFrame, or if calling LatLonEllipsoidal
+     * directly, by manually setting this.datum / this.referenceFrame.
+     *
      * @param  {number} lat - Latitude (in degrees).
      * @param  {number} lon - Longitude (in degrees).
      * @param  {number} [height=0] - Height above ellipsoid in metres.

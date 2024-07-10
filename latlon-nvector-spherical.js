@@ -32,8 +32,8 @@ const π = Math.PI;
 
 
 /**
- * Latitude/longitude points on an spherical model earth, and methods for calculating distances,
- * bearings, destinations, etc on great circle paths.
+ * Latitude/longitude points on a spherical model earth, and methods for calculating distances,
+ * bearings, destinations, etc on (orthodromic) great-circle paths.
  */
 class LatLonNvectorSpherical {
 
@@ -304,7 +304,7 @@ class LatLonNvectorSpherical {
 
     /**
      * Returns the latitude/longitude point projected from the point at given fraction on a straight
-     * line between between ‘this’ point and given point.
+     * line (rather than a geodesic) between ‘this’ point and given point.
      *
      * @param   {LatLon}    point - Latitude/longitude of destination point.
      * @param   {number}    fraction - Fraction between the two points (0 = this point, 1 = specified point).
@@ -314,7 +314,7 @@ class LatLonNvectorSpherical {
      * @example
      *   const p1 = new LatLon(52.205, 0.119);
      *   const p2 = new LatLon(48.857, 2.351);
-     *   const pInt = p1.intermediatePointTo(p2, 0.25); // 51.3723°N, 000.7072°E
+     *   const pInt = p1.intermediatePointOnChordTo(p2, 0.25); // 51.3723°N, 000.7072°E
      */
     intermediatePointOnChordTo(point, fraction) {
         if (!(point instanceof LatLonNvectorSpherical)) throw new TypeError(`invalid point ‘${point}’`);
