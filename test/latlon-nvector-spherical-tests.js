@@ -1,5 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - latlon-nvector-spherical                    (c) Chris Veness 2014-2022  */
+/* Geodesy Test Harness - latlon-nvector-spherical                    (c) Chris Veness 2014-2024  */
+/*                                                                                                */
+/* Usage:                                                                                         */
+/*   $ mocha test/latlon-nvector-spherical-tests.js                                               */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Nvector, Dms } from '../latlon-nvector-spherical.js';
@@ -86,11 +89,16 @@ describe('latlon-nvector-spherical', function() {
 
     describe('setters (fail)', function() {
         const camb = new LatLon(0, 0);
-        test('lat',       () => should.Throw(function() { camb.lat = 'xxx'; }, TypeError, 'invalid lat ‘xxx’'));
-        test('latitude',  () => should.Throw(function() { camb.latitude = 'xxx'; }, TypeError, 'invalid latitude ‘xxx’'));
-        test('lon',       () => should.Throw(function() { camb.lon = 'xxx'; }, TypeError, 'invalid lon ‘xxx’'));
-        test('lgn',       () => should.Throw(function() { camb.lng = 'xxx'; }, TypeError, 'invalid lng ‘xxx’'));
-        test('longitude', () => should.Throw(function() { camb.longitude = 'xxx'; }, TypeError, 'invalid longitude ‘xxx’'));
+        test('lat text',       () => should.Throw(function() { camb.lat = 'xxx'; }, TypeError, 'invalid lat ‘xxx’'));
+        test('lat null',       () => should.Throw(function() { camb.lat = null; }, TypeError, 'invalid lat ‘null’'));
+        test('latitude text',  () => should.Throw(function() { camb.latitude = 'xxx'; }, TypeError, 'invalid latitude ‘xxx’'));
+        test('latitude null',  () => should.Throw(function() { camb.latitude = null; }, TypeError, 'invalid latitude ‘null’'));
+        test('lon text',       () => should.Throw(function() { camb.lon = 'xxx'; }, TypeError, 'invalid lon ‘xxx’'));
+        test('lon null',       () => should.Throw(function() { camb.lon = null; }, TypeError, 'invalid lon ‘null’'));
+        test('lgn text',       () => should.Throw(function() { camb.lng = 'xxx'; }, TypeError, 'invalid lng ‘xxx’'));
+        test('lgn null',       () => should.Throw(function() { camb.lng = null; }, TypeError, 'invalid lng ‘null’'));
+        test('longitude text', () => should.Throw(function() { camb.longitude = 'xxx'; }, TypeError, 'invalid longitude ‘xxx’'));
+        test('longitude null', () => should.Throw(function() { camb.longitude = null; }, TypeError, 'invalid longitude ‘null’'));
     });
 
     describe('toString', function() {

@@ -1,5 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Geodesy Test Harness - ellipsoidal                                 (c) Chris Veness 2014-2021  */
+/* Geodesy Test Harness - latlon-ellipsoidal                          (c) Chris Veness 2014-2024  */
+/*                                                                                                */
+/* Usage:                                                                                         */
+/*   $ mocha test/latlon-ellipsoidal-tests.js                                                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 import LatLon, { Cartesian, Dms } from '../latlon-ellipsoidal.js';
@@ -91,25 +94,31 @@ describe('latlon-ellipsoidal', function() {
 
     describe('getters/setters', function() {
         const p = new LatLon(51.47788, -0.00147, 99);
-        test('get lat',            () => p.lat.should.equal(51.47788));
-        test('get latitude',       () => p.latitude.should.equal(51.47788));
-        test('get lon',            () => p.lon.should.equal(-0.00147));
-        test('get lng',            () => p.lng.should.equal(-0.00147));
-        test('get longitude',      () => p.longitude.should.equal(-0.00147));
-        test('get height',         () => p.height.should.equal(99));
-        test('set lat',            () => { p.lat = 48.8584; p.lat.should.equal(48.8584); });
-        test('set latitude',       () => { p.latitude = 48.8584; p.latitude.should.equal(48.8584); });
-        test('set lon',            () => { p.lon = 2.2945; p.lon.should.equal(2.2945); });
-        test('set lng',            () => { p.lng = 2.2945; p.lng.should.equal(2.2945); });
-        test('set longitude',      () => { p.longitude = 2.2945; p.longitude.should.equal(2.2945); });
-        test('set height',         () => { p.height = 9; p.height.should.equal(9); });
-        test('get ellipsoids',     () => LatLon.ellipsoids.should.deep.equal({ WGS84: { a: 6378137, b: 6356752.314245, f: 1/298.257223563 } }));
-        test('set lat fail',       () => should.Throw(function() { p.lat = 'x'; }, TypeError, 'invalid lat ‘x’'));
-        test('set latitude fail',  () => should.Throw(function() { p.latitude = 'x'; }, TypeError, 'invalid latitude ‘x’'));
-        test('set lon fail',       () => should.Throw(function() { p.lon = 'x'; }, TypeError, 'invalid lon ‘x’'));
-        test('set lng fail',       () => should.Throw(function() { p.lng = 'x'; }, TypeError, 'invalid lng ‘x’'));
-        test('set longitude fail', () => should.Throw(function() { p.longitude = 'x'; }, TypeError, 'invalid longitude ‘x’'));
-        test('set height fail',    () => should.Throw(function() { p.height = 'x'; }, TypeError, 'invalid height ‘x’'));
+        test('get lat',                 () => p.lat.should.equal(51.47788));
+        test('get latitude',            () => p.latitude.should.equal(51.47788));
+        test('get lon',                 () => p.lon.should.equal(-0.00147));
+        test('get lng',                 () => p.lng.should.equal(-0.00147));
+        test('get longitude',           () => p.longitude.should.equal(-0.00147));
+        test('get height',              () => p.height.should.equal(99));
+        test('set lat',                 () => { p.lat = 48.8584; p.lat.should.equal(48.8584); });
+        test('set latitude',            () => { p.latitude = 48.8584; p.latitude.should.equal(48.8584); });
+        test('set lon',                 () => { p.lon = 2.2945; p.lon.should.equal(2.2945); });
+        test('set lng',                 () => { p.lng = 2.2945; p.lng.should.equal(2.2945); });
+        test('set longitude',           () => { p.longitude = 2.2945; p.longitude.should.equal(2.2945); });
+        test('set height',              () => { p.height = 9; p.height.should.equal(9); });
+        test('get ellipsoids',          () => LatLon.ellipsoids.should.deep.equal({ WGS84: { a: 6378137, b: 6356752.314245, f: 1/298.257223563 } }));
+        test('set lat fail text',       () => should.Throw(function() { p.lat = 'x'; }, TypeError, 'invalid lat ‘x’'));
+        test('set lat fail null',       () => should.Throw(function() { p.lat = null; }, TypeError, 'invalid lat ‘null’'));
+        test('set latitude fail text',  () => should.Throw(function() { p.latitude = 'x'; }, TypeError, 'invalid latitude ‘x’'));
+        test('set latitude fail null',  () => should.Throw(function() { p.latitude = null; }, TypeError, 'invalid latitude ‘null’'));
+        test('set lon fail text',       () => should.Throw(function() { p.lon = 'x'; }, TypeError, 'invalid lon ‘x’'));
+        test('set lon fail null',       () => should.Throw(function() { p.lon = null; }, TypeError, 'invalid lon ‘null’'));
+        test('set lng fail text',       () => should.Throw(function() { p.lng = 'x'; }, TypeError, 'invalid lng ‘x’'));
+        test('set lng fail null',       () => should.Throw(function() { p.lng = null; }, TypeError, 'invalid lng ‘null’'));
+        test('set longitude fail text', () => should.Throw(function() { p.longitude = 'x'; }, TypeError, 'invalid longitude ‘x’'));
+        test('set longitude fail null', () => should.Throw(function() { p.longitude = null; }, TypeError, 'invalid longitude ‘null’'));
+        test('set height fail text',    () => should.Throw(function() { p.height = 'x'; }, TypeError, 'invalid height ‘x’'));
+        test('set height fail null',    () => should.Throw(function() { p.height = null; }, TypeError, 'invalid height ‘null’'));
     });
 
     describe('equals', function() {
