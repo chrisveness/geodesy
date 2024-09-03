@@ -97,7 +97,7 @@ class OsGridRef {
         const F0 = nationalGrid.scaleFactor;                // 0.9996012717
 
         const e2 = 1 - (b*b)/(a*a);                         // eccentricity squared
-        const n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;        // n, n², n³
+        const n = (a-b)/(a+b), n2 = n*n, n3 = n2*n;        // n, n², n³
 
         let φ=φ0, M=0;
         do {
